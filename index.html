@@ -293,8 +293,8 @@
       color: #888;
       margin: 5px 0 10px;
     }
-    .match-correct { color: #4CAF50; }
-    .match-pending { color: #333; }
+    .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
+    .match-pending { color: #666; }
     .mic-btn {
       background: #f44336;
       color: white;
@@ -310,6 +310,22 @@
     }
     .mic-btn:hover { background: #e53935; }
     .mic-btn.listening { animation: pulse 1s infinite; }
+    .mic-btn.error {
+      background: #9e9e9e;
+      position: relative;
+    }
+    .mic-btn.error::after {
+      content: '✕';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      color: #f44336;
+      font-weight: bold;
+    }
+    .mic-btn.retrying { animation: pulse 0.5s infinite; background: #ff9800; }
+    #readMode.mic-error { cursor: pointer; }
     .confetti {
       position: fixed;
       top: 0;
@@ -524,7 +540,10 @@
           <div class="btn-group">
             <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
             <button class="btn btn-secondary" id="dontKnowBtn">I don't know</button>
-            <button class="btn btn-success hidden" id="readNextBtn">Next card</button>
+          </div>
+          <div class="btn-group hidden" id="readNextGroup">
+            <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
+            <button class="btn btn-success" id="readNextBtn">Next card</button>
           </div>
         </div>
 
@@ -548,6 +567,7 @@
           </div>
 
           <div class="btn-group hidden" id="writeNextGroup">
+            <button class="btn btn-secondary" id="writeSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="writeNextBtn">Next card</button>
           </div>
         </div>
@@ -812,9 +832,21 @@
       backBtn.addEventListener('click', endGame);
 
       // Read mode
-      // Mic button is now just a visual indicator (auto-starts), no click handler
+      // Mic button is a visual indicator (auto-starts), but tapping readMode retries on error
+      document.getElementById('readMode').addEventListener('click', (e) => {
+        // Only retry if in error state and not clicking a button
+        if (document.getElementById('readMode').classList.contains('mic-error') &&
+            !e.target.closest('button')) {
+          toggleSpeechRecognition();
+        }
+      });
       document.getElementById('showHintBtn').addEventListener('click', handleShowHint);
       document.getElementById('dontKnowBtn').addEventListener('click', handleDontKnow);
+      document.getElementById('readSayAgainBtn').addEventListener('click', () => {
+        const wordEl = document.getElementById('readWord');
+        const sentenceEl = document.getElementById('readSentence');
+        speakWordThenSentence(wordEl, sentenceEl);
+      });
       document.getElementById('readNextBtn').addEventListener('click', () => nextCard());
 
       // Write mode
@@ -822,6 +854,11 @@
       document.getElementById('showAnswerBtn').addEventListener('click', handleShowAnswer);
       document.getElementById('wrongBtn').addEventListener('click', () => handleWriteAnswer(false));
       document.getElementById('correctBtn').addEventListener('click', () => handleWriteAnswer(true));
+      document.getElementById('writeSayAgainBtn').addEventListener('click', () => {
+        const wordEl = document.getElementById('writeWordChinese');
+        const sentenceEl = document.getElementById('writeSentenceChinese');
+        speakWordThenSentence(wordEl, sentenceEl);
+      });
       document.getElementById('writeNextBtn').addEventListener('click', () => nextCard());
 
       // Hamburger menu (mobile)
@@ -1027,7 +1064,7 @@
       document.getElementById('readSentencePinyin').classList.add('hidden');
       document.getElementById('readWordEnglish').classList.add('hidden');
       document.getElementById('readSentenceEnglish').classList.add('hidden');
-      document.getElementById('readNextBtn').classList.add('hidden');
+      document.getElementById('readNextGroup').classList.add('hidden');
       document.getElementById('showHintBtn').classList.remove('hidden');
       document.getElementById('dontKnowBtn').classList.remove('hidden');
       document.getElementById('speechInput').value = '';
@@ -1097,7 +1134,9 @@
 
         recognition.onstart = () => {
           recognitionStarting = false;
-          document.getElementById('micBtn').classList.add('listening');
+          const micBtn = document.getElementById('micBtn');
+          micBtn.classList.remove('retrying');
+          micBtn.classList.add('listening');
           document.getElementById('speechInput').classList.add('listening');
           document.getElementById('speechTip').textContent = 'Listening...';
           document.getElementById('speechTip').classList.remove('hidden');
@@ -1122,7 +1161,9 @@
           console.error('Speech recognition error:', event.error);
           recognitionStarting = false;
           stopSpeechRecognition();
-          document.getElementById('modeIndicator').textContent = 'READ: Mic error. Tap to try again.';
+          document.getElementById('micBtn').classList.add('error');
+          document.getElementById('readMode').classList.add('mic-error');
+          document.getElementById('modeIndicator').textContent = 'READ: Mic error. Tap anywhere to retry.';
         };
 
         recognition.onend = () => {
@@ -1204,6 +1245,11 @@
 
     function startSpeechRecognition() {
       if (!recognition || recognitionStarting) return;
+      const micBtn = document.getElementById('micBtn');
+      // Clear error state and show retrying
+      micBtn.classList.remove('error');
+      micBtn.classList.add('retrying');
+      document.getElementById('readMode').classList.remove('mic-error');
       try {
         recognitionStarting = true;
         document.getElementById('modeIndicator').textContent = 'READ: Starting mic...';
@@ -1212,7 +1258,10 @@
       } catch (e) {
         console.error('Failed to start recognition:', e);
         recognitionStarting = false;
-        document.getElementById('modeIndicator').textContent = 'READ: Failed to start mic. Tap to retry.';
+        micBtn.classList.remove('retrying');
+        micBtn.classList.add('error');
+        document.getElementById('readMode').classList.add('mic-error');
+        document.getElementById('modeIndicator').textContent = 'READ: Failed to start mic. Tap anywhere to retry.';
       }
     }
 
@@ -1367,7 +1416,7 @@
       document.getElementById('readSentencePinyin').classList.remove('hidden');
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
-      document.getElementById('readNextBtn').classList.remove('hidden');
+      document.getElementById('readNextGroup').classList.remove('hidden');
       document.getElementById('showHintBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
     }
@@ -1400,11 +1449,11 @@
       document.getElementById('showHintBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
 
-      speakSentence(currentCard.sentence, 0.3, () => {
-        speakSentence(currentCard.sentence, 0.6, () => {
-          document.getElementById('readNextBtn').classList.remove('hidden');
-          document.getElementById('modeIndicator').textContent = 'READ: Tap to listen again';
-        });
+      const wordEl = document.getElementById('readWord');
+      const sentenceEl = document.getElementById('readSentence');
+      speakWordThenSentence(wordEl, sentenceEl, () => {
+        document.getElementById('readNextGroup').classList.remove('hidden');
+        document.getElementById('modeIndicator').textContent = 'READ: Listen again or continue';
       });
     }
 
@@ -1445,6 +1494,46 @@
         if (callback) callback();
       };
       speechSynthesis.speak(utterance);
+    }
+
+    function speakWordThenSentence(wordEl, sentenceEl, callback) {
+      speechSynthesis.cancel();
+
+      // Highlight word with span.match-correct and speak it
+      const originalWord = wordEl.textContent;
+      wordEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word)}</span>`;
+      const wordUtterance = new SpeechSynthesisUtterance(currentCard.word);
+      if (selectedVoice) {
+        wordUtterance.voice = selectedVoice;
+        wordUtterance.lang = selectedVoice.lang;
+      } else {
+        wordUtterance.lang = 'zh-CN';
+      }
+      wordUtterance.rate = 0.6;
+
+      wordUtterance.onend = () => {
+        wordEl.textContent = originalWord;
+        // Pause 1 second, then speak sentence
+        setTimeout(() => {
+          const originalSentence = sentenceEl.textContent;
+          sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence)}</span>`;
+          const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence);
+          if (selectedVoice) {
+            sentenceUtterance.voice = selectedVoice;
+            sentenceUtterance.lang = selectedVoice.lang;
+          } else {
+            sentenceUtterance.lang = 'zh-CN';
+          }
+          sentenceUtterance.rate = 0.5;
+
+          sentenceUtterance.onend = () => {
+            sentenceEl.textContent = originalSentence;
+            if (callback) callback();
+          };
+          speechSynthesis.speak(sentenceUtterance);
+        }, 1000);
+      };
+      speechSynthesis.speak(wordUtterance);
     }
 
     // Say it speed toggle for WRITE mode
@@ -1489,8 +1578,9 @@
         showConfetti();
         setTimeout(() => nextCard(), 1000);
       } else {
-        // Play audio at 0.3x, then show next button
-        speakSentence(currentCard.sentence, 0.3, () => {
+        const wordEl = document.getElementById('writeWordChinese');
+        const sentenceEl = document.getElementById('writeSentenceChinese');
+        speakWordThenSentence(wordEl, sentenceEl, () => {
           document.getElementById('writeNextGroup').classList.remove('hidden');
         });
       }
