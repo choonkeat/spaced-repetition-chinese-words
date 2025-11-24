@@ -77,6 +77,8 @@ npm run test:headed        # Run tests with browser visible
 npm run test:ui            # Run tests with interactive UI
 ```
 
+> **Note:** Tests run in parallel, so you may hear overlapping Chinese speech synthesis voices. This is normal.
+
 ## Privacy
 
 No data is sent to any server. All flashcard data and learning progress is stored entirely in your browser's localStorage. Your data stays on your device.

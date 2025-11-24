@@ -1225,8 +1225,65 @@
       document.getElementById('speechTip').classList.add('hidden');
     }
 
-    function normalizeText(text) {
-      return text.replace(/[\s\.,!?，。！？、]/g, '').toLowerCase();
+    // Convert Arabic numerals to Chinese characters
+    // Based on https://github.com/Lostpig/chinese-numerals
+    const arabicToChinese = (() => {
+      const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+      const units = ['', '十', '百', '千'];
+      const scales = ['', '万', '亿'];
+
+      function convertSection(numStr) {
+        // Convert a 4-digit section (or less) to Chinese
+        let result = '';
+        let prevZero = false;
+        for (let i = 0; i < numStr.length; i++) {
+          const digit = parseInt(numStr[i], 10);
+          const pos = numStr.length - 1 - i; // position from right (0=ones, 1=tens, etc)
+          if (digit === 0) {
+            prevZero = true;
+          } else {
+            if (prevZero && result !== '') result += digits[0];
+            // Special case: omit 一 before 十 at start (十 not 一十)
+            if (digit === 1 && pos === 1 && result === '') {
+              result += units[pos];
+            } else {
+              result += digits[digit] + units[pos];
+            }
+            prevZero = false;
+          }
+        }
+        return result;
+      }
+
+      return function(num) {
+        if (num === 0) return digits[0];
+        const str = String(num);
+        // Split into groups of 4 from the right
+        const sections = [];
+        for (let i = str.length; i > 0; i -= 4) {
+          sections.unshift(str.slice(Math.max(0, i - 4), i));
+        }
+        let result = '';
+        for (let i = 0; i < sections.length; i++) {
+          const scaleIndex = sections.length - 1 - i;
+          const sectionStr = convertSection(sections[i]);
+          if (sectionStr) {
+            // Add zero if previous section was empty but we have more coming
+            if (result && !result.endsWith(digits[0]) && parseInt(sections[i], 10) < 1000) {
+              result += digits[0];
+            }
+            result += sectionStr + (scales[scaleIndex] || '');
+          }
+        }
+        return result;
+      };
+    })();
+
+    function normalizeForSpeechMatch(text) {
+      // Convert Arabic numerals to Chinese characters
+      let normalized = text.replace(/\d+/g, match => arabicToChinese(parseInt(match, 10)));
+      // Remove punctuation and whitespace
+      return normalized.replace(/[\s\.,!?，。！？、]/g, '').toLowerCase();
     }
 
     let lastMatchLen = 0; // Track previous match for encouragement messages
@@ -1235,13 +1292,13 @@
     function updateSentenceHighlight(transcript) {
       if (!currentCard) return;
       const sentence = currentCard.sentence;
-      const normalizedTranscript = normalizeText(transcript);
+      const normalizedTranscript = normalizeForSpeechMatch(transcript);
       const sentenceEl = document.getElementById('readSentence');
 
       // Find how many characters from the start of the sentence match
       // the end of the transcript (since user might have false starts)
       let matchLen = 0;
-      const normalizedSentence = normalizeText(sentence);
+      const normalizedSentence = normalizeForSpeechMatch(sentence);
 
       // Check suffix of transcript against prefix of sentence
       for (let len = normalizedSentence.length; len >= 1; len--) {
@@ -1291,8 +1348,8 @@
 
     function checkSpeechMatch(transcript) {
       if (cardCompleted) return; // Already recorded result for this card
-      const expected = normalizeText(currentCard.sentence);
-      const actual = normalizeText(transcript);
+      const expected = normalizeForSpeechMatch(currentCard.sentence);
+      const actual = normalizeForSpeechMatch(transcript);
       // Suffix match: allows corrections like "ABF.. ABCD" to match "ABCD"
       if (actual.endsWith(expected)) {
         cardCompleted = true;
