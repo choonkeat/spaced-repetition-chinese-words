@@ -168,7 +168,7 @@ type FlashcardList = Flashcard[];</code></pre>
   <h3>Import Behavior</h3>
   <ul>
     <li>New cards are shuffled (Fisher-Yates algorithm)</li>
-    <li>Duplicate words are skipped</li>
+    <li>Each import creates a new set (duplicates across sets are allowed)</li>
     <li>Data persists in localStorage</li>
     <li>Backup files (with <code>exportedAt</code>) restore progress; plain JSON imports as new set</li>
   </ul>
@@ -182,7 +182,7 @@ type FlashcardList = Flashcard[];</code></pre>
   </ul>
 
   <h2>Browser Compatibility</h2>
-  <p>Best in <strong>Chrome</strong> (full speech recognition support). Speech recognition may not work in Safari/Firefox.</p>
+  <p><strong>Chrome</strong> and <strong>Safari</strong> (including iOS Safari) fully support all features. Firefox does not support the Web Speech API for speech recognition, so READ mode will not function in Firefox.</p>
 
 </body>
 </html>

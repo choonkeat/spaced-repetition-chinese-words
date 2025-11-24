@@ -100,6 +100,7 @@
     <li><strong>New cards</strong>: Cards with no progress data (treated as due)</li>
     <li><strong>Oldest first</strong>: Among due cards, prioritize by <code>nextReview</code> timestamp</li>
     <li><strong>Random tiebreaker</strong>: If multiple cards have same priority, pick randomly</li>
+    <li><strong>Fallback</strong>: If no cards are due, the card with the soonest <code>nextReview</code> is selected (even if it's in the future)</li>
   </ol>
 
   <h2>Separate Tracking for Read/Write</h2>

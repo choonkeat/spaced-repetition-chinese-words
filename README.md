@@ -43,17 +43,19 @@ A static web app for learning Chinese characters using spaced repetition.
 
 ## Browser & OS Support
 
-**Recommended:** Chrome on macOS, Windows, or Android
+**Recommended:** Chrome or Safari
 
 | Feature | Chrome | Safari | Firefox |
 |---------|--------|--------|---------|
-| Speech Recognition (READ mode) | Full | Limited | No |
+| Speech Recognition (READ mode) | Full | Full | No |
 | Text-to-Speech (Chinese) | Full | Full | Full |
 | localStorage | Full | Full | Full |
 
-**Why Chrome?** The Web Speech API (`SpeechRecognition`) for Chinese speech-to-text is fully supported only in Chrome. Safari has limited support, and Firefox does not support it at all.
+**Desktop:** Chrome (macOS/Windows/Linux) and Safari (macOS) both work well.
 
-**Mobile:** Works on Android Chrome. iOS Safari has limited speech recognition support.
+**Mobile:** iOS Safari and Android Chrome both fully support all features including speech recognition.
+
+**Firefox:** Does not implement the Web Speech API for speech recognition. WRITE mode still works, but READ mode will not function.
 
 ## Privacy
 
