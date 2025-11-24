@@ -1693,7 +1693,15 @@
     }
 
     // Confetti
+    let confettiAnimationId = null;
+
     function showConfetti() {
+      // Cancel any existing animation to prevent multiple loops
+      if (confettiAnimationId) {
+        cancelAnimationFrame(confettiAnimationId);
+        confettiAnimationId = null;
+      }
+
       const canvas = document.getElementById('confettiCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
@@ -1729,12 +1737,13 @@
           ctx.fillRect(p.x, p.y, p.size, p.size);
         });
         if (alive) {
-          requestAnimationFrame(animate);
+          confettiAnimationId = requestAnimationFrame(animate);
         } else {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+          confettiAnimationId = null;
         }
       }
-      animate();
+      confettiAnimationId = requestAnimationFrame(animate);
     }
 
     // Start the app

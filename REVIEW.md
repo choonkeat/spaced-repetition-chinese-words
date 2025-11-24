@@ -50,13 +50,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 4. Memory leak in confetti animation
+### 4. [FIXED] Memory leak in confetti animation
 **Severity:** Medium
-**Location:** Lines ~1691-1733
+**Location:** Lines ~1696-1747
 
-**Issue:** If `showConfetti()` is called rapidly, multiple animation loops can run simultaneously without cleanup. Each call creates new particles without canceling existing animations.
+**Issue:** If `showConfetti()` is called rapidly, multiple animation loops could run simultaneously.
 
-**Status:** Open
+**Fix:** Added `confettiAnimationId` to track animation frame. Cancel any existing animation before starting a new one.
+
+**Status:** Fixed
 
 ### 5. speechSynthesis.cancel() timing issue
 **Severity:** Medium
