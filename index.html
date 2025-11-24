@@ -701,10 +701,6 @@
           <div class="english-display hidden" id="readSentenceEnglish"></div>
 
           <button class="mic-btn" id="micBtn">&#127908;</button>
-          <div class="ios-audio-warning" id="iosAudioWarning">
-            iOS Safari + Bluetooth audio may have issues.
-            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
-          </div>
           <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
           <div class="speech-tip hidden" id="speechTip">💡 Just keep speaking - no need to restart</div>
 
@@ -715,6 +711,10 @@
           <div class="btn-group hidden" id="readNextGroup">
             <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="readNextBtn">Next card</button>
+          </div>
+          <div class="ios-audio-warning" id="iosAudioWarningRead">
+            iOS Safari + Bluetooth audio may have issues.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="card-label" id="readCardLabel"></div>
         </div>
@@ -741,6 +741,10 @@
           <div class="btn-group hidden" id="writeNextGroup">
             <button class="btn btn-secondary" id="writeSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="writeNextBtn">Next card</button>
+          </div>
+          <div class="ios-audio-warning" id="iosAudioWarningWrite">
+            iOS Safari + Bluetooth audio may have issues.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="card-label" id="writeCardLabel"></div>
         </div>
@@ -1208,8 +1212,17 @@
       return topCandidates[Math.floor(Math.random() * topCandidates.length)];
     }
 
-    function startGame() {
+    async function startGame() {
       if (!currentFileId) return;
+
+      // Request mic permission early (for iOS audio detection)
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        checkiOSAudioWarning();
+      } catch (e) {
+        console.log('Mic permission denied or unavailable:', e);
+      }
+
       homeScreen.classList.add('hidden');
       gameScreen.classList.add('active');
       nextCard();
@@ -1353,8 +1366,6 @@
           document.getElementById('speechInput').classList.add('listening');
           document.getElementById('speechTip').textContent = 'Listening...';
           document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
-          // Check for iOS audio issues now that we have mic permission
-          checkiOSAudioWarning();
         };
 
         recognition.onresult = (event) => {
@@ -1462,7 +1473,8 @@
         ) || audioInputs.length > 1;
 
         if (hasBluetooth) {
-          document.getElementById('iosAudioWarning').classList.add('visible');
+          document.getElementById('iosAudioWarningRead').classList.add('visible');
+          document.getElementById('iosAudioWarningWrite').classList.add('visible');
         }
       } catch (e) {
         console.log('Could not enumerate audio devices:', e);

@@ -412,10 +412,13 @@ test.describe('READ Mode', () => {
     await page.click('#playBtn');
     await waitForGameScreen(page);
 
-    // The warning element should exist but not be visible (no 'visible' class)
-    const warning = page.locator('#iosAudioWarning');
-    await expect(warning).toBeAttached();
-    await expect(warning).not.toHaveClass(/visible/);
+    // The warning elements should exist but not be visible (no 'visible' class)
+    const warningRead = page.locator('#iosAudioWarningRead');
+    const warningWrite = page.locator('#iosAudioWarningWrite');
+    await expect(warningRead).toBeAttached();
+    await expect(warningRead).not.toHaveClass(/visible/);
+    await expect(warningWrite).toBeAttached();
+    await expect(warningWrite).not.toHaveClass(/visible/);
   });
 });
 
