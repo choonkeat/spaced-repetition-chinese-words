@@ -35,8 +35,8 @@ A static web app for learning Chinese characters using spaced repetition.
 
 ## Documentation
 
-- [How it works](SPACED_REPETITION.html) - Spaced repetition algorithm
-- [Developer Guide](DEVELOPER.html) - Technical details
+- [How it works](https://spaced-repetition-chinese-words.netlify.app/spaced_repetition) - Spaced repetition algorithm
+- [Developer Guide](https://spaced-repetition-chinese-words.netlify.app/developer) - Technical details
 
 ## Browser & OS Support
 
