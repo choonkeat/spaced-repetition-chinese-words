@@ -1,0 +1,26 @@
+{
+  "name": "claude",
+  "version": "1.0.0",
+  "description": "A static web app for learning Chinese characters using spaced repetition.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/choonkeat/chinese-flashcards.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/choonkeat/chinese-flashcards/issues"
+  },
+  "homepage": "https://github.com/choonkeat/chinese-flashcards#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "typescript": "^5.9.3"
+  }
+}

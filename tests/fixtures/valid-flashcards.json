@@ -1,0 +1,26 @@
+[
+  {
+    "word": "你",
+    "word_hanyupinyin": "nǐ",
+    "word_english": "you",
+    "sentence": "你好！",
+    "sentence_hanyupinyin": "Nǐ hǎo!",
+    "sentence_english": "Hello!"
+  },
+  {
+    "word": "好",
+    "word_hanyupinyin": "hǎo",
+    "word_english": "good",
+    "sentence": "很好！",
+    "sentence_hanyupinyin": "Hěn hǎo!",
+    "sentence_english": "Very good!"
+  },
+  {
+    "word": "我",
+    "word_hanyupinyin": "wǒ",
+    "word_english": "I/me",
+    "sentence": "我是学生。",
+    "sentence_hanyupinyin": "Wǒ shì xuéshēng.",
+    "sentence_english": "I am a student."
+  }
+]

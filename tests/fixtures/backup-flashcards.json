@@ -1,0 +1,30 @@
+{
+  "name": "My Backup Set",
+  "flashcards": [
+    {
+      "word": "谢谢",
+      "word_hanyupinyin": "xièxie",
+      "word_english": "thank you",
+      "sentence": "谢谢你！",
+      "sentence_hanyupinyin": "Xièxie nǐ!",
+      "sentence_english": "Thank you!"
+    }
+  ],
+  "progress": {
+    "谢谢": {
+      "read": {
+        "intervalIndex": 3,
+        "nextReview": 0,
+        "successCount": 3,
+        "failCount": 0
+      },
+      "write": {
+        "intervalIndex": 2,
+        "nextReview": 0,
+        "successCount": 2,
+        "failCount": 1
+      }
+    }
+  },
+  "exportedAt": "2024-01-15T10:30:00.000Z"
+}
