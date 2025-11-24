@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Guide - Chinese Flashcards</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2, h3 { color: #2196F3; }
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Consolas', monospace;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    pre code {
+      padding: 0;
+      background: none;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th { background: #f5f5f5; }
+    a { color: #2196F3; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">&larr; Back to App</a>
+
+  <h1>Developer Guide</h1>
+
+  <h2>Overview</h2>
+  <p>A static single-page web application for learning Chinese characters using spaced repetition. Built with vanilla HTML, CSS, and JavaScript - no build tools required.</p>
+
+  <h2>Project Structure</h2>
+  <pre><code>claude/
+├── index.html              # Main application
+├── DEVELOPER.html          # This file
+└── SPACED_REPETITION.html  # Algorithm documentation</code></pre>
+
+  <h2>Running the Application</h2>
+  <p>Start a local HTTP server from the project root:</p>
+  <pre><code>python3 -m http.server 8765</code></pre>
+  <p>Then open: <a href="http://localhost:8765/">http://localhost:8765/</a></p>
+
+  <h2>Testing with MCP Playwright</h2>
+  <p>The app can be tested using MCP Playwright tools:</p>
+  <pre><code>// 1. Navigate to the app
+mcp__playwright__browser_navigate({ url: "http://localhost:8765/" })
+
+// 2. Upload flashcard JSON file
+mcp__playwright__browser_click({ element: "Choose File button", ref: "e7" })
+mcp__playwright__browser_file_upload({
+  paths: ["/path/to/flashcards.json"]
+})
+
+// 3. Click Play to start
+mcp__playwright__browser_click({ element: "Play button", ref: "e12" })
+
+// 4. Take snapshots to verify UI state
+mcp__playwright__browser_snapshot()
+
+// 5. Evaluate JavaScript state
+mcp__playwright__browser_evaluate({
+  function: "() => JSON.parse(localStorage.getItem('progress') || '{}')"
+})
+
+// 6. Check console for errors
+mcp__playwright__browser_console_messages()
+
+// 7. Close browser when done
+mcp__playwright__browser_close()</code></pre>
+
+  <h2>Data Schema</h2>
+  <p>The app expects JSON files with this structure:</p>
+  <pre><code>interface Flashcard {
+  word: string;              // Chinese character (e.g., "你")
+  word_hanyupinyin: string;  // Pinyin with tone marks (e.g., "nǐ")
+  word_english: string;      // English translation (e.g., "you")
+  sentence: string;          // Chinese sentence (e.g., "你好！")
+  sentence_hanyupinyin: string; // Sentence pinyin (e.g., "Nǐ hǎo!")
+  sentence_english: string;  // English translation (e.g., "Hello!")
+}
+
+type FlashcardList = Flashcard[];</code></pre>
+
+  <h2>localStorage Structure</h2>
+  <p>All data is stored under the key <code>flashcard_files</code>:</p>
+  <pre><code>// localStorage.getItem('flashcard_files')
+[
+  {
+    id: "unique-id",
+    name: "My Flashcard Set",
+    flashcards: [...],  // Array of Flashcard objects
+    progress: {
+      "你": {
+        read: { intervalIndex, nextReview, successCount, failCount },
+        write: { intervalIndex, nextReview, successCount, failCount }
+      }
+    }
+  }
+]</code></pre>
+
+  <h2>Key Features</h2>
+
+  <h3>Multi-File Support</h3>
+  <ul>
+    <li>Upload multiple JSON files as separate "sets"</li>
+    <li>Each set has its own name (defaults to datetime)</li>
+    <li>Each set tracks its own progress and session stats</li>
+    <li>Sidebar shows all sets with quick stats</li>
+    <li>Delete individual sets with trash icon</li>
+  </ul>
+
+  <h3>Two Test Modes</h3>
+  <table>
+    <tr><th>Mode</th><th>Shows</th><th>User Action</th></tr>
+    <tr>
+      <td><strong style="color:#2196F3;">READ</strong></td>
+      <td>Chinese word + sentence</td>
+      <td>Pronounce sentence (speech recognition) or tap "I don't know"</td>
+    </tr>
+    <tr>
+      <td><strong style="color:#9C27B0;">WRITE</strong></td>
+      <td>English + pinyin</td>
+      <td>Recall Chinese, then self-grade (Correct/Wrong)</td>
+    </tr>
+  </table>
+
+  <h3>Session Stats</h3>
+  <p>Tracks correct/wrong counts per session (resets on page reload).</p>
+
+  <h3>Import Behavior</h3>
+  <ul>
+    <li>New cards are shuffled (Fisher-Yates algorithm)</li>
+    <li>Duplicate words are skipped</li>
+    <li>Data persists in localStorage</li>
+  </ul>
+
+  <h2>Browser APIs Used</h2>
+  <ul>
+    <li><strong>Web Speech API</strong> - SpeechRecognition for speech-to-text (Chinese)</li>
+    <li><strong>Web Speech API</strong> - SpeechSynthesis for text-to-speech</li>
+    <li><strong>localStorage</strong> - Data persistence</li>
+    <li><strong>Canvas API</strong> - Confetti animation</li>
+  </ul>
+
+  <h2>Browser Compatibility</h2>
+  <p>Best in <strong>Chrome</strong> (full speech recognition support). Speech recognition may not work in Safari/Firefox.</p>
+
+</body>
+</html>

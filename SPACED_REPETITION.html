@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spaced Repetition - Chinese Flashcards</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2, h3 { color: #9C27B0; }
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Consolas', monospace;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    pre code {
+      padding: 0;
+      background: none;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 15px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th { background: #f5f5f5; }
+    a { color: #9C27B0; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .highlight { background: #fff3e0; padding: 15px; border-radius: 8px; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">&larr; Back to App</a>
+
+  <h1>Spaced Repetition Algorithm</h1>
+
+  <h2>Overview</h2>
+  <p>This app uses a simplified spaced repetition system inspired by SM-2. Cards are scheduled for review at increasing intervals based on successful recall.</p>
+
+  <h2>Interval Levels</h2>
+  <p>There are 8 interval levels (0-7):</p>
+  <table>
+    <tr><th>Level</th><th>Interval</th><th>Description</th></tr>
+    <tr><td>0</td><td>1 minute</td><td>Initial / Reset after wrong answer</td></tr>
+    <tr><td>1</td><td>10 minutes</td><td>First success</td></tr>
+    <tr><td>2</td><td>1 hour</td><td>Second success</td></tr>
+    <tr><td>3</td><td>1 day</td><td>Third success</td></tr>
+    <tr style="background:#e8f5e9;"><td>4</td><td>3 days</td><td>Fourth success (considered "mastered")</td></tr>
+    <tr><td>5</td><td>7 days</td><td>Fifth success</td></tr>
+    <tr><td>6</td><td>14 days</td><td>Sixth success</td></tr>
+    <tr><td>7</td><td>30 days</td><td>Maximum interval</td></tr>
+  </table>
+
+  <h2>Scheduling Logic</h2>
+
+  <div class="highlight">
+    <h3 style="color:#4CAF50; margin-top:0;">On Correct Answer</h3>
+    <ol>
+      <li>Increment <code>successCount</code></li>
+      <li>Advance <code>intervalIndex</code> by 1 (max 7)</li>
+      <li>Set <code>nextReview</code> = now + interval for new level</li>
+    </ol>
+  </div>
+
+  <div class="highlight" style="background:#ffebee;">
+    <h3 style="color:#f44336; margin-top:0;">On Wrong Answer</h3>
+    <ol>
+      <li>Increment <code>failCount</code></li>
+      <li>Reset <code>intervalIndex</code> to 0</li>
+      <li>Set <code>nextReview</code> = now + 1 minute</li>
+    </ol>
+  </div>
+
+  <h2>Card Selection Priority</h2>
+  <p>Cards are selected for review using this priority:</p>
+  <ol>
+    <li><strong>Due cards first</strong>: Cards where <code>nextReview &lt;= now</code></li>
+    <li><strong>New cards</strong>: Cards with no progress data (treated as due)</li>
+    <li><strong>Oldest first</strong>: Among due cards, prioritize by <code>nextReview</code> timestamp</li>
+    <li><strong>Random tiebreaker</strong>: If multiple cards have same priority, pick randomly</li>
+  </ol>
+
+  <h2>Separate Tracking for Read/Write</h2>
+  <p>Each card has independent progress for READ and WRITE modes:</p>
+  <pre><code>progress[word] = {
+  read: {
+    intervalIndex: 0,      // Current level (0-7)
+    nextReview: timestamp, // When card is due
+    successCount: 0,       // Total correct answers
+    failCount: 0           // Total wrong answers
+  },
+  write: {
+    intervalIndex: 0,
+    nextReview: timestamp,
+    successCount: 0,
+    failCount: 0
+  }
+}</code></pre>
+
+  <p>This means:</p>
+  <ul>
+    <li>You might master reading a character but still be learning to write it</li>
+    <li>Each mode progresses independently through the interval levels</li>
+    <li>Stats (due/practiced/mastered) are calculated separately per mode</li>
+  </ul>
+
+  <h2>"Mastered" Definition</h2>
+  <p>A card is considered <strong>"mastered"</strong> when <code>intervalIndex &gt;= 4</code> (3+ days interval). This is displayed in the homepage stats.</p>
+
+  <h2>Initial State</h2>
+  <p>For new cards (no progress data):</p>
+  <ul>
+    <li><code>nextReview</code> defaults to 0, meaning immediately due</li>
+    <li>Both READ and WRITE modes start as due</li>
+    <li>Cards are shuffled on import for variety</li>
+  </ul>
+
+</body>
+</html>

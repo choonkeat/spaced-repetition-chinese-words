@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chinese Flashcards</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar-header h2 {
+      margin: 0 0 15px 0;
+      font-size: 18px;
+      color: #333;
+    }
+    .upload-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .upload-section input[type="text"] {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .upload-section input[type="file"] {
+      font-size: 12px;
+    }
+    .file-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .file-item {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      background: #f9f9f9;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .file-item:hover {
+      background: #f0f0f0;
+    }
+    .file-item.active {
+      border-color: #2196F3;
+      background: #e3f2fd;
+    }
+    .file-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .file-item-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-item-trash {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      opacity: 0.5;
+      padding: 4px;
+    }
+    .file-item-trash:hover {
+      opacity: 1;
+    }
+    .file-item-stats {
+      font-size: 11px;
+      color: #888;
+    }
+    .file-item-session {
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .file-item-session .correct { color: #4CAF50; }
+    .file-item-session .wrong { color: #f44336; }
+    .sidebar-footer {
+      padding: 15px;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      text-align: center;
+    }
+    .sidebar-footer a {
+      color: #888;
+      margin: 0 8px;
+    }
+    /* Main content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .main-content h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    .welcome-message {
+      text-align: center;
+      color: #888;
+      padding: 40px;
+    }
+    .stats-panel {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .stats-grid {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+    .stats-column h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+    .stats-column.read h4 { color: #2196F3; }
+    .stats-column.write h4 { color: #9C27B0; }
+    .stats-column div {
+      font-size: 13px;
+      color: #666;
+    }
+    .play-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .play-btn:hover { background: #43A047; }
+    .play-btn:disabled { background: #ccc; cursor: not-allowed; }
+    /* Game screen */
+    .game-screen { display: none; width: 100%; max-width: 500px; }
+    .game-screen.active { display: block; }
+    .home-screen { display: block; }
+    .home-screen.hidden { display: none; }
+    .back-btn {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .back-btn:hover { color: #333; }
+    .mode-indicator {
+      text-align: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .mode-indicator.read { color: #2196F3; }
+    .mode-indicator.write { color: #9C27B0; }
+    .word-display {
+      text-align: center;
+      font-size: 72px;
+      margin: 20px 0;
+      color: #333;
+    }
+    .pinyin-display {
+      text-align: center;
+      font-size: 24px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .sentence-display {
+      text-align: center;
+      font-size: 28px;
+      margin: 20px 0;
+      line-height: 1.5;
+    }
+    .sentence-pinyin {
+      text-align: center;
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .english-display {
+      text-align: center;
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    .hidden { visibility: hidden; }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-secondary { background: #e0e0e0; color: #333; }
+    .btn-secondary:hover { background: #d0d0d0; }
+    .btn-success { background: #4CAF50; color: white; }
+    .btn-success:hover { background: #43A047; }
+    .btn-danger { background: #f44336; color: white; }
+    .btn-danger:hover { background: #e53935; }
+    .speech-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 20px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .speech-input:focus { outline: none; border-color: #2196F3; }
+    .speech-input.listening { border-color: #f44336; animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+    }
+    .mic-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      margin: 10px auto;
+      display: block;
+    }
+    .mic-btn:hover { background: #e53935; }
+    .mic-btn.listening { animation: pulse 1s infinite; }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .game-stats {
+      display: flex;
+      justify-content: space-around;
+      font-size: 12px;
+      color: #888;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .instruction {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .success-msg {
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .mic-btn.replay-mode {
+      background: #2196F3;
+    }
+    .mic-btn.replay-mode:hover {
+      background: #1976D2;
+    }
+    /* Hamburger menu */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #333;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .sidebar-overlay.open {
+        display: block;
+      }
+      .main-content {
+        padding-top: 70px;
+      }
+      .main-content h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hamburger menu button (mobile) -->
+  <button class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Flashcard Sets</h2>
+      <div class="upload-section">
+        <input type="text" id="fileNameInput" placeholder="Set name (optional)">
+        <input type="file" id="fileInput" accept=".json">
+      </div>
+      <div id="uploadMsg"></div>
+    </div>
+    <div class="file-list" id="fileList">
+      <!-- File items will be inserted here -->
+    </div>
+    <div class="sidebar-footer">
+      <a href="SPACED_REPETITION.html">How it works</a>
+      <a href="DEVELOPER.html">Developer</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>Chinese Flashcards</h1>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="home-screen">
+      <div id="welcomeMessage" class="welcome-message">
+        <p>Upload a JSON file to get started.</p>
+        <p>Click on a set in the sidebar to play.</p>
+      </div>
+
+      <div id="selectedFileStats" class="stats-panel" style="display:none;">
+        <div class="card">
+          <h3 id="selectedFileName" style="margin:0 0 10px 0; text-align:center;"></h3>
+          <div id="selectedFileWordCount" style="text-align:center; color:#666;"></div>
+          <div id="selectedFileSession" style="text-align:center; margin:10px 0; padding:8px; background:#f0f0f0; border-radius:8px;"></div>
+          <div class="stats-grid">
+            <div class="stats-column read">
+              <h4>READ</h4>
+              <div id="readDue"></div>
+              <div id="readPracticed"></div>
+              <div id="readMastered"></div>
+            </div>
+            <div class="stats-column write">
+              <h4>WRITE</h4>
+              <div id="writeDue"></div>
+              <div id="writePracticed"></div>
+              <div id="writeMastered"></div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <button class="play-btn" id="playBtn">Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="game-screen">
+      <button class="back-btn" id="backBtn">&larr; Back to menu</button>
+
+      <div class="card">
+        <div class="mode-indicator" id="modeIndicator">READ</div>
+
+        <!-- Read Mode -->
+        <div id="readMode" style="display: none;">
+          <div class="word-display" id="readWord"></div>
+          <div class="pinyin-display hidden" id="readPinyin"></div>
+          <div class="english-display hidden" id="readWordEnglish"></div>
+          <div class="sentence-display" id="readSentence"></div>
+          <div class="sentence-pinyin hidden" id="readSentencePinyin"></div>
+          <div class="english-display hidden" id="readSentenceEnglish"></div>
+
+          <div class="instruction" id="readInstruction">Pronounce the sentence above</div>
+
+          <button class="mic-btn" id="micBtn">&#127908;</button>
+          <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
+
+          <div class="btn-group">
+            <button class="btn btn-secondary" id="dontKnowBtn">I don't know</button>
+            <button class="btn btn-success hidden" id="readNextBtn">Next card</button>
+          </div>
+        </div>
+
+        <!-- Write Mode -->
+        <div id="writeMode" style="display: none;">
+          <div class="word-display" id="writeWordEnglish"></div>
+          <div class="pinyin-display hidden" id="writeWordChinese"></div>
+          <div class="sentence-display" id="writeSentenceEnglish"></div>
+          <div class="sentence-pinyin hidden" id="writeSentenceChinese"></div>
+
+          <div class="instruction">Can you write this in Chinese?</div>
+
+          <div class="btn-group" id="writeShowGroup">
+            <button class="btn btn-secondary" id="showAnswerBtn">Show answer</button>
+          </div>
+
+          <div class="btn-group hidden" id="writeAnswerGroup">
+            <button class="btn btn-danger" id="wrongBtn">Wrong</button>
+            <button class="btn btn-success" id="correctBtn">Correct</button>
+          </div>
+        </div>
+
+        <div class="game-stats" id="gameStats"></div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" class="confetti"></canvas>
+
+  <script>
+    // Storage key
+    const STORAGE_KEY = 'flashcard_files';
+
+    // Spaced repetition intervals (in milliseconds)
+    const INTERVALS = [
+      1 * 60 * 1000,        // 1 minute
+      10 * 60 * 1000,       // 10 minutes
+      60 * 60 * 1000,       // 1 hour
+      24 * 60 * 60 * 1000,  // 1 day
+      3 * 24 * 60 * 60 * 1000,  // 3 days
+      7 * 24 * 60 * 60 * 1000,  // 7 days
+      14 * 24 * 60 * 60 * 1000, // 14 days
+      30 * 24 * 60 * 60 * 1000  // 30 days
+    ];
+
+    // State
+    let files = []; // Array of { id, name, flashcards, progress }
+    let currentFileId = null;
+    let currentCard = null;
+    let currentMode = 'read';
+    let recognition = null;
+    let sessionStats = {}; // { fileId: { correct: 0, wrong: 0 } }
+
+    // DOM elements
+    const fileInput = document.getElementById('fileInput');
+    const fileNameInput = document.getElementById('fileNameInput');
+    const uploadMsg = document.getElementById('uploadMsg');
+    const fileList = document.getElementById('fileList');
+    const homeScreen = document.getElementById('homeScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const selectedFileStats = document.getElementById('selectedFileStats');
+    const playBtn = document.getElementById('playBtn');
+    const backBtn = document.getElementById('backBtn');
+
+    // Initialize
+    function init() {
+      loadFromStorage();
+      renderFileList();
+      setupEventListeners();
+      setupSpeechRecognition();
+      // On mobile, open sidebar if no file selected
+      if (window.innerWidth <= 768 && !currentFileId) {
+        document.getElementById('hamburger').classList.add('open');
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+      }
+    }
+
+    function loadFromStorage() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        files = JSON.parse(stored);
+      }
+      // Initialize session stats for each file
+      files.forEach(f => {
+        sessionStats[f.id] = { correct: 0, wrong: 0 };
+      });
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function getDefaultName() {
+      const now = new Date();
+      return now.toLocaleString();
+    }
+
+    function renderFileList() {
+      fileList.innerHTML = '';
+      files.forEach(file => {
+        const stats = calculateFileStats(file);
+        const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+        const item = document.createElement('div');
+        item.className = 'file-item' + (file.id === currentFileId ? ' active' : '');
+        item.innerHTML = `
+          <div class="file-item-header">
+            <span class="file-item-name">${escapeHtml(file.name)}</span>
+            <button class="file-item-trash" data-id="${file.id}" title="Delete">&#128465;</button>
+          </div>
+          <div class="file-item-stats">${file.flashcards.length} words</div>
+          <div class="file-item-session">
+            Session: <span class="correct">${session.correct}</span> / <span class="wrong">${session.wrong}</span>
+          </div>
+        `;
+        item.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('file-item-trash')) {
+            selectFile(file.id);
+          }
+        });
+        item.querySelector('.file-item-trash').addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteFile(file.id);
+        });
+        fileList.appendChild(item);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function selectFile(fileId) {
+      currentFileId = fileId;
+      renderFileList();
+      updateSelectedFileStats();
+      closeSidebarOnMobile();
+    }
+
+    function closeSidebarOnMobile() {
+      if (window.innerWidth <= 768) {
+        document.getElementById('hamburger').classList.remove('open');
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+      }
+    }
+
+    function updateSelectedFileStats() {
+      const file = files.find(f => f.id === currentFileId);
+      if (!file) {
+        welcomeMessage.style.display = 'block';
+        selectedFileStats.style.display = 'none';
+        return;
+      }
+
+      welcomeMessage.style.display = 'none';
+      selectedFileStats.style.display = 'block';
+
+      const stats = calculateFileStats(file);
+      const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+
+      document.getElementById('selectedFileName').textContent = file.name;
+      document.getElementById('selectedFileWordCount').textContent = `${file.flashcards.length} words`;
+      document.getElementById('selectedFileSession').innerHTML = `
+        <strong>This session:</strong>
+        <span style="color:#4CAF50;">${session.correct} correct</span> /
+        <span style="color:#f44336;">${session.wrong} wrong</span>
+      `;
+      document.getElementById('readDue').textContent = `${stats.read.dueNow} due`;
+      document.getElementById('readPracticed').textContent = `${stats.read.practiced} practiced`;
+      document.getElementById('readMastered').textContent = `${stats.read.mastered} mastered`;
+      document.getElementById('writeDue').textContent = `${stats.write.dueNow} due`;
+      document.getElementById('writePracticed').textContent = `${stats.write.practiced} practiced`;
+      document.getElementById('writeMastered').textContent = `${stats.write.mastered} mastered`;
+    }
+
+    function calculateFileStats(file) {
+      const now = Date.now();
+      let readDue = 0, readPracticed = 0, readMastered = 0;
+      let writeDue = 0, writePracticed = 0, writeMastered = 0;
+
+      file.flashcards.forEach(card => {
+        const p = file.progress[card.word];
+
+        if (p && p.read) {
+          readPracticed++;
+          if (p.read.nextReview <= now) readDue++;
+          if (p.read.intervalIndex >= 4) readMastered++;
+        } else {
+          readDue++;
+        }
+
+        if (p && p.write) {
+          writePracticed++;
+          if (p.write.nextReview <= now) writeDue++;
+          if (p.write.intervalIndex >= 4) writeMastered++;
+        } else {
+          writeDue++;
+        }
+      });
+
+      return {
+        read: { dueNow: readDue, practiced: readPracticed, mastered: readMastered },
+        write: { dueNow: writeDue, practiced: writePracticed, mastered: writeMastered }
+      };
+    }
+
+    function deleteFile(fileId) {
+      const file = files.find(f => f.id === fileId);
+      if (!file) return;
+      if (!confirm(`Delete "${file.name}" and all its progress?`)) return;
+
+      files = files.filter(f => f.id !== fileId);
+      delete sessionStats[fileId];
+      if (currentFileId === fileId) {
+        currentFileId = null;
+      }
+      saveToStorage();
+      renderFileList();
+      updateSelectedFileStats();
+    }
+
+    function setupEventListeners() {
+      fileInput.addEventListener('change', handleFileUpload);
+      playBtn.addEventListener('click', startGame);
+      backBtn.addEventListener('click', endGame);
+
+      // Read mode
+      document.getElementById('micBtn').addEventListener('click', handleMicClick);
+      document.getElementById('dontKnowBtn').addEventListener('click', handleDontKnow);
+      document.getElementById('readNextBtn').addEventListener('click', () => nextCard());
+
+      // Write mode
+      document.getElementById('showAnswerBtn').addEventListener('click', handleShowAnswer);
+      document.getElementById('wrongBtn').addEventListener('click', () => handleWriteAnswer(false));
+      document.getElementById('correctBtn').addEventListener('click', () => handleWriteAnswer(true));
+
+      // Hamburger menu (mobile)
+      const hamburger = document.getElementById('hamburger');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      });
+
+      overlay.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    }
+
+    // Mic button state
+    let replayMode = false;
+
+    function handleMicClick() {
+      if (replayMode) {
+        // In replay mode, just play the audio
+        speakSentence(currentCard.sentence, 0.6);
+      } else {
+        toggleSpeechRecognition();
+      }
+    }
+
+    function validateFlashcard(card) {
+      const requiredFields = ['word', 'word_hanyupinyin', 'word_english', 'sentence', 'sentence_hanyupinyin', 'sentence_english'];
+      return requiredFields.every(field => typeof card[field] === 'string' && card[field].length > 0);
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+
+          if (!Array.isArray(data)) {
+            throw new Error('JSON must be an array of flashcards');
+          }
+
+          const invalidCards = data.filter(card => !validateFlashcard(card));
+          if (invalidCards.length > 0) {
+            throw new Error('Invalid schema. Each card needs: word, word_hanyupinyin, word_english, sentence, sentence_hanyupinyin, sentence_english');
+          }
+
+          // Shuffle cards (Fisher-Yates)
+          for (let i = data.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [data[i], data[j]] = [data[j], data[i]];
+          }
+
+          // Create new file entry
+          const newFile = {
+            id: generateId(),
+            name: fileNameInput.value.trim() || getDefaultName(),
+            flashcards: data,
+            progress: {}
+          };
+
+          files.push(newFile);
+          sessionStats[newFile.id] = { correct: 0, wrong: 0 };
+          saveToStorage();
+          renderFileList();
+
+          // Select the new file
+          selectFile(newFile.id);
+
+          uploadMsg.className = 'success-msg';
+          uploadMsg.textContent = `Added "${newFile.name}" with ${data.length} words`;
+          uploadMsg.style.display = 'block';
+          setTimeout(() => { uploadMsg.style.display = 'none'; }, 3000);
+
+          fileNameInput.value = '';
+        } catch (err) {
+          uploadMsg.className = 'error';
+          uploadMsg.textContent = err.message;
+          uploadMsg.style.display = 'block';
+        }
+      };
+      reader.readAsText(file);
+      fileInput.value = '';
+    }
+
+    function getCurrentFile() {
+      return files.find(f => f.id === currentFileId);
+    }
+
+    function getNextScheduledCard() {
+      const file = getCurrentFile();
+      if (!file) return null;
+
+      const now = Date.now();
+      let candidates = [];
+
+      file.flashcards.forEach(card => {
+        const p = file.progress[card.word] || { read: null, write: null };
+
+        const readNext = p.read?.nextReview || 0;
+        if (readNext <= now) {
+          candidates.push({ card, mode: 'read', priority: readNext });
+        }
+
+        const writeNext = p.write?.nextReview || 0;
+        if (writeNext <= now) {
+          candidates.push({ card, mode: 'write', priority: writeNext });
+        }
+      });
+
+      if (candidates.length === 0) {
+        let soonest = null;
+        file.flashcards.forEach(card => {
+          const p = file.progress[card.word] || { read: null, write: null };
+          const readNext = p.read?.nextReview || Infinity;
+          const writeNext = p.write?.nextReview || Infinity;
+          const next = Math.min(readNext, writeNext);
+          if (!soonest || next < soonest.priority) {
+            soonest = { card, mode: readNext <= writeNext ? 'read' : 'write', priority: next };
+          }
+        });
+        return soonest;
+      }
+
+      candidates.sort((a, b) => a.priority - b.priority);
+      const topPriority = candidates[0].priority;
+      const topCandidates = candidates.filter(c => c.priority === topPriority);
+      return topCandidates[Math.floor(Math.random() * topCandidates.length)];
+    }
+
+    function startGame() {
+      if (!currentFileId) return;
+      homeScreen.classList.add('hidden');
+      gameScreen.classList.add('active');
+      nextCard();
+    }
+
+    function endGame() {
+      gameScreen.classList.remove('active');
+      homeScreen.classList.remove('hidden');
+      stopSpeechRecognition();
+      renderFileList();
+      updateSelectedFileStats();
+    }
+
+    function nextCard() {
+      const next = getNextScheduledCard();
+      if (!next) {
+        alert('No cards to review!');
+        endGame();
+        return;
+      }
+
+      currentCard = next.card;
+      currentMode = next.mode;
+
+      resetCardUI();
+
+      if (currentMode === 'read') {
+        showReadMode();
+      } else {
+        showWriteMode();
+      }
+
+      updateGameStats();
+    }
+
+    function resetCardUI() {
+      // Reset replay mode
+      replayMode = false;
+      const micBtn = document.getElementById('micBtn');
+      micBtn.innerHTML = '&#127908;'; // Mic icon
+      micBtn.classList.remove('replay-mode');
+      micBtn.classList.remove('listening');
+
+      document.getElementById('readPinyin').classList.add('hidden');
+      document.getElementById('readSentencePinyin').classList.add('hidden');
+      document.getElementById('readWordEnglish').classList.add('hidden');
+      document.getElementById('readSentenceEnglish').classList.add('hidden');
+      document.getElementById('readNextBtn').classList.add('hidden');
+      document.getElementById('dontKnowBtn').classList.remove('hidden');
+      document.getElementById('speechInput').value = '';
+      document.getElementById('speechInput').style.display = 'block';
+      document.getElementById('speechInput').classList.remove('listening');
+      document.getElementById('readInstruction').textContent = 'Pronounce the sentence above';
+
+      document.getElementById('writeWordChinese').classList.add('hidden');
+      document.getElementById('writeSentenceChinese').classList.add('hidden');
+      document.getElementById('writeShowGroup').classList.remove('hidden');
+      document.getElementById('writeAnswerGroup').classList.add('hidden');
+    }
+
+    function showReadMode() {
+      document.getElementById('modeIndicator').textContent = 'READ';
+      document.getElementById('modeIndicator').className = 'mode-indicator read';
+      document.getElementById('readMode').style.display = 'block';
+      document.getElementById('writeMode').style.display = 'none';
+
+      document.getElementById('readWord').textContent = currentCard.word;
+      document.getElementById('readPinyin').textContent = currentCard.word_hanyupinyin;
+      document.getElementById('readWordEnglish').textContent = currentCard.word_english;
+      document.getElementById('readSentence').textContent = currentCard.sentence;
+      document.getElementById('readSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
+      document.getElementById('readSentenceEnglish').textContent = currentCard.sentence_english;
+    }
+
+    function showWriteMode() {
+      document.getElementById('modeIndicator').textContent = 'WRITE';
+      document.getElementById('modeIndicator').className = 'mode-indicator write';
+      document.getElementById('readMode').style.display = 'none';
+      document.getElementById('writeMode').style.display = 'block';
+
+      document.getElementById('writeWordEnglish').textContent = `${currentCard.word_english} (${currentCard.word_hanyupinyin})`;
+      document.getElementById('writeWordChinese').textContent = currentCard.word;
+      document.getElementById('writeSentenceEnglish').textContent = `${currentCard.sentence_english} (${currentCard.sentence_hanyupinyin})`;
+      document.getElementById('writeSentenceChinese').textContent = currentCard.sentence;
+    }
+
+    function updateGameStats() {
+      const file = getCurrentFile();
+      if (!file) return;
+      const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+      document.getElementById('gameStats').innerHTML = `
+        <span style="color:#4CAF50;">✓ ${session.correct}</span>
+        <span style="color:#f44336;">✗ ${session.wrong}</span>
+      `;
+    }
+
+    // Speech Recognition
+    let recognitionStarting = false;
+
+    function setupSpeechRecognition() {
+      if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'zh-CN';
+
+        recognition.onstart = () => {
+          recognitionStarting = false;
+          document.getElementById('micBtn').classList.add('listening');
+          document.getElementById('speechInput').classList.add('listening');
+          document.getElementById('readInstruction').textContent = 'Listening... (tap mic to clear & restart)';
+        };
+
+        recognition.onresult = (event) => {
+          // Accumulate all results from the beginning
+          let transcript = '';
+          for (let i = 0; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          document.getElementById('speechInput').value = transcript;
+          checkSpeechMatch(transcript);
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          recognitionStarting = false;
+          stopSpeechRecognition();
+          document.getElementById('readInstruction').textContent = 'Mic error. Tap to try again.';
+        };
+
+        recognition.onend = () => {
+          if (document.getElementById('micBtn').classList.contains('listening')) {
+            recognition.start();
+          }
+        };
+      }
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        alert('Speech recognition not supported. Please use Chrome.');
+        return;
+      }
+      if (document.getElementById('micBtn').classList.contains('listening') || recognitionStarting) {
+        stopSpeechRecognition();
+        // Clear and allow restart
+        document.getElementById('speechInput').value = '';
+        document.getElementById('readInstruction').textContent = 'Cleared. Tap mic to start again.';
+      } else {
+        startSpeechRecognition();
+      }
+    }
+
+    function startSpeechRecognition() {
+      if (!recognition || recognitionStarting) return;
+      try {
+        recognitionStarting = true;
+        document.getElementById('readInstruction').textContent = 'Starting mic...';
+        document.getElementById('speechInput').value = '';
+        recognition.start();
+      } catch (e) {
+        console.error('Failed to start recognition:', e);
+        recognitionStarting = false;
+        document.getElementById('readInstruction').textContent = 'Failed to start mic. Tap to retry.';
+      }
+    }
+
+    function stopSpeechRecognition() {
+      if (!recognition) return;
+      recognitionStarting = false;
+      try { recognition.stop(); } catch (e) {}
+      document.getElementById('micBtn').classList.remove('listening');
+      document.getElementById('speechInput').classList.remove('listening');
+    }
+
+    function normalizeText(text) {
+      return text.replace(/[\s\.,!?，。！？、]/g, '').toLowerCase();
+    }
+
+    function checkSpeechMatch(transcript) {
+      const expected = normalizeText(currentCard.sentence);
+      const actual = normalizeText(transcript);
+      // Suffix match: allows corrections like "ABF.. ABCD" to match "ABCD"
+      if (actual.endsWith(expected)) {
+        stopSpeechRecognition();
+        handleReadSuccess();
+      }
+    }
+
+    function handleReadSuccess() {
+      recordResult(true);
+      showConfetti();
+      document.getElementById('readInstruction').textContent = 'Correct!';
+      document.getElementById('readPinyin').classList.remove('hidden');
+      document.getElementById('readSentencePinyin').classList.remove('hidden');
+      document.getElementById('readWordEnglish').classList.remove('hidden');
+      document.getElementById('readSentenceEnglish').classList.remove('hidden');
+      document.getElementById('readNextBtn').classList.remove('hidden');
+      document.getElementById('dontKnowBtn').classList.add('hidden');
+    }
+
+    function handleDontKnow() {
+      stopSpeechRecognition();
+      recordResult(false);
+
+      // Switch to replay mode - no more speech recognition attempts
+      replayMode = true;
+      const micBtn = document.getElementById('micBtn');
+      micBtn.innerHTML = '&#9654;'; // Play icon
+      micBtn.classList.add('replay-mode');
+
+      document.getElementById('readPinyin').classList.remove('hidden');
+      document.getElementById('readSentencePinyin').classList.remove('hidden');
+      document.getElementById('readWordEnglish').classList.remove('hidden');
+      document.getElementById('readSentenceEnglish').classList.remove('hidden');
+      document.getElementById('speechInput').style.display = 'none';
+      document.getElementById('dontKnowBtn').classList.add('hidden');
+
+      speakSentence(currentCard.sentence, 0.3, () => {
+        speakSentence(currentCard.sentence, 0.6, () => {
+          document.getElementById('readNextBtn').classList.remove('hidden');
+          document.getElementById('readInstruction').textContent = 'Tap to listen again';
+        });
+      });
+    }
+
+    function speakSentence(text, rate, callback) {
+      const micBtn = document.getElementById('micBtn');
+      micBtn.disabled = true;
+      micBtn.style.opacity = '0.5';
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'zh-CN';
+      utterance.rate = rate;
+      utterance.onend = () => {
+        micBtn.disabled = false;
+        micBtn.style.opacity = '1';
+        if (callback) callback();
+      };
+      speechSynthesis.speak(utterance);
+    }
+
+    function handleShowAnswer() {
+      document.getElementById('writeWordChinese').classList.remove('hidden');
+      document.getElementById('writeSentenceChinese').classList.remove('hidden');
+      document.getElementById('writeShowGroup').classList.add('hidden');
+      document.getElementById('writeAnswerGroup').classList.remove('hidden');
+    }
+
+    function handleWriteAnswer(isCorrect) {
+      recordResult(isCorrect);
+      if (isCorrect) {
+        showConfetti();
+        setTimeout(() => nextCard(), 1000);
+      } else {
+        nextCard();
+      }
+    }
+
+    function recordResult(success) {
+      const file = getCurrentFile();
+      if (!file) return;
+
+      // Track session stats
+      if (!sessionStats[file.id]) {
+        sessionStats[file.id] = { correct: 0, wrong: 0 };
+      }
+      if (success) {
+        sessionStats[file.id].correct++;
+      } else {
+        sessionStats[file.id].wrong++;
+      }
+
+      // Update progress
+      if (!file.progress[currentCard.word]) {
+        file.progress[currentCard.word] = { read: null, write: null };
+      }
+
+      let modeProgress = file.progress[currentCard.word][currentMode];
+      if (!modeProgress) {
+        modeProgress = {
+          intervalIndex: 0,
+          nextReview: 0,
+          successCount: 0,
+          failCount: 0
+        };
+      }
+
+      if (success) {
+        modeProgress.successCount++;
+        modeProgress.intervalIndex = Math.min(modeProgress.intervalIndex + 1, INTERVALS.length - 1);
+      } else {
+        modeProgress.failCount++;
+        modeProgress.intervalIndex = 0;
+      }
+
+      modeProgress.nextReview = Date.now() + INTERVALS[modeProgress.intervalIndex];
+      file.progress[currentCard.word][currentMode] = modeProgress;
+
+      saveToStorage();
+      updateGameStats();
+    }
+
+    // Confetti
+    function showConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 20,
+          vy: (Math.random() - 0.5) * 20 - 10,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 8 + 4,
+          life: 1
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          if (p.life <= 0) return;
+          alive = true;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.5;
+          p.life -= 0.02;
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        if (alive) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
