@@ -697,8 +697,8 @@
           <div class="file-item-header">
             <span class="file-item-name">${escapeHtml(file.name)}</span>
             <div class="file-item-actions">
-              <button class="file-item-btn file-item-export" data-id="${file.id}" title="Export">&#128229;</button>
-              <button class="file-item-btn file-item-trash" data-id="${file.id}" title="Delete">&#128465;</button>
+              <button class="file-item-btn file-item-export" data-id="${escapeHtml(file.id)}" title="Export">&#128229;</button>
+              <button class="file-item-btn file-item-trash" data-id="${escapeHtml(file.id)}" title="Delete">&#128465;</button>
             </div>
           </div>
           <div class="file-item-stats">${file.flashcards.length} words</div>

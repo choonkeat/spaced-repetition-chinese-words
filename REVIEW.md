@@ -20,17 +20,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 ## New Issues Found (2024-11-24 Update)
 
-### 1. Unescaped file.id in HTML attributes
+### 1. [FIXED] Unescaped file.id in HTML attributes
 **Severity:** High
-**Location:** Lines 696-707
+**Location:** Lines 700-701
 
-```javascript
-<button class="file-item-btn file-item-export" data-id="${file.id}" title="Export">
-```
+**Issue:** While `file.name` is escaped, `file.id` was inserted directly into HTML attributes.
 
-**Issue:** While `file.name` is escaped, `file.id` is inserted directly into HTML attributes. The `generateId()` function produces safe alphanumeric IDs, but malicious backup files could contain crafted `id` fields that break out of the attribute context.
+**Fix:** Wrapped `file.id` with `escapeHtml()` in data-id attributes.
 
-**Status:** Open
+**Status:** Fixed
 
 ### 2. Missing null check in checkSpeechMatch
 **Severity:** Medium
