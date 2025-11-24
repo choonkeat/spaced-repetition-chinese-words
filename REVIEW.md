@@ -166,15 +166,3 @@ The app is generally well-structured for a vanilla JS single-file application. M
    - Mode indicator and voice selector on same row
    - "Say it again" button replaces non-functional play button
 
----
-
-## Fix Priority
-
-| Priority | Issue | Effort |
-|----------|-------|--------|
-| 1 | Escape file.id in HTML | Low |
-| 2 | Add null check in checkSpeechMatch | Low |
-| 3 | Add FileReader error handler | Low |
-| 4 | Fix confetti animation leak | Medium |
-| 5 | Validate progress on import | Medium |
-| 6 | Replace deprecated substr | Low |
