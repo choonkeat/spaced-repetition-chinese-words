@@ -1007,6 +1007,7 @@
       currentMode = next.mode;
 
       resetCardUI();
+      speakScore();
 
       if (currentMode === 'read') {
         showReadMode();
@@ -1343,6 +1344,23 @@
           document.getElementById('modeIndicator').textContent = 'READ: Tap to listen again';
         });
       });
+    }
+
+    function speakScore() {
+      const file = getCurrentFile();
+      if (!file) return;
+      const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+      const scoreText = `${session.correct} 比 ${session.wrong}`;
+
+      const utterance = new SpeechSynthesisUtterance(scoreText);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = 'zh-CN';
+      }
+      utterance.rate = 1.0;
+      speechSynthesis.speak(utterance);
     }
 
     function speakSentence(text, rate, callback) {
