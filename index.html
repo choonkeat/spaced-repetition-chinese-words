@@ -1175,6 +1175,7 @@
 
     // Speech Recognition
     let recognitionStarting = false;
+    let lastSpeechRetry = 0; // Rate limiting for speech recognition retries
 
     function setupSpeechRecognition() {
       if ('webkitSpeechRecognition' in window) {
@@ -1295,6 +1296,13 @@
         alert('Speech recognition not supported. Please use Chrome.');
         return;
       }
+      // Rate limit: prevent rapid retries (500ms minimum between attempts)
+      const now = Date.now();
+      if (now - lastSpeechRetry < 500) {
+        return;
+      }
+      lastSpeechRetry = now;
+
       // Always clear and restart (not toggle)
       stopSpeechRecognition();
       document.getElementById('speechInput').value = '';

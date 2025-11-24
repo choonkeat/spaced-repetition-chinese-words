@@ -87,12 +87,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 8. No rate limiting on speech recognition retries
+### 8. [FIXED] No rate limiting on speech recognition retries
 **Severity:** Low
+**Location:** Lines ~1294-1313
 
 **Issue:** Rapid taps on the error state could spam the speech recognition API.
 
-**Status:** Open
+**Fix:** Added `lastSpeechRetry` timestamp variable and 500ms rate limiting in `toggleSpeechRecognition()`.
+
+**Status:** Fixed
 
 ---
 
