@@ -67,13 +67,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Open (Low impact in practice)
 
-### 6. Progress data structure not validated on import
+### 6. [FIXED] Progress data structure not validated on import
 **Severity:** Medium
-**Location:** Lines ~923-934
+**Location:** Lines ~622-643, 956
 
-**Issue:** The `progress` object from imported backups is used without validation. Malformed progress data could cause unexpected behavior.
+**Issue:** The `progress` object from imported backups was used without validation.
 
-**Status:** Open
+**Fix:** Added `sanitizeProgress()` function that validates and clamps all progress values (intervalIndex capped at INTERVALS.length-1, counts non-negative, etc.).
+
+**Status:** Fixed
 
 ### 7. Deprecated substr() usage
 **Severity:** Low

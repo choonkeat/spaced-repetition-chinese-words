@@ -619,6 +619,29 @@
       30 * 24 * 60 * 60 * 1000  // 30 days
     ];
 
+    // Validate and sanitize progress data from imports
+    function sanitizeProgress(progress) {
+      if (!progress || typeof progress !== 'object') return {};
+      const sanitized = {};
+      for (const word of Object.keys(progress)) {
+        if (typeof word !== 'string') continue;
+        const entry = progress[word];
+        if (!entry || typeof entry !== 'object') continue;
+        sanitized[word] = {};
+        for (const mode of ['read', 'write']) {
+          if (entry[mode] && typeof entry[mode] === 'object') {
+            sanitized[word][mode] = {
+              intervalIndex: Math.max(0, Math.min(INTERVALS.length - 1, parseInt(entry[mode].intervalIndex, 10) || 0)),
+              nextReview: typeof entry[mode].nextReview === 'number' ? entry[mode].nextReview : 0,
+              successCount: Math.max(0, parseInt(entry[mode].successCount, 10) || 0),
+              failCount: Math.max(0, parseInt(entry[mode].failCount, 10) || 0)
+            };
+          }
+        }
+      }
+      return sanitized;
+    }
+
     // State
     let files = []; // Array of { id, name, flashcards, progress }
     let currentFileId = null;
@@ -930,7 +953,7 @@
               id: generateId(),
               name: data.name || getDefaultName(),
               flashcards: data.flashcards,
-              progress: data.progress || {}
+              progress: sanitizeProgress(data.progress)
             };
 
             files.push(newFile);
