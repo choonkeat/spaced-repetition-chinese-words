@@ -368,7 +368,6 @@
       border: 1px solid #ffcc80;
       border-radius: 8px;
       padding: 10px 15px;
-      margin-bottom: 15px;
       font-size: 13px;
       color: #e65100;
       text-align: center;
@@ -379,6 +378,7 @@
     }
     .ios-audio-warning.visible {
       display: block;
+      margin-bottom: 15px;
     }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
@@ -704,6 +704,10 @@
           <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
           <div class="speech-tip hidden" id="speechTip">💡 Just keep speaking - no need to restart</div>
 
+          <div class="ios-audio-warning" id="iosAudioWarningRead">
+            iOS Safari + Bluetooth audio may have issues.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
+          </div>
           <div class="btn-group">
             <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
             <button class="btn btn-secondary" id="dontKnowBtn">I don't know</button>
@@ -711,10 +715,6 @@
           <div class="btn-group hidden" id="readNextGroup">
             <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="readNextBtn">Next card</button>
-          </div>
-          <div class="ios-audio-warning" id="iosAudioWarningRead">
-            iOS Safari + Bluetooth audio may have issues.
-            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="card-label" id="readCardLabel"></div>
         </div>
@@ -728,6 +728,10 @@
           <div class="sentence-pinyin" id="writeSentencePinyin"></div>
           <div class="english-display" id="writeSentenceEnglish"></div>
 
+          <div class="ios-audio-warning" id="iosAudioWarningWrite">
+            iOS Safari + Bluetooth audio may have issues.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
+          </div>
           <div class="btn-group" id="writeShowGroup">
             <button class="btn btn-secondary" id="sayItBtn">Say it</button>
             <button class="btn btn-secondary" id="showAnswerBtn">Show answer</button>
@@ -741,10 +745,6 @@
           <div class="btn-group hidden" id="writeNextGroup">
             <button class="btn btn-secondary" id="writeSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="writeNextBtn">Next card</button>
-          </div>
-          <div class="ios-audio-warning" id="iosAudioWarningWrite">
-            iOS Safari + Bluetooth audio may have issues.
-            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="card-label" id="writeCardLabel"></div>
         </div>
