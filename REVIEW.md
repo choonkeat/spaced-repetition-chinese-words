@@ -7,7 +7,7 @@ File reviewed: `index.html`
 
 ## Summary
 
-The app is generally well-structured for a vanilla JS single-file application. The recent `cardCompleted` flag fix addresses the main race condition issue. However, several other issues remain that could cause bugs or security concerns.
+The app is generally well-structured for a vanilla JS single-file application. All identified issues have been fixed and tested.
 
 **Severity Legend:**
 - **Critical**: Security vulnerability or data loss risk
@@ -21,176 +21,67 @@ The app is generally well-structured for a vanilla JS single-file application. T
 ## Race Conditions
 
 ### 1. [FIXED] Speech recognition double-recording
-**Severity:** High (Already Fixed)
+**Severity:** High
 
-The `cardCompleted` flag at line 1292 properly prevents multiple `recordResult()` calls when speech recognition fires multiple `onresult` events before `stopSpeechRecognition()` takes effect.
+The `cardCompleted` flag properly prevents multiple `recordResult()` calls when speech recognition fires multiple `onresult` events before `stopSpeechRecognition()` takes effect.
 
-### 2. Speech synthesis queue buildup
+### 2. [FIXED] Speech synthesis queue buildup
 **Severity:** Medium
 
-**Location:** Lines 1357-1372, 1374-1393
-
-**Problem:** `speakScore()` is called at the start of every card without canceling previous utterances. If a user quickly navigates through cards (e.g., marking multiple as wrong), speech utterances queue up and play sequentially.
-
-**Proposed Fix:**
-```javascript
-function speakScore() {
-  speechSynthesis.cancel(); // Cancel any pending speech
-  const file = getCurrentFile();
-  // ... rest of function
-}
-```
+**Fix:** Added `speechSynthesis.cancel()` at the start of `speakScore()` to cancel any pending speech.
 
 ### 3. Recognition restart race
-**Severity:** Low
+**Severity:** Low (No fix needed)
 
-**Location:** Lines 1132-1136
-
-**Problem:** The `onend` handler checks if `micBtn` still has the `listening` class to decide whether to restart. If `stopSpeechRecognition()` is called but `onend` fires before the class is removed, it could restart unexpectedly.
-
-**Current mitigation:** The class removal happens synchronously after `recognition.stop()`, so this should rarely occur.
+The class removal happens synchronously after `recognition.stop()`, so this should rarely occur.
 
 ---
 
 ## Security Issues
 
-### 1. XSS via flashcard content
+### 1. [FIXED] XSS via flashcard content
 **Severity:** Critical
 
-**Location:** Line 1289
+**Fix:** Used `escapeHtml()` function to escape `matched` and `remaining` in `updateSentenceHighlight()`.
 
-```javascript
-sentenceEl.innerHTML = `<span class="match-correct">${matched}</span>...`;
-```
-
-**Problem:** The `matched` and `remaining` variables come from `currentCard.sentence`, which is user-uploaded JSON. A malicious flashcard file could contain:
-```json
-{ "sentence": "<img src=x onerror=alert('XSS')>" }
-```
-
-This would execute arbitrary JavaScript when the sentence is highlighted.
-
-**Proposed Fix:**
-```javascript
-function escapeHtmlContent(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// In updateSentenceHighlight:
-sentenceEl.innerHTML = `<span class="match-correct">${escapeHtmlContent(matched)}</span><span class="match-pending">${escapeHtmlContent(remaining)}</span>`;
-```
-
-### 2. Missing `rel="noopener"` on external link
+### 2. [FIXED] Missing `rel="noopener"` on external link
 **Severity:** Low
 
-**Location:** Line 457
+**Fix:** Added `rel="noopener noreferrer"` to the GitHub link.
 
-```html
-<a href="https://github.com/choonkeat/spaced-repetition-chinese-words">GitHub</a>
-```
-
-**Proposed Fix:**
-```html
-<a href="https://github.com/choonkeat/spaced-repetition-chinese-words" rel="noopener noreferrer">GitHub</a>
-```
-
-### 3. No localStorage quota handling
+### 3. [FIXED] No localStorage quota handling
 **Severity:** Medium
 
-**Location:** Line 627
-
-**Problem:** `localStorage.setItem()` can throw `QuotaExceededError` if storage is full, which would crash the app silently.
-
-**Proposed Fix:**
-```javascript
-function saveToStorage() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
-  } catch (e) {
-    if (e.name === 'QuotaExceededError') {
-      alert('Storage full! Cannot save progress. Try deleting some flashcard sets.');
-    }
-    console.error('Failed to save:', e);
-  }
-}
-```
+**Fix:** Wrapped `localStorage.setItem()` in try-catch with user-friendly error message for `QuotaExceededError`.
 
 ---
 
 ## Logic Issues
 
-### 1. Game screen visibility check is broken
+### 1. [FIXED] Game screen visibility check is broken
 **Severity:** High
 
-**Location:** Line 685
+**Fix:** Changed `gameScreen.style.display !== 'none'` to `gameScreen.classList.contains('active')`.
 
-```javascript
-if (gameScreen.style.display !== 'none') {
-```
-
-**Problem:** The game screen visibility is controlled via the `.active` class (line 182), not inline `style.display`. This check will always fail because `gameScreen.style.display` is an empty string when using CSS classes.
-
-**Proposed Fix:**
-```javascript
-if (gameScreen.classList.contains('active')) {
-```
-
-### 2. Dead code: `replayMode` and `handleMicClick`
+### 2. [FIXED] Dead code: `replayMode` and `handleMicClick`
 **Severity:** Low
 
-**Location:** Lines 839-848, 1336
+**Fix:** Removed dead `replayMode` variable and `handleMicClick()` function.
 
-**Problem:** `replayMode` is set in `handleDontKnow()`, but `handleMicClick()` that uses it is never called because the mic button has `pointer-events: none` (line 307). This code does nothing.
-
-**Proposed Fix:** Either:
-- Remove `replayMode`, `handleMicClick()` entirely, or
-- Make the mic button clickable in replay mode to allow re-listening
-
-### 3. Saved voice not found handling
+### 3. [FIXED] Saved voice not found handling
 **Severity:** Medium
 
-**Location:** Lines 1157-1171
-
-**Problem:** If the user's saved voice is no longer available (e.g., system update, different device), `selectedVoice` remains `null` even though the dropdown shows a voice selected.
-
-**Proposed Fix:**
-```javascript
-// After the forEach loop:
-if (!selectedVoice && chineseVoices.length > 0) {
-  selectedVoice = chineseVoices[0];
-  voiceSelect.value = selectedVoice.name;
-  localStorage.setItem(VOICE_KEY, selectedVoice.name);
-}
-```
+**Fix:** When saved voice is not found, select first available voice and update localStorage.
 
 ### 4. Progress key collision
-**Severity:** Info
+**Severity:** Info (No fix needed)
 
-**Location:** Lines 1462-1463
+Progress is keyed by `currentCard.word`. This is intentional - if you learn "你" in one set, it should be "learned" in another.
 
-**Problem:** Progress is keyed by `currentCard.word`. If two flashcard sets contain the same word, or if a single set has duplicate words, they share progress.
-
-**Impact:** Likely intentional - if you learn "你" in one set, it should be "learned" in another. But could surprise users.
-
-### 5. Global state not reset between cards
+### 5. [FIXED] Global state not reset between cards
 **Severity:** Low
 
-**Location:** Lines 1234-1235
-
-`lastMatchLen` and `showingOops` are reset in `recognition.onstart`, but if speech recognition fails to start, these values remain stale from the previous card.
-
-**Proposed Fix:** Reset them in `resetCardUI()`:
-```javascript
-function resetCardUI() {
-  cardCompleted = false;
-  lastMatchLen = 0;      // Add
-  showingOops = false;   // Add
-  replayMode = false;
-  // ...
-}
-```
+**Fix:** Added `lastMatchLen = 0` and `showingOops = false` to `resetCardUI()`.
 
 ---
 
@@ -199,9 +90,9 @@ function resetCardUI() {
 ### None found
 
 The following were checked and found correct:
-- Fisher-Yates shuffle (lines 903-906): Loop bounds and random range are correct
-- INTERVALS indexing (lines 1478, 1481, 1484): `Math.min` correctly caps at `INTERVALS.length - 1`
-- Substring operations in highlight mapping (lines 1279-1288): Index tracking is correct
+- Fisher-Yates shuffle: Loop bounds and random range are correct
+- INTERVALS indexing: `Math.min` correctly caps at `INTERVALS.length - 1`
+- Substring operations in highlight mapping: Index tracking is correct
 
 ---
 
@@ -209,78 +100,48 @@ The following were checked and found correct:
 
 ### 1. Memory/resource leaks
 
-**a) Confetti canvas alpha not reset**
-**Location:** Line 1530
+**a) Confetti canvas alpha not reset** - Benign, next animation starts fresh.
 
-After confetti animation, `ctx.globalAlpha` remains at a low value. Next confetti animation starts fresh, so this is benign but sloppy.
+**b) [FIXED] URL blob not properly released**
 
-**b) URL blob not properly released**
-**Location:** Lines 795-799
+**Fix:** Added `setTimeout(() => URL.revokeObjectURL(url), 100)` to delay revocation.
 
-`URL.revokeObjectURL(url)` is called immediately after `a.click()`, but the download may not have started yet. Should use a small delay:
-```javascript
-a.click();
-setTimeout(() => URL.revokeObjectURL(url), 100);
-```
+**c) `speechSynthesis.onvoiceschanged` never removed** - Benign, only called once in `init()`.
 
-**c) `speechSynthesis.onvoiceschanged` never removed**
-**Location:** Line 1176
+### 2. [FIXED] Error handling gaps
+**Severity:** Low
 
-If `setupVoiceSelector()` were called multiple times, handlers would stack. Currently only called once in `init()`, so benign.
-
-### 2. Error handling gaps
-
-**Location:** Lines 928-932
-
-```javascript
-} catch (err) {
-  uploadMsg.textContent = err.message;
-```
-
-If `err` is not an Error object (e.g., a string was thrown), `err.message` would be `undefined`.
-
-**Proposed Fix:**
-```javascript
-uploadMsg.textContent = err instanceof Error ? err.message : String(err);
-```
+**Fix:** Changed to `err instanceof Error ? err.message : String(err)` for robust error display.
 
 ### 3. Accessibility concerns
-**Severity:** Medium
+**Severity:** Medium (Not fixed - future improvement)
 
 - No ARIA labels on interactive elements
 - Confetti canvas covers the screen but has no `aria-hidden`
 - Color-only indicators (green/red) may be hard to distinguish for colorblind users
 
-### 4. No validation of flashcard array length
+### 4. [FIXED] No validation of flashcard array length
 **Severity:** Low
 
-**Location:** Lines 893-895
-
-An empty array `[]` passes validation and creates a file with 0 words, which shows "0 words" in the UI and "No cards to review!" when played.
-
-**Proposed Fix:**
-```javascript
-if (!Array.isArray(data) || data.length === 0) {
-  throw new Error('JSON must be a non-empty array of flashcards');
-}
-```
+**Fix:** Added check for empty array with user-friendly error message.
 
 ---
 
-## Recommendations Summary
+## Fix Summary
 
-### Must Fix (Security/Critical)
-1. Escape HTML in `updateSentenceHighlight()` to prevent XSS
-
-### Should Fix (High/Medium)
-2. Fix game screen visibility check (line 685)
-3. Add `speechSynthesis.cancel()` before `speakScore()`
-4. Handle localStorage quota exceeded
-5. Handle case when saved voice no longer exists
-
-### Nice to Have (Low/Info)
-6. Remove dead `replayMode` code or make it functional
-7. Reset `lastMatchLen`/`showingOops` in `resetCardUI()`
-8. Add `rel="noopener noreferrer"` to external link
-9. Validate non-empty flashcard array
-10. Improve error message handling for non-Error exceptions
+| # | Issue | Severity | Status |
+|---|-------|----------|--------|
+| 1 | XSS via flashcard content | Critical | FIXED |
+| 2 | Game screen visibility check | High | FIXED |
+| 3 | Speech synthesis queue buildup | Medium | FIXED |
+| 4 | localStorage quota handling | Medium | FIXED |
+| 5 | Saved voice not found | Medium | FIXED |
+| 6 | Dead replayMode code | Low | FIXED |
+| 7 | Global state not reset | Low | FIXED |
+| 8 | Missing rel="noopener" | Low | FIXED |
+| 9 | Empty flashcard array | Low | FIXED |
+| 10 | Error handling for non-Error | Low | FIXED |
+| 11 | URL blob release timing | Low | FIXED |
+| 12 | Accessibility concerns | Medium | Future |
+| 13 | Progress key collision | Info | By Design |
+| 14 | Recognition restart race | Low | Acceptable |

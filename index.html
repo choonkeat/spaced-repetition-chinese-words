@@ -454,7 +454,7 @@
     <div class="sidebar-footer">
       <a href="SPACED_REPETITION.html">How it works</a>
       <a href="DEVELOPER.html">Developer</a>
-      <a href="https://github.com/choonkeat/spaced-repetition-chinese-words">GitHub</a>
+      <a href="https://github.com/choonkeat/spaced-repetition-chinese-words" rel="noopener noreferrer">GitHub</a>
       <div style="margin-top:10px; font-size:10px; color:#aaa;">No data sent to server. All progress stored in your browser.</div>
     </div>
   </div>
@@ -624,7 +624,14 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+      } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          alert('Storage full! Cannot save progress. Try deleting some flashcard sets.');
+        }
+        console.error('Failed to save:', e);
+      }
     }
 
     function generateId() {
@@ -682,7 +689,7 @@
     function selectFile(fileId) {
       currentFileId = fileId;
       // If in game mode, go back to homepage
-      if (gameScreen.style.display !== 'none') {
+      if (gameScreen.classList.contains('active')) {
         endGame();
       }
       renderFileList();
@@ -796,7 +803,7 @@
       a.href = url;
       a.download = filename;
       a.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
     }
 
     function setupEventListeners() {
@@ -833,18 +840,6 @@
         sidebar.classList.remove('open');
         overlay.classList.remove('open');
       });
-    }
-
-    // Mic button state
-    let replayMode = false;
-
-    function handleMicClick() {
-      if (replayMode) {
-        // In replay mode, just play the audio
-        speakSentence(currentCard.sentence, 0.6);
-      } else {
-        toggleSpeechRecognition();
-      }
     }
 
     function validateFlashcard(card) {
@@ -890,8 +885,8 @@
             setTimeout(() => { uploadMsg.style.display = 'none'; }, 3000);
           } else {
             // Import plain flashcards array
-            if (!Array.isArray(data)) {
-              throw new Error('JSON must be an array of flashcards or an exported backup');
+            if (!Array.isArray(data) || data.length === 0) {
+              throw new Error('JSON must be a non-empty array of flashcards');
             }
 
             const invalidCards = data.filter(card => !validateFlashcard(card));
@@ -927,7 +922,7 @@
           fileNameInput.value = '';
         } catch (err) {
           uploadMsg.className = 'error';
-          uploadMsg.textContent = err.message;
+          uploadMsg.textContent = err instanceof Error ? err.message : String(err);
           uploadMsg.style.display = 'block';
         }
       };
@@ -1021,7 +1016,8 @@
     function resetCardUI() {
       // Reset card state
       cardCompleted = false;
-      replayMode = false;
+      lastMatchLen = 0;
+      showingOops = false;
       const micBtn = document.getElementById('micBtn');
       micBtn.innerHTML = '&#127908;'; // Mic icon
       micBtn.classList.remove('replay-mode');
@@ -1165,9 +1161,11 @@
           voiceSelect.appendChild(option);
         });
 
-        // If no saved voice, select first one
+        // If no saved voice or saved voice not found, select first one
         if (!selectedVoice && chineseVoices.length > 0) {
           selectedVoice = chineseVoices[0];
+          voiceSelect.value = selectedVoice.name;
+          localStorage.setItem(VOICE_KEY, selectedVoice.name);
         }
       }
 
@@ -1286,7 +1284,7 @@
 
       const matched = sentence.substring(0, origIdx);
       const remaining = sentence.substring(origIdx);
-      sentenceEl.innerHTML = `<span class="match-correct">${matched}</span><span class="match-pending">${remaining}</span>`;
+      sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(matched)}</span><span class="match-pending">${escapeHtml(remaining)}</span>`;
     }
 
     let cardCompleted = false; // Prevent multiple result recordings per card
@@ -1332,8 +1330,7 @@
       stopSpeechRecognition();
       recordResult(false);
 
-      // Switch to replay mode - no more speech recognition attempts
-      replayMode = true;
+      // Change mic to play icon (visual only, not interactive)
       const micBtn = document.getElementById('micBtn');
       micBtn.innerHTML = '&#9654;'; // Play icon
       micBtn.classList.add('replay-mode');
@@ -1355,6 +1352,7 @@
     }
 
     function speakScore() {
+      speechSynthesis.cancel(); // Cancel any pending speech to prevent queue buildup
       const file = getCurrentFile();
       if (!file) return;
       const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
