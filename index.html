@@ -362,6 +362,24 @@
       color: #888;
       margin: 5px 0 10px;
     }
+    .ios-audio-warning {
+      display: none;
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #e65100;
+      text-align: center;
+    }
+    .ios-audio-warning a {
+      color: #e65100;
+      text-decoration: underline;
+    }
+    .ios-audio-warning.visible {
+      display: block;
+    }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
     .mic-btn {
@@ -588,7 +606,7 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <h1>Spaced Repetition Chinese Words</h1>
+    <h1><a href="https://en.wikipedia.org/wiki/Spaced_repetition" target="_blank" style="color: inherit; text-decoration: none;">Spaced Repetition</a> Chinese Words</h1>
 
     <!-- Home Screen -->
     <div id="homeScreen" class="home-screen">
@@ -675,6 +693,10 @@
 
         <!-- Read Mode -->
         <div id="readMode" style="display: none;">
+          <div class="ios-audio-warning" id="iosAudioWarning">
+            Bluetooth audio detected. iOS Safari may have issues with speech recognition.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
+          </div>
           <div class="word-display" id="readWord"></div>
           <div class="pinyin-display hidden" id="readPinyin"></div>
           <div class="english-display hidden" id="readWordEnglish"></div>
@@ -796,6 +818,7 @@
       setupEventListeners();
       setupSpeechRecognition();
       setupVoiceSelector();
+      checkiOSAudioWarning();
       // On mobile, open sidebar if no file selected
       if (window.innerWidth <= 768 && !currentFileId) {
         document.getElementById('hamburger').classList.add('open');
@@ -1414,6 +1437,27 @@
         utterance.rate = 0.8;
         speechSynthesis.speak(utterance);
       });
+    }
+
+    // Detect iOS Safari with multiple audio devices (likely Bluetooth)
+    async function checkiOSAudioWarning() {
+      // Check if iOS Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
+      if (!isIOS || !isSafari) return;
+
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(d => d.kind === 'audioinput');
+
+        // If more than 1 audio input, likely has external device (AirPods, etc.)
+        if (audioInputs.length > 1) {
+          document.getElementById('iosAudioWarning').classList.add('visible');
+        }
+      } catch (e) {
+        console.log('Could not enumerate audio devices:', e);
+      }
     }
 
     function toggleSpeechRecognition() {

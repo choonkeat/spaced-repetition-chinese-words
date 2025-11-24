@@ -1,13 +1,13 @@
-# Spaced Repetition Chinese Words
+# [Spaced Repetition](https://en.wikipedia.org/wiki/Spaced_repetition) Chinese Words
 
-A static web app for learning Chinese characters using spaced repetition.
+A static web app for learning Chinese characters using [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition).
 
 **Live Demo:** https://spaced-repetition-chinese-words.netlify.app/
 
 ## Features
 
 - **Two test modes**: READ (speech recognition) and WRITE (self-grading)
-- **Spaced repetition**: Cards scheduled at increasing intervals (1 min to 30 days)
+- **[Spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition)**: Cards scheduled at increasing intervals (1 min to 30 days)
 - **Multi-file support**: Upload multiple flashcard sets, each with independent progress
 - **Voice selection**: Choose from available Chinese TTS voices
 - **Export/Import**: Download progress as JSON backup, restore later
