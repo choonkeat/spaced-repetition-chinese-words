@@ -392,8 +392,8 @@ test.describe('READ Mode', () => {
     await expect(page.locator('#showHintBtn')).toHaveClass(/hidden/);
     await expect(page.locator('#dontKnowBtn')).toHaveClass(/hidden/);
 
-    // Mic button changes to replay mode
-    await expect(page.locator('#micBtn')).toHaveClass(/replay-mode/);
+    // Mic button is hidden (Say it again button replaces its function)
+    await expect(page.locator('#micBtn')).not.toBeVisible();
 
     // Wait for TTS to complete and Next button to appear
     await expect(page.locator('#readNextBtn')).not.toHaveClass(/hidden/, { timeout: 10000 });
