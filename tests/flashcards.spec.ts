@@ -406,6 +406,17 @@ test.describe('READ Mode', () => {
     expect(storage.files[0].progress['你'].read.failCount).toBe(1);
     expect(storage.files[0].progress['你'].read.intervalIndex).toBe(0);
   });
+
+  test('iOS audio warning is not visible on Chrome desktop', async ({ page }) => {
+    await setupReadMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // The warning element should exist but not be visible (no 'visible' class)
+    const warning = page.locator('#iosAudioWarning');
+    await expect(warning).toBeAttached();
+    await expect(warning).not.toHaveClass(/visible/);
+  });
 });
 
 test.describe('WRITE Mode', () => {

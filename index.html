@@ -693,10 +693,6 @@
 
         <!-- Read Mode -->
         <div id="readMode" style="display: none;">
-          <div class="ios-audio-warning" id="iosAudioWarning">
-            Bluetooth audio detected. iOS Safari may have issues with speech recognition.
-            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
-          </div>
           <div class="word-display" id="readWord"></div>
           <div class="pinyin-display hidden" id="readPinyin"></div>
           <div class="english-display hidden" id="readWordEnglish"></div>
@@ -705,6 +701,10 @@
           <div class="english-display hidden" id="readSentenceEnglish"></div>
 
           <button class="mic-btn" id="micBtn">&#127908;</button>
+          <div class="ios-audio-warning" id="iosAudioWarning">
+            iOS Safari + Bluetooth audio may have issues.
+            <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
+          </div>
           <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
           <div class="speech-tip hidden" id="speechTip">💡 Just keep speaking - no need to restart</div>
 
@@ -818,7 +818,6 @@
       setupEventListeners();
       setupSpeechRecognition();
       setupVoiceSelector();
-      checkiOSAudioWarning();
       // On mobile, open sidebar if no file selected
       if (window.innerWidth <= 768 && !currentFileId) {
         document.getElementById('hamburger').classList.add('open');
@@ -1354,6 +1353,8 @@
           document.getElementById('speechInput').classList.add('listening');
           document.getElementById('speechTip').textContent = 'Listening...';
           document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
+          // Check for iOS audio issues now that we have mic permission
+          checkiOSAudioWarning();
         };
 
         recognition.onresult = (event) => {
@@ -1439,8 +1440,12 @@
       });
     }
 
-    // Detect iOS Safari with multiple audio devices (likely Bluetooth)
+    // Detect iOS Safari with Bluetooth audio devices
+    let iosAudioWarningChecked = false;
     async function checkiOSAudioWarning() {
+      if (iosAudioWarningChecked) return; // Only check once
+      iosAudioWarningChecked = true;
+
       // Check if iOS Safari
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
@@ -1451,8 +1456,12 @@
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioInputs = devices.filter(d => d.kind === 'audioinput');
 
-        // If more than 1 audio input, likely has external device (AirPods, etc.)
-        if (audioInputs.length > 1) {
+        // Check for Bluetooth indicators in device labels or multiple inputs
+        const hasBluetooth = audioInputs.some(d =>
+          /airpod|bluetooth|wireless|bose|beats|sony|jabra|samsung|buds/i.test(d.label)
+        ) || audioInputs.length > 1;
+
+        if (hasBluetooth) {
           document.getElementById('iosAudioWarning').classList.add('visible');
         }
       } catch (e) {
