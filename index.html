@@ -282,11 +282,19 @@
       margin: 10px 0;
     }
     .speech-input:focus { outline: none; border-color: #2196F3; }
-    .speech-input.listening { border-color: #f44336; animation: pulse 1s infinite; }
+    .speech-input.listening { border-color: #f44336; }
     @keyframes pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
       50% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
     }
+    .speech-tip {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin: 5px 0 10px;
+    }
+    .match-correct { color: #4CAF50; }
+    .match-pending { color: #333; }
     .mic-btn {
       background: #f44336;
       color: white;
@@ -295,7 +303,8 @@
       height: 60px;
       border-radius: 50%;
       font-size: 24px;
-      cursor: pointer;
+      cursor: default;
+      pointer-events: none;
       margin: 10px auto;
       display: block;
     }
@@ -465,6 +474,7 @@
         <div class="card">
           <h3 id="selectedFileName" style="margin:0 0 10px 0; text-align:center;"></h3>
           <div id="selectedFileWordCount" style="text-align:center; color:#666;"></div>
+          <div id="selectedFileLastAttempted" style="text-align:center; color:#888; font-size:12px; margin-top:5px;"></div>
           <div id="selectedFileSession" style="text-align:center; margin:10px 0; padding:8px; background:#f0f0f0; border-radius:8px;"></div>
           <div class="stats-grid">
             <div class="stats-column read">
@@ -509,6 +519,7 @@
 
           <button class="mic-btn" id="micBtn">&#127908;</button>
           <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
+          <div class="speech-tip hidden" id="speechTip">💡 Just keep speaking - no need to restart</div>
 
           <div class="btn-group">
             <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
@@ -519,10 +530,12 @@
 
         <!-- Write Mode -->
         <div id="writeMode" style="display: none;">
-          <div class="word-display" id="writeWordEnglish"></div>
-          <div class="pinyin-display hidden" id="writeWordChinese"></div>
-          <div class="sentence-display" id="writeSentenceEnglish"></div>
-          <div class="sentence-pinyin hidden" id="writeSentenceChinese"></div>
+          <div class="word-display hidden" id="writeWordChinese"></div>
+          <div class="pinyin-display" id="writeWordPinyin"></div>
+          <div class="english-display" id="writeWordEnglish"></div>
+          <div class="sentence-display hidden" id="writeSentenceChinese"></div>
+          <div class="sentence-pinyin" id="writeSentencePinyin"></div>
+          <div class="english-display" id="writeSentenceEnglish"></div>
 
           <div class="btn-group" id="writeShowGroup">
             <button class="btn btn-secondary" id="sayItBtn">Say it</button>
@@ -668,6 +681,10 @@
 
     function selectFile(fileId) {
       currentFileId = fileId;
+      // If in game mode, go back to homepage
+      if (gameScreen.style.display !== 'none') {
+        endGame();
+      }
       renderFileList();
       updateSelectedFileStats();
       closeSidebarOnMobile();
@@ -697,6 +714,9 @@
 
       document.getElementById('selectedFileName').textContent = file.name;
       document.getElementById('selectedFileWordCount').textContent = `${file.flashcards.length} words`;
+      document.getElementById('selectedFileLastAttempted').textContent = file.lastAttempted
+        ? `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`
+        : '';
       document.getElementById('selectedFileSession').innerHTML = `
         <strong>This session:</strong>
         <span style="color:#4CAF50;">${session.correct} correct</span> /
@@ -785,7 +805,7 @@
       backBtn.addEventListener('click', endGame);
 
       // Read mode
-      document.getElementById('micBtn').addEventListener('click', handleMicClick);
+      // Mic button is now just a visual indicator (auto-starts), no click handler
       document.getElementById('showHintBtn').addEventListener('click', handleShowHint);
       document.getElementById('dontKnowBtn').addEventListener('click', handleDontKnow);
       document.getElementById('readNextBtn').addEventListener('click', () => nextCard());
@@ -1015,6 +1035,7 @@
       document.getElementById('speechInput').value = '';
       document.getElementById('speechInput').style.display = 'block';
       document.getElementById('speechInput').classList.remove('listening');
+      document.getElementById('speechTip').classList.add('hidden');
       document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
 
       document.getElementById('writeWordChinese').classList.add('hidden');
@@ -1037,6 +1058,9 @@
       document.getElementById('readSentence').textContent = currentCard.sentence;
       document.getElementById('readSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
       document.getElementById('readSentenceEnglish').textContent = currentCard.sentence_english;
+
+      // Auto-start speech recognition
+      setTimeout(() => startSpeechRecognition(), 300);
     }
 
     function showWriteMode() {
@@ -1045,9 +1069,11 @@
       document.getElementById('readMode').style.display = 'none';
       document.getElementById('writeMode').style.display = 'block';
 
-      document.getElementById('writeWordEnglish').textContent = `${currentCard.word_english} (${currentCard.word_hanyupinyin})`;
+      document.getElementById('writeWordEnglish').textContent = currentCard.word_english;
+      document.getElementById('writeWordPinyin').textContent = currentCard.word_hanyupinyin;
       document.getElementById('writeWordChinese').textContent = currentCard.word;
-      document.getElementById('writeSentenceEnglish').textContent = `${currentCard.sentence_english} (${currentCard.sentence_hanyupinyin})`;
+      document.getElementById('writeSentenceEnglish').textContent = currentCard.sentence_english;
+      document.getElementById('writeSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
       document.getElementById('writeSentenceChinese').textContent = currentCard.sentence;
     }
 
@@ -1075,7 +1101,12 @@
           recognitionStarting = false;
           document.getElementById('micBtn').classList.add('listening');
           document.getElementById('speechInput').classList.add('listening');
-          document.getElementById('modeIndicator').textContent = 'READ: Listening... (tap mic to clear & restart)';
+          document.getElementById('speechTip').textContent = 'Listening...';
+          document.getElementById('speechTip').classList.remove('hidden');
+          document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
+          lastMatchLen = 0; // Reset match tracking
+          showingOops = false; // Reset oops state
+          updateSentenceHighlight(''); // Reset highlighting
         };
 
         recognition.onresult = (event) => {
@@ -1085,6 +1116,7 @@
             transcript += event.results[i][0].transcript;
           }
           document.getElementById('speechInput').value = transcript;
+          updateSentenceHighlight(transcript);
           checkSpeechMatch(transcript);
         };
 
@@ -1161,14 +1193,13 @@
         alert('Speech recognition not supported. Please use Chrome.');
         return;
       }
-      if (document.getElementById('micBtn').classList.contains('listening') || recognitionStarting) {
-        stopSpeechRecognition();
-        // Clear and allow restart
-        document.getElementById('speechInput').value = '';
-        document.getElementById('modeIndicator').textContent = 'READ: Cleared. Tap mic to start again.';
-      } else {
-        startSpeechRecognition();
+      // Always clear and restart (not toggle)
+      stopSpeechRecognition();
+      document.getElementById('speechInput').value = '';
+      if (currentCard) {
+        document.getElementById('readSentence').textContent = currentCard.sentence; // Reset highlighting
       }
+      setTimeout(() => startSpeechRecognition(), 100);
     }
 
     function startSpeechRecognition() {
@@ -1191,10 +1222,69 @@
       try { recognition.stop(); } catch (e) {}
       document.getElementById('micBtn').classList.remove('listening');
       document.getElementById('speechInput').classList.remove('listening');
+      document.getElementById('speechTip').classList.add('hidden');
     }
 
     function normalizeText(text) {
       return text.replace(/[\s\.,!?，。！？、]/g, '').toLowerCase();
+    }
+
+    let lastMatchLen = 0; // Track previous match for encouragement messages
+    let showingOops = false; // Track if we're showing the oops message
+
+    function updateSentenceHighlight(transcript) {
+      if (!currentCard) return;
+      const sentence = currentCard.sentence;
+      const normalizedTranscript = normalizeText(transcript);
+      const sentenceEl = document.getElementById('readSentence');
+
+      // Find how many characters from the start of the sentence match
+      // the end of the transcript (since user might have false starts)
+      let matchLen = 0;
+      const normalizedSentence = normalizeText(sentence);
+
+      // Check suffix of transcript against prefix of sentence
+      for (let len = normalizedSentence.length; len >= 1; len--) {
+        const prefix = normalizedSentence.substring(0, len);
+        if (normalizedTranscript.endsWith(prefix)) {
+          matchLen = len;
+          break;
+        }
+      }
+
+      // Build highlighted HTML
+      const speechTip = document.getElementById('speechTip');
+      if (matchLen === 0) {
+        sentenceEl.innerHTML = sentence;
+        // Show oops if we had a previous match, and keep showing it
+        if (lastMatchLen > 0) {
+          speechTip.textContent = 'Oops! Try again from the beginning.';
+          showingOops = true;
+        }
+        // Keep showing oops or listening based on state
+        lastMatchLen = 0;
+        return;
+      }
+
+      // We have a partial match - show encouragement
+      lastMatchLen = matchLen;
+      showingOops = false;
+      speechTip.textContent = 'Good! Carry on...';
+
+      // Map normalized match length back to original sentence
+      let origIdx = 0;
+      let normIdx = 0;
+      while (normIdx < matchLen && origIdx < sentence.length) {
+        const char = sentence[origIdx];
+        if (!/[\s\.,!?，。！？、]/.test(char)) {
+          normIdx++;
+        }
+        origIdx++;
+      }
+
+      const matched = sentence.substring(0, origIdx);
+      const remaining = sentence.substring(origIdx);
+      sentenceEl.innerHTML = `<span class="match-correct">${matched}</span><span class="match-pending">${remaining}</span>`;
     }
 
     function checkSpeechMatch(transcript) {
@@ -1211,6 +1301,7 @@
       recordResult(true);
       showConfetti();
       document.getElementById('modeIndicator').textContent = 'READ: Correct!';
+      document.getElementById('speechTip').textContent = 'Perfect!';
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
       document.getElementById('readWordEnglish').classList.remove('hidden');
@@ -1325,6 +1416,9 @@
     function recordResult(success) {
       const file = getCurrentFile();
       if (!file) return;
+
+      // Track last attempted timestamp
+      file.lastAttempted = Date.now();
 
       // Track session stats
       if (!sessionStats[file.id]) {
