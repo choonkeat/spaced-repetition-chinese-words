@@ -77,17 +77,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 7. Deprecated substr() usage
+### 7. [FIXED] Deprecated substr() usage
 **Severity:** Low
-**Location:** Line ~681
+**Location:** Line 704
 
-```javascript
-return Date.now().toString(36) + Math.random().toString(36).substr(2);
-```
+**Issue:** `String.prototype.substr()` is deprecated.
 
-**Issue:** `String.prototype.substr()` is deprecated. Should use `slice()` instead.
+**Fix:** Replaced `.substr(2)` with `.slice(2)`.
 
-**Status:** Open
+**Status:** Fixed
 
 ### 8. No rate limiting on speech recognition retries
 **Severity:** Low
