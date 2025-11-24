@@ -63,7 +63,12 @@
 ├── index.html              # Main application
 ├── README.md               # Project documentation
 ├── DEVELOPER.html          # This file
-└── SPACED_REPETITION.html  # Algorithm documentation</code></pre>
+├── REVIEW.md               # Code review findings
+├── SPACED_REPETITION.html  # Algorithm documentation
+├── tests/
+│   └── flashcards.spec.ts  # Playwright test suite
+├── package.json            # npm dependencies
+└── playwright.config.ts    # Playwright configuration</code></pre>
 
   <h2>Running the Application</h2>
   <p>Start a local HTTP server from the project root:</p>
@@ -155,14 +160,28 @@ type FlashcardList = Flashcard[];</code></pre>
     <tr>
       <td><strong style="color:#2196F3;">READ</strong></td>
       <td>Chinese word + sentence</td>
-      <td>Auto-starts mic, just speak. Partial match highlighting shows progress. "Show hint" reveals pinyin/English.</td>
+      <td>Auto-starts mic (spinner → red mic when ready), just speak. Partial match highlighting shows progress. "Show hint" reveals pinyin/English. On wrong answer, speaks word then sentence with highlighting.</td>
     </tr>
     <tr>
       <td><strong style="color:#9C27B0;">WRITE</strong></td>
       <td>English + pinyin</td>
-      <td>Recall Chinese, use "Say it" to hear pronunciation, then self-grade (Correct/Wrong)</td>
+      <td>Recall Chinese, use "Say it" to hear pronunciation, then self-grade (Correct/Wrong). On wrong answer, speaks word then sentence with highlighting.</td>
     </tr>
   </table>
+
+  <h3>Mic Button States (READ Mode)</h3>
+  <table>
+    <tr><th>State</th><th>Appearance</th><th>Meaning</th></tr>
+    <tr><td>Starting</td><td>Gray button with spinner</td><td>Waiting for audio capture to be ready</td></tr>
+    <tr><td>Listening</td><td>Red pulsing mic</td><td>Actively recording speech</td></tr>
+    <tr><td>Error</td><td>Gray with red X</td><td>Mic error - tap anywhere to retry</td></tr>
+  </table>
+
+  <h3>Speech Recognition Notes</h3>
+  <ul>
+    <li><strong>Arabic numeral handling:</strong> Browser speech-to-text may output "7" instead of "七". The app converts Arabic numerals to Chinese characters before comparison (supports up to 亿).</li>
+    <li><strong>Partial matching:</strong> As you speak, correctly matched characters are highlighted in dark background.</li>
+  </ul>
 
   <h3>Voice Selection</h3>
   <p>Choose from available Chinese TTS voices (zh-CN, zh-TW, zh-HK). Selection is persisted in localStorage.</p>

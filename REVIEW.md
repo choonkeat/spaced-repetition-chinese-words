@@ -1,13 +1,13 @@
 # Code Review: Chinese Flashcards App
 
-Date: 2024-11-24
+Date: 2024-11-24 (Updated)
 File reviewed: `index.html`
 
 ---
 
 ## Summary
 
-The app is generally well-structured for a vanilla JS single-file application. All identified issues have been fixed and tested.
+The app is generally well-structured for a vanilla JS single-file application. Most critical issues from the initial review have been fixed. This update identifies new issues found during re-review.
 
 **Severity Legend:**
 - **Critical**: Security vulnerability or data loss risk
@@ -18,130 +18,159 @@ The app is generally well-structured for a vanilla JS single-file application. A
 
 ---
 
-## Race Conditions
+## New Issues Found (2024-11-24 Update)
 
-### 1. [FIXED] Speech recognition double-recording
+### 1. Unescaped file.id in HTML attributes
 **Severity:** High
+**Location:** Lines 696-707
 
-The `cardCompleted` flag properly prevents multiple `recordResult()` calls when speech recognition fires multiple `onresult` events before `stopSpeechRecognition()` takes effect.
+```javascript
+<button class="file-item-btn file-item-export" data-id="${file.id}" title="Export">
+```
 
-### 2. [FIXED] Speech synthesis queue buildup
+**Issue:** While `file.name` is escaped, `file.id` is inserted directly into HTML attributes. The `generateId()` function produces safe alphanumeric IDs, but malicious backup files could contain crafted `id` fields that break out of the attribute context.
+
+**Status:** Open
+
+### 2. Missing null check in checkSpeechMatch
+**Severity:** Medium
+**Location:** Lines ~1434-1444
+
+```javascript
+function checkSpeechMatch(transcript) {
+  if (cardCompleted) return;
+  const expected = normalizeForSpeechMatch(currentCard.sentence); // No null check
+```
+
+**Issue:** If `currentCard` is null when speech recognition fires a late event, this will throw an error.
+
+**Status:** Open
+
+### 3. Missing FileReader error handler
+**Severity:** Medium
+**Location:** Lines ~914-989
+
+**Issue:** No `reader.onerror` handler is defined. If file reading fails (file deleted mid-read, permission denied), the failure is silent.
+
+**Status:** Open
+
+### 4. Memory leak in confetti animation
+**Severity:** Medium
+**Location:** Lines ~1691-1733
+
+**Issue:** If `showConfetti()` is called rapidly, multiple animation loops can run simultaneously without cleanup. Each call creates new particles without canceling existing animations.
+
+**Status:** Open
+
+### 5. speechSynthesis.cancel() timing issue
 **Severity:** Medium
 
-**Fix:** Added `speechSynthesis.cancel()` at the start of `speakScore()` to cancel any pending speech.
+**Issue:** `speechSynthesis.cancel()` is asynchronous in some browsers. Immediately calling `speak()` after `cancel()` can cause the new utterance to be canceled as well.
 
-### 3. Recognition restart race
-**Severity:** Low (No fix needed)
+**Status:** Open (Low impact in practice)
 
-The class removal happens synchronously after `recognition.stop()`, so this should rarely occur.
-
----
-
-## Security Issues
-
-### 1. [FIXED] XSS via flashcard content
-**Severity:** Critical
-
-**Fix:** Used `escapeHtml()` function to escape `matched` and `remaining` in `updateSentenceHighlight()`.
-
-### 2. [FIXED] Missing `rel="noopener"` on external link
-**Severity:** Low
-
-**Fix:** Added `rel="noopener noreferrer"` to the GitHub link.
-
-### 3. [FIXED] No localStorage quota handling
+### 6. Progress data structure not validated on import
 **Severity:** Medium
+**Location:** Lines ~923-934
 
-**Fix:** Wrapped `localStorage.setItem()` in try-catch with user-friendly error message for `QuotaExceededError`.
+**Issue:** The `progress` object from imported backups is used without validation. Malformed progress data could cause unexpected behavior.
+
+**Status:** Open
+
+### 7. Deprecated substr() usage
+**Severity:** Low
+**Location:** Line ~681
+
+```javascript
+return Date.now().toString(36) + Math.random().toString(36).substr(2);
+```
+
+**Issue:** `String.prototype.substr()` is deprecated. Should use `slice()` instead.
+
+**Status:** Open
+
+### 8. No rate limiting on speech recognition retries
+**Severity:** Low
+
+**Issue:** Rapid taps on the error state could spam the speech recognition API.
+
+**Status:** Open
 
 ---
 
-## Logic Issues
+## Previously Fixed Issues
 
-### 1. [FIXED] Game screen visibility check is broken
-**Severity:** High
+### Race Conditions
 
-**Fix:** Changed `gameScreen.style.display !== 'none'` to `gameScreen.classList.contains('active')`.
+| Issue | Severity | Status |
+|-------|----------|--------|
+| Speech recognition double-recording | High | FIXED - `cardCompleted` flag prevents multiple recordings |
+| Speech synthesis queue buildup | Medium | FIXED - Added `speechSynthesis.cancel()` at start |
 
-### 2. [FIXED] Dead code: `replayMode` and `handleMicClick`
-**Severity:** Low
+### Security Issues
 
-**Fix:** Removed dead `replayMode` variable and `handleMicClick()` function.
+| Issue | Severity | Status |
+|-------|----------|--------|
+| XSS via flashcard content | Critical | FIXED - Using `escapeHtml()` in all innerHTML assignments |
+| Missing `rel="noopener"` on external link | Low | FIXED |
+| No localStorage quota handling | Medium | FIXED - Try-catch with user-friendly error |
 
-### 3. [FIXED] Saved voice not found handling
-**Severity:** Medium
+### Logic Issues
 
-**Fix:** When saved voice is not found, select first available voice and update localStorage.
+| Issue | Severity | Status |
+|-------|----------|--------|
+| Game screen visibility check broken | High | FIXED - Using classList check |
+| Dead code: replayMode | Low | FIXED - Removed |
+| Saved voice not found handling | Medium | FIXED - Falls back to first available |
+| Global state not reset between cards | Low | FIXED - Reset in card setup |
+| Empty flashcard array | Low | FIXED - Validation added |
 
-### 4. Progress key collision
-**Severity:** Info (No fix needed)
+### Other Issues
 
-Progress is keyed by `currentCard.word`. This is intentional - if you learn "你" in one set, it should be "learned" in another.
-
-### 5. [FIXED] Global state not reset between cards
-**Severity:** Low
-
-**Fix:** Added `lastMatchLen = 0` and `showingOops = false` to `resetCardUI()`.
-
----
-
-## Off-by-1 Errors
-
-### None found
-
-The following were checked and found correct:
-- Fisher-Yates shuffle: Loop bounds and random range are correct
-- INTERVALS indexing: `Math.min` correctly caps at `INTERVALS.length - 1`
-- Substring operations in highlight mapping: Index tracking is correct
+| Issue | Severity | Status |
+|-------|----------|--------|
+| URL blob not properly released | Low | FIXED - Delayed revocation |
+| Error handling for non-Error objects | Low | FIXED - Robust error display |
 
 ---
 
-## Other Issues
+## Accessibility Concerns (Future Improvement)
 
-### 1. Memory/resource leaks
-
-**a) Confetti canvas alpha not reset** - Benign, next animation starts fresh.
-
-**b) [FIXED] URL blob not properly released**
-
-**Fix:** Added `setTimeout(() => URL.revokeObjectURL(url), 100)` to delay revocation.
-
-**c) `speechSynthesis.onvoiceschanged` never removed** - Benign, only called once in `init()`.
-
-### 2. [FIXED] Error handling gaps
-**Severity:** Low
-
-**Fix:** Changed to `err instanceof Error ? err.message : String(err)` for robust error display.
-
-### 3. Accessibility concerns
-**Severity:** Medium (Not fixed - future improvement)
-
-- No ARIA labels on interactive elements
-- Confetti canvas covers the screen but has no `aria-hidden`
-- Color-only indicators (green/red) may be hard to distinguish for colorblind users
-
-### 4. [FIXED] No validation of flashcard array length
-**Severity:** Low
-
-**Fix:** Added check for empty array with user-friendly error message.
+- No ARIA labels on interactive elements (hamburger, mic button)
+- Confetti canvas covers screen without `aria-hidden`
+- Color-only indicators (green/red) may be hard for colorblind users
+- No `aria-live` regions for dynamic status updates
 
 ---
 
-## Fix Summary
+## Architecture Notes
 
-| # | Issue | Severity | Status |
-|---|-------|----------|--------|
-| 1 | XSS via flashcard content | Critical | FIXED |
-| 2 | Game screen visibility check | High | FIXED |
-| 3 | Speech synthesis queue buildup | Medium | FIXED |
-| 4 | localStorage quota handling | Medium | FIXED |
-| 5 | Saved voice not found | Medium | FIXED |
-| 6 | Dead replayMode code | Low | FIXED |
-| 7 | Global state not reset | Low | FIXED |
-| 8 | Missing rel="noopener" | Low | FIXED |
-| 9 | Empty flashcard array | Low | FIXED |
-| 10 | Error handling for non-Error | Low | FIXED |
-| 11 | URL blob release timing | Low | FIXED |
-| 12 | Accessibility concerns | Medium | Future |
-| 13 | Progress key collision | Info | By Design |
-| 14 | Recognition restart race | Low | Acceptable |
+### Recent Improvements (This Session)
+
+1. **Arabic numeral to Chinese conversion** - Speech-to-text outputs "7" but flashcards have "七". Added `arabicToChinese()` converter in `normalizeForSpeechMatch()`.
+
+2. **Mic state feedback** - Three distinct states:
+   - Starting (gray spinner): `onstart` event, waiting for audio capture
+   - Listening (red pulsing mic): `onaudiostart` event, actually recording
+   - Error (gray with X): Recognition error, tap to retry
+
+3. **Audio feedback for wrong answers** - `speakWordThenSentence()` highlights and speaks word, pauses 1s, then highlights and speaks sentence.
+
+4. **UI improvements**:
+   - Score display moved to top of card
+   - Score highlighted while being spoken
+   - Mode indicator and voice selector on same row
+   - "Say it again" button replaces non-functional play button
+
+---
+
+## Fix Priority
+
+| Priority | Issue | Effort |
+|----------|-------|--------|
+| 1 | Escape file.id in HTML | Low |
+| 2 | Add null check in checkSpeechMatch | Low |
+| 3 | Add FileReader error handler | Low |
+| 4 | Fix confetti animation leak | Medium |
+| 5 | Validate progress on import | Medium |
+| 6 | Replace deprecated substr | Low |
