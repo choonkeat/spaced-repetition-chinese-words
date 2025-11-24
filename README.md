@@ -57,6 +57,26 @@ A static web app for learning Chinese characters using spaced repetition.
 
 **Firefox:** Does not implement the Web Speech API for speech recognition. WRITE mode still works, but READ mode will not function.
 
+## Development
+
+### Running Locally
+
+```bash
+python3 -m http.server 8765
+# Open http://localhost:8765
+```
+
+### Running Tests
+
+```bash
+npm install                # Install dependencies
+npx playwright install chromium  # Install browser
+
+npm test                   # Run tests (headless)
+npm run test:headed        # Run tests with browser visible
+npm run test:ui            # Run tests with interactive UI
+```
+
 ## Privacy
 
 No data is sent to any server. All flashcard data and learning progress is stored entirely in your browser's localStorage. Your data stays on your device.
