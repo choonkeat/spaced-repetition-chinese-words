@@ -986,6 +986,11 @@
           uploadMsg.style.display = 'block';
         }
       };
+      reader.onerror = () => {
+        uploadMsg.className = 'error';
+        uploadMsg.textContent = 'Failed to read file';
+        uploadMsg.style.display = 'block';
+      };
       reader.readAsText(file);
       fileInput.value = '';
     }

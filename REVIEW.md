@@ -40,13 +40,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 3. Missing FileReader error handler
+### 3. [FIXED] Missing FileReader error handler
 **Severity:** Medium
-**Location:** Lines ~914-989
+**Location:** Line 989-993
 
-**Issue:** No `reader.onerror` handler is defined. If file reading fails (file deleted mid-read, permission denied), the failure is silent.
+**Issue:** No `reader.onerror` handler was defined. If file reading fails, the failure was silent.
 
-**Status:** Open
+**Fix:** Added `reader.onerror` handler that displays "Failed to read file" error message.
+
+**Status:** Fixed
 
 ### 4. Memory leak in confetti animation
 **Severity:** Medium
