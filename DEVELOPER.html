@@ -117,9 +117,11 @@ mcp__playwright__browser_close()</code></pre>
   sentence: string;          // Chinese sentence (e.g., "你好！")
   sentence_hanyupinyin: string; // Sentence pinyin (e.g., "Nǐ hǎo!")
   sentence_english: string;  // English translation (e.g., "Hello!")
+  label?: string;            // Optional grade/category (e.g., "一上")
 }
 
 type FlashcardList = Flashcard[];</code></pre>
+  <p>The optional <code>label</code> field can indicate grade level (e.g., "一上" for Primary 1 First Semester) and is displayed on flashcards during practice.</p>
 
   <h2>localStorage Structure</h2>
   <p>All data is stored under the key <code>flashcard_files</code>:</p>

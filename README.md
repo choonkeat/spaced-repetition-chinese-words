@@ -31,10 +31,13 @@ A static web app for learning Chinese characters using spaced repetition.
     "word_english": "you",
     "sentence": "你好！",
     "sentence_hanyupinyin": "Nǐ hǎo!",
-    "sentence_english": "Hello!"
+    "sentence_english": "Hello!",
+    "label": "一上"
   }
 ]
 ```
+
+The `label` field is optional and can be used to indicate grade level or category (e.g., "一上" for Primary 1 First Semester).
 
 ## Documentation
 

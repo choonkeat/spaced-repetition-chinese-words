@@ -1,6 +1,6 @@
 # Code Review: Chinese Flashcards App
 
-Date: 2024-11-24 (Updated)
+Date: 2025-11-24 (Updated)
 File reviewed: `index.html`
 
 ---
@@ -18,7 +18,7 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 ---
 
-## New Issues Found (2024-11-24 Update)
+## Issues Found
 
 ### 1. [FIXED] Unescaped file.id in HTML attributes
 **Severity:** High
@@ -149,20 +149,16 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 ## Architecture Notes
 
-### Recent Improvements (This Session)
+### Notable Implementation Details
 
-1. **Arabic numeral to Chinese conversion** - Speech-to-text outputs "7" but flashcards have "七". Added `arabicToChinese()` converter in `normalizeForSpeechMatch()`.
+1. **Arabic numeral to Chinese conversion** - Speech-to-text outputs "7" but flashcards have "七". `arabicToChinese()` converter handles this in `normalizeForSpeechMatch()`.
 
-2. **Mic state feedback** - Three distinct states:
+2. **Mic state feedback** - Three distinct visual states:
    - Starting (gray spinner): `onstart` event, waiting for audio capture
    - Listening (red pulsing mic): `onaudiostart` event, actually recording
    - Error (gray with X): Recognition error, tap to retry
 
-3. **Audio feedback for wrong answers** - `speakWordThenSentence()` highlights and speaks word, pauses 1s, then highlights and speaks sentence.
+3. **Audio feedback** - `speakWordThenSentence()` highlights and speaks word, pauses 1s, then highlights and speaks sentence.
 
-4. **UI improvements**:
-   - Score display moved to top of card
-   - Score highlighted while being spoken
-   - Mode indicator and voice selector on same row
-   - "Say it again" button replaces non-functional play button
+4. **Grade level labels** - Optional `label` field on flashcards (e.g., "一上", "三下") displayed on cards during practice.
 
