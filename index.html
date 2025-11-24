@@ -1529,27 +1529,30 @@
 
     function speakScore() {
       speechSynthesis.cancel(); // Cancel any pending speech to prevent queue buildup
-      const file = getCurrentFile();
-      if (!file) return;
-      const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
-      const scoreText = `${session.correct} 比 ${session.wrong}`;
+      // Delay after cancel() to avoid race condition in some browsers
+      setTimeout(() => {
+        const file = getCurrentFile();
+        if (!file) return;
+        const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+        const scoreText = `${session.correct} 比 ${session.wrong}`;
 
-      // Highlight score while speaking
-      const gameStats = document.getElementById('gameStats');
-      gameStats.classList.add('speaking');
+        // Highlight score while speaking
+        const gameStats = document.getElementById('gameStats');
+        gameStats.classList.add('speaking');
 
-      const utterance = new SpeechSynthesisUtterance(scoreText);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        utterance.lang = selectedVoice.lang;
-      } else {
-        utterance.lang = 'zh-CN';
-      }
-      utterance.rate = 1.0;
-      utterance.onend = () => {
-        gameStats.classList.remove('speaking');
-      };
-      speechSynthesis.speak(utterance);
+        const utterance = new SpeechSynthesisUtterance(scoreText);
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = 'zh-CN';
+        }
+        utterance.rate = 1.0;
+        utterance.onend = () => {
+          gameStats.classList.remove('speaking');
+        };
+        speechSynthesis.speak(utterance);
+      }, 50);
     }
 
     function speakSentence(text, rate, callback) {
@@ -1576,7 +1579,7 @@
     function speakWordThenSentence(wordEl, sentenceEl, callback) {
       speechSynthesis.cancel();
 
-      // Disable "Say it again" buttons during speech
+      // Disable "Say it again" buttons during speech (immediately)
       const readSayAgainBtn = document.getElementById('readSayAgainBtn');
       const writeSayAgainBtn = document.getElementById('writeSayAgainBtn');
       readSayAgainBtn.disabled = true;
@@ -1584,46 +1587,49 @@
       writeSayAgainBtn.disabled = true;
       writeSayAgainBtn.style.opacity = '0.5';
 
-      // Highlight word with span.match-correct and speak it
-      const originalWord = wordEl.textContent;
-      wordEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word)}</span>`;
-      const wordUtterance = new SpeechSynthesisUtterance(currentCard.word);
-      if (selectedVoice) {
-        wordUtterance.voice = selectedVoice;
-        wordUtterance.lang = selectedVoice.lang;
-      } else {
-        wordUtterance.lang = 'zh-CN';
-      }
-      wordUtterance.rate = 0.6;
+      // Delay after cancel() to avoid race condition in some browsers
+      setTimeout(() => {
+        // Highlight word with span.match-correct and speak it
+        const originalWord = wordEl.textContent;
+        wordEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word)}</span>`;
+        const wordUtterance = new SpeechSynthesisUtterance(currentCard.word);
+        if (selectedVoice) {
+          wordUtterance.voice = selectedVoice;
+          wordUtterance.lang = selectedVoice.lang;
+        } else {
+          wordUtterance.lang = 'zh-CN';
+        }
+        wordUtterance.rate = 0.6;
 
-      wordUtterance.onend = () => {
-        wordEl.textContent = originalWord;
-        // Pause 1 second, then speak sentence
-        setTimeout(() => {
-          const originalSentence = sentenceEl.textContent;
-          sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence)}</span>`;
-          const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence);
-          if (selectedVoice) {
-            sentenceUtterance.voice = selectedVoice;
-            sentenceUtterance.lang = selectedVoice.lang;
-          } else {
-            sentenceUtterance.lang = 'zh-CN';
-          }
-          sentenceUtterance.rate = 0.5;
+        wordUtterance.onend = () => {
+          wordEl.textContent = originalWord;
+          // Pause 1 second, then speak sentence
+          setTimeout(() => {
+            const originalSentence = sentenceEl.textContent;
+            sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence)}</span>`;
+            const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence);
+            if (selectedVoice) {
+              sentenceUtterance.voice = selectedVoice;
+              sentenceUtterance.lang = selectedVoice.lang;
+            } else {
+              sentenceUtterance.lang = 'zh-CN';
+            }
+            sentenceUtterance.rate = 0.5;
 
-          sentenceUtterance.onend = () => {
-            sentenceEl.textContent = originalSentence;
-            // Re-enable "Say it again" buttons
-            readSayAgainBtn.disabled = false;
-            readSayAgainBtn.style.opacity = '1';
-            writeSayAgainBtn.disabled = false;
-            writeSayAgainBtn.style.opacity = '1';
-            if (callback) callback();
-          };
-          speechSynthesis.speak(sentenceUtterance);
-        }, 1000);
-      };
-      speechSynthesis.speak(wordUtterance);
+            sentenceUtterance.onend = () => {
+              sentenceEl.textContent = originalSentence;
+              // Re-enable "Say it again" buttons
+              readSayAgainBtn.disabled = false;
+              readSayAgainBtn.style.opacity = '1';
+              writeSayAgainBtn.disabled = false;
+              writeSayAgainBtn.style.opacity = '1';
+              if (callback) callback();
+            };
+            speechSynthesis.speak(sentenceUtterance);
+          }, 1000);
+        };
+        speechSynthesis.speak(wordUtterance);
+      }, 50);
     }
 
     // Say it speed toggle for WRITE mode

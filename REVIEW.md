@@ -60,12 +60,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 5. speechSynthesis.cancel() timing issue
+### 5. [FIXED] speechSynthesis.cancel() timing issue
 **Severity:** Medium
+**Location:** Lines ~1530-1556, 1579-1633
 
 **Issue:** `speechSynthesis.cancel()` is asynchronous in some browsers. Immediately calling `speak()` after `cancel()` can cause the new utterance to be canceled as well.
 
-**Status:** Open (Low impact in practice)
+**Fix:** Added 50ms delay after `cancel()` before calling `speak()` in `speakScore()` and `speakWordThenSentence()` functions.
+
+**Status:** Fixed
 
 ### 6. [FIXED] Progress data structure not validated on import
 **Severity:** Medium
