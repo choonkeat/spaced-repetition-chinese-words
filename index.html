@@ -1640,6 +1640,11 @@
       btn.disabled = true;
       btn.style.opacity = '0.5';
 
+      // Highlight sentence pinyin while speaking
+      const pinyinEl = document.getElementById('writeSentencePinyin');
+      const originalPinyin = pinyinEl.textContent;
+      pinyinEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_hanyupinyin)}</span>`;
+
       const utterance = new SpeechSynthesisUtterance(currentCard.sentence);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
@@ -1651,6 +1656,7 @@
       utterance.onend = () => {
         btn.disabled = false;
         btn.style.opacity = '1';
+        pinyinEl.textContent = originalPinyin; // Remove highlight
         // Toggle speed for next click
         sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
       };
