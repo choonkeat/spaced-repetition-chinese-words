@@ -148,23 +148,88 @@
     .stats-panel {
       width: 100%;
       max-width: 700px;
+    }
+    .file-header {
+      text-align: center;
+      padding: 15px 0 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .file-header h2 {
+      margin: 0 0 5px 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    .file-header .word-count {
+      font-size: 14px;
+      color: #666;
+    }
+    .file-header .last-practiced {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    .session-banner {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .session-stat {
       text-align: center;
     }
+    .session-stat .number {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .session-stat .number.correct { color: #4CAF50; }
+    .session-stat .number.wrong { color: #f44336; }
+    .session-stat .label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
     .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stats-card {
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .stats-card h4 {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stats-card.read h4 { color: #2196F3; }
+    .stats-card.write h4 { color: #9C27B0; }
+    .stats-row {
       display: flex;
-      justify-content: space-around;
-      margin-top: 15px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
     }
-    .stats-column h4 {
-      margin: 0 0 8px 0;
-      font-size: 14px;
-    }
-    .stats-column.read h4 { color: #2196F3; }
-    .stats-column.write h4 { color: #9C27B0; }
-    .stats-column div {
+    .stats-row .stat-label {
       font-size: 13px;
       color: #666;
     }
+    .stats-row .stat-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+    .stats-row .stat-value.due { color: #ff9800; }
+    .stats-row .stat-value.mastered { color: #4CAF50; }
     .play-btn {
       background: #4CAF50;
       color: white;
@@ -173,14 +238,14 @@
       font-size: 18px;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 20px;
+      width: 100%;
     }
     .play-btn:hover { background: #43A047; }
     .play-btn:disabled { background: #ccc; cursor: not-allowed; }
     /* Game screen */
     .game-screen { display: none; width: 100%; max-width: 700px; }
     .game-screen.active { display: block; }
-    .home-screen { display: block; }
+    .home-screen { display: block; width: 100%; max-width: 700px; }
     .home-screen.hidden { display: none; }
     .back-btn {
       background: none;
@@ -470,6 +535,23 @@
       .main-content h1 {
         font-size: 24px;
       }
+      .file-header h2 {
+        font-size: 18px;
+      }
+      .session-banner {
+        gap: 25px;
+        padding: 12px 15px;
+      }
+      .session-stat .number {
+        font-size: 20px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .stats-card {
+        padding: 12px;
+      }
     }
   </style>
 </head>
@@ -517,34 +599,68 @@
 
       <div id="selectedFileStats" class="stats-panel" style="display:none;">
         <div class="card">
-          <h3 id="selectedFileName" style="margin:0 0 10px 0; text-align:center;"></h3>
-          <div id="selectedFileWordCount" style="text-align:center; color:#666;"></div>
-          <div id="selectedFileLastAttempted" style="text-align:center; color:#888; font-size:12px; margin-top:5px;"></div>
-          <div id="selectedFileSession" style="text-align:center; margin:10px 0; padding:8px; background:#f0f0f0; border-radius:8px;"></div>
+          <!-- Header with file name -->
+          <div class="file-header">
+            <h2 id="selectedFileName"></h2>
+            <div class="word-count" id="selectedFileWordCount"></div>
+            <div class="last-practiced" id="selectedFileLastAttempted"></div>
+          </div>
+
+          <!-- Session stats -->
+          <div class="session-banner">
+            <div class="session-stat">
+              <div class="number correct" id="sessionCorrect">0</div>
+              <div class="label">Correct</div>
+            </div>
+            <div class="session-stat">
+              <div class="number wrong" id="sessionWrong">0</div>
+              <div class="label">Wrong</div>
+            </div>
+          </div>
+
+          <!-- Stats grid -->
           <div class="stats-grid">
-            <div class="stats-column read">
-              <h4>READ</h4>
-              <div id="readDue"></div>
-              <div id="readPracticed"></div>
-              <div id="readMastered"></div>
+            <div class="stats-card read">
+              <h4>读</h4>
+              <div class="stats-row">
+                <span class="stat-label">Due now</span>
+                <span class="stat-value due" id="readDue">0</span>
+              </div>
+              <div class="stats-row">
+                <span class="stat-label">Practiced</span>
+                <span class="stat-value" id="readPracticed">0</span>
+              </div>
+              <div class="stats-row">
+                <span class="stat-label">Mastered</span>
+                <span class="stat-value mastered" id="readMastered">0</span>
+              </div>
             </div>
-            <div class="stats-column write">
-              <h4>WRITE</h4>
-              <div id="writeDue"></div>
-              <div id="writePracticed"></div>
-              <div id="writeMastered"></div>
+            <div class="stats-card write">
+              <h4>写</h4>
+              <div class="stats-row">
+                <span class="stat-label">Due now</span>
+                <span class="stat-value due" id="writeDue">0</span>
+              </div>
+              <div class="stats-row">
+                <span class="stat-label">Practiced</span>
+                <span class="stat-value" id="writePracticed">0</span>
+              </div>
+              <div class="stats-row">
+                <span class="stat-label">Mastered</span>
+                <span class="stat-value mastered" id="writeMastered">0</span>
+              </div>
             </div>
           </div>
-          <div style="text-align:center;">
-            <button class="play-btn" id="playBtn">Play</button>
-          </div>
+
+          <!-- Play button -->
+          <button class="play-btn" id="playBtn">Start Practice</button>
         </div>
       </div>
     </div>
 
     <!-- Game Screen -->
     <div id="gameScreen" class="game-screen">
-      <button class="back-btn" id="backBtn">&larr; Back to menu</button>
+      <button class="back-btn" id="backBtn">&larr; Exit</button>
 
       <div class="card">
         <div class="card-header">
@@ -799,18 +915,15 @@
       document.getElementById('selectedFileWordCount').textContent = `${file.flashcards.length} words`;
       document.getElementById('selectedFileLastAttempted').textContent = file.lastAttempted
         ? `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`
-        : '';
-      document.getElementById('selectedFileSession').innerHTML = `
-        <strong>This session:</strong>
-        <span style="color:#4CAF50;">${session.correct} correct</span> /
-        <span style="color:#f44336;">${session.wrong} wrong</span>
-      `;
-      document.getElementById('readDue').textContent = `${stats.read.dueNow} due`;
-      document.getElementById('readPracticed').textContent = `${stats.read.practiced} practiced`;
-      document.getElementById('readMastered').textContent = `${stats.read.mastered} mastered`;
-      document.getElementById('writeDue').textContent = `${stats.write.dueNow} due`;
-      document.getElementById('writePracticed').textContent = `${stats.write.practiced} practiced`;
-      document.getElementById('writeMastered').textContent = `${stats.write.mastered} mastered`;
+        : 'Not yet practiced';
+      document.getElementById('sessionCorrect').textContent = session.correct;
+      document.getElementById('sessionWrong').textContent = session.wrong;
+      document.getElementById('readDue').textContent = stats.read.dueNow;
+      document.getElementById('readPracticed').textContent = stats.read.practiced;
+      document.getElementById('readMastered').textContent = stats.read.mastered;
+      document.getElementById('writeDue').textContent = stats.write.dueNow;
+      document.getElementById('writePracticed').textContent = stats.write.practiced;
+      document.getElementById('writeMastered').textContent = stats.write.mastered;
     }
 
     function calculateFileStats(file) {
