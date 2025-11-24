@@ -255,27 +255,27 @@ test.describe('Home Screen Stats', () => {
     await uploadFile(page, VALID_FLASHCARDS, 'Test Set');
 
     // All cards should be "due" initially
-    await expect(page.locator('#readDue')).toHaveText('3 due');
-    await expect(page.locator('#readPracticed')).toHaveText('0 practiced');
-    await expect(page.locator('#readMastered')).toHaveText('0 mastered');
+    await expect(page.locator('#readDue')).toHaveText('3');
+    await expect(page.locator('#readPracticed')).toHaveText('0');
+    await expect(page.locator('#readMastered')).toHaveText('0');
 
-    await expect(page.locator('#writeDue')).toHaveText('3 due');
-    await expect(page.locator('#writePracticed')).toHaveText('0 practiced');
-    await expect(page.locator('#writeMastered')).toHaveText('0 mastered');
+    await expect(page.locator('#writeDue')).toHaveText('3');
+    await expect(page.locator('#writePracticed')).toHaveText('0');
+    await expect(page.locator('#writeMastered')).toHaveText('0');
 
     // Session stats at zero
-    await expect(page.locator('#selectedFileSession')).toContainText('0 correct');
-    await expect(page.locator('#selectedFileSession')).toContainText('0 wrong');
+    await expect(page.locator('#sessionCorrect')).toHaveText('0');
+    await expect(page.locator('#sessionWrong')).toHaveText('0');
 
     // No last practiced yet
-    await expect(page.locator('#selectedFileLastAttempted')).toBeEmpty();
+    await expect(page.locator('#selectedFileLastAttempted')).toHaveText('Not yet practiced');
   });
 
   test('shows last practiced timestamp after practice', async ({ page }) => {
     await setupWriteMode(page);
 
-    // Initially empty
-    await expect(page.locator('#selectedFileLastAttempted')).toBeEmpty();
+    // Initially shows "Not yet practiced"
+    await expect(page.locator('#selectedFileLastAttempted')).toHaveText('Not yet practiced');
 
     // Play and answer
     await page.click('#playBtn');
@@ -547,9 +547,9 @@ test.describe('Spaced Repetition & Progress', () => {
     });
 
     // 1 mastered (你 at level 4), 1 not mastered (好 at level 3)
-    await expect(page.locator('#readMastered')).toHaveText('1 mastered');
-    await expect(page.locator('#writeMastered')).toHaveText('1 mastered');
-    await expect(page.locator('#readPracticed')).toHaveText('2 practiced');
+    await expect(page.locator('#readMastered')).toHaveText('1');
+    await expect(page.locator('#writeMastered')).toHaveText('1');
+    await expect(page.locator('#readPracticed')).toHaveText('2');
   });
 
   test('progress persists across page reload', async ({ page }) => {
@@ -583,8 +583,8 @@ test.describe('Spaced Repetition & Progress', () => {
     await page.locator('.file-item').click();
 
     // Session stats should be reset
-    await expect(page.locator('#selectedFileSession')).toContainText('0 correct');
-    await expect(page.locator('#selectedFileSession')).toContainText('0 wrong');
+    await expect(page.locator('#sessionCorrect')).toHaveText('0');
+    await expect(page.locator('#sessionWrong')).toHaveText('0');
 
     // But progress should persist (failCount should still be 1)
     const storage = await getStorageData(page);
