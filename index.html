@@ -385,6 +385,14 @@
       margin-top: 10px;
       font-size: 13px;
     }
+    .card-label {
+      text-align: right;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
     .success-msg {
       color: #2e7d32;
       background: #e8f5e9;
@@ -570,6 +578,7 @@
             <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="readNextBtn">Next card</button>
           </div>
+          <div class="card-label" id="readCardLabel"></div>
         </div>
 
         <!-- Write Mode -->
@@ -595,6 +604,7 @@
             <button class="btn btn-secondary" id="writeSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="writeNextBtn">Next card</button>
           </div>
+          <div class="card-label" id="writeCardLabel"></div>
         </div>
       </div>
     </div>
@@ -1144,6 +1154,7 @@
       document.getElementById('readSentence').textContent = currentCard.sentence;
       document.getElementById('readSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
       document.getElementById('readSentenceEnglish').textContent = currentCard.sentence_english;
+      document.getElementById('readCardLabel').textContent = currentCard.label || '';
 
       // Auto-start speech recognition
       setTimeout(() => startSpeechRecognition(), 300);
@@ -1161,6 +1172,7 @@
       document.getElementById('writeSentenceEnglish').textContent = currentCard.sentence_english;
       document.getElementById('writeSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
       document.getElementById('writeSentenceChinese').textContent = currentCard.sentence;
+      document.getElementById('writeCardLabel').textContent = currentCard.label || '';
     }
 
     function updateGameStats() {
