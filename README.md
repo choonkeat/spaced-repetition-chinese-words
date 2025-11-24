@@ -51,3 +51,7 @@ A static web app for learning Chinese characters using spaced repetition.
 **Why Chrome?** The Web Speech API (`SpeechRecognition`) for Chinese speech-to-text is fully supported only in Chrome. Safari has limited support, and Firefox does not support it at all.
 
 **Mobile:** Works on Android Chrome. iOS Safari has limited speech recognition support.
+
+## Privacy
+
+No data is sent to any server. All flashcard data and learning progress is stored entirely in your browser's localStorage. Your data stays on your device.
