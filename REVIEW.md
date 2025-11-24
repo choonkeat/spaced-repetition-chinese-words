@@ -30,19 +30,15 @@ The app is generally well-structured for a vanilla JS single-file application. M
 
 **Status:** Fixed
 
-### 2. Missing null check in checkSpeechMatch
+### 2. [FIXED] Missing null check in checkSpeechMatch
 **Severity:** Medium
-**Location:** Lines ~1434-1444
+**Location:** Line 1435
 
-```javascript
-function checkSpeechMatch(transcript) {
-  if (cardCompleted) return;
-  const expected = normalizeForSpeechMatch(currentCard.sentence); // No null check
-```
+**Issue:** If `currentCard` is null when speech recognition fires a late event, this would throw an error.
 
-**Issue:** If `currentCard` is null when speech recognition fires a late event, this will throw an error.
+**Fix:** Added `|| !currentCard` to the early return check.
 
-**Status:** Open
+**Status:** Fixed
 
 ### 3. Missing FileReader error handler
 **Severity:** Medium

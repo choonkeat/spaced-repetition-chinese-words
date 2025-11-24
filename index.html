@@ -1432,7 +1432,7 @@
     let cardCompleted = false; // Prevent multiple result recordings per card
 
     function checkSpeechMatch(transcript) {
-      if (cardCompleted) return; // Already recorded result for this card
+      if (cardCompleted || !currentCard) return; // Already recorded or no card
       const expected = normalizeForSpeechMatch(currentCard.sentence);
       const actual = normalizeForSpeechMatch(transcript);
       // Suffix match: allows corrections like "ABF.. ABCD" to match "ABCD"
