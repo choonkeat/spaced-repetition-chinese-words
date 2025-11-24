@@ -1019,7 +1019,8 @@
     }
 
     function resetCardUI() {
-      // Reset replay mode
+      // Reset card state
+      cardCompleted = false;
       replayMode = false;
       const micBtn = document.getElementById('micBtn');
       micBtn.innerHTML = '&#127908;'; // Mic icon
@@ -1288,11 +1289,15 @@
       sentenceEl.innerHTML = `<span class="match-correct">${matched}</span><span class="match-pending">${remaining}</span>`;
     }
 
+    let cardCompleted = false; // Prevent multiple result recordings per card
+
     function checkSpeechMatch(transcript) {
+      if (cardCompleted) return; // Already recorded result for this card
       const expected = normalizeText(currentCard.sentence);
       const actual = normalizeText(transcript);
       // Suffix match: allows corrections like "ABF.. ABCD" to match "ABCD"
       if (actual.endsWith(expected)) {
+        cardCompleted = true;
         stopSpeechRecognition();
         handleReadSuccess();
       }
@@ -1308,6 +1313,7 @@
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('readNextBtn').classList.remove('hidden');
+      document.getElementById('showHintBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
     }
 
@@ -1321,6 +1327,8 @@
     }
 
     function handleDontKnow() {
+      if (cardCompleted) return; // Prevent double recording
+      cardCompleted = true;
       stopSpeechRecognition();
       recordResult(false);
 
@@ -1417,6 +1425,8 @@
     }
 
     function handleWriteAnswer(isCorrect) {
+      if (cardCompleted) return; // Prevent double recording
+      cardCompleted = true;
       recordResult(isCorrect);
       document.getElementById('writeAnswerGroup').classList.add('hidden');
 
