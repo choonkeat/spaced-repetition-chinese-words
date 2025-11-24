@@ -201,6 +201,26 @@
     }
     .mode-indicator.read { color: #2196F3; }
     .mode-indicator.write { color: #9C27B0; }
+    .voice-selector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+    .voice-selector label {
+      margin: 0;
+    }
+    .voice-selector select {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+      max-width: 200px;
+      background: white;
+    }
     .word-display {
       text-align: center;
       font-size: 56px;
@@ -473,6 +493,10 @@
 
       <div class="card">
         <div class="mode-indicator" id="modeIndicator">READ</div>
+        <div class="voice-selector">
+          <label for="voiceSelect">Voice:</label>
+          <select id="voiceSelect"></select>
+        </div>
 
         <!-- Read Mode -->
         <div id="readMode" style="display: none;">
@@ -523,8 +547,9 @@
   <canvas id="confettiCanvas" class="confetti"></canvas>
 
   <script>
-    // Storage key
+    // Storage keys
     const STORAGE_KEY = 'flashcard_files';
+    const VOICE_KEY = 'flashcard_voice';
 
     // Spaced repetition intervals (in milliseconds)
     const INTERVALS = [
@@ -545,6 +570,7 @@
     let currentMode = 'read';
     let recognition = null;
     let sessionStats = {}; // { fileId: { correct: 0, wrong: 0 } }
+    let selectedVoice = null;
 
     // DOM elements
     const fileInput = document.getElementById('fileInput');
@@ -564,6 +590,7 @@
       renderFileList();
       setupEventListeners();
       setupSpeechRecognition();
+      setupVoiceSelector();
       // On mobile, open sidebar if no file selected
       if (window.innerWidth <= 768 && !currentFileId) {
         document.getElementById('hamburger').classList.add('open');
@@ -1076,6 +1103,59 @@
       }
     }
 
+    function setupVoiceSelector() {
+      const voiceSelect = document.getElementById('voiceSelect');
+      const savedVoiceName = localStorage.getItem(VOICE_KEY);
+
+      function populateVoices() {
+        const voices = speechSynthesis.getVoices();
+        const chineseVoices = voices.filter(v => v.lang.startsWith('zh'));
+
+        voiceSelect.innerHTML = '';
+
+        if (chineseVoices.length === 0) {
+          const option = document.createElement('option');
+          option.textContent = 'No Chinese voices available';
+          voiceSelect.appendChild(option);
+          return;
+        }
+
+        chineseVoices.forEach(voice => {
+          const option = document.createElement('option');
+          option.value = voice.name;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          if (voice.name === savedVoiceName) {
+            option.selected = true;
+            selectedVoice = voice;
+          }
+          voiceSelect.appendChild(option);
+        });
+
+        // If no saved voice, select first one
+        if (!selectedVoice && chineseVoices.length > 0) {
+          selectedVoice = chineseVoices[0];
+        }
+      }
+
+      // Voices may load asynchronously
+      populateVoices();
+      speechSynthesis.onvoiceschanged = populateVoices;
+
+      // Handle voice selection
+      voiceSelect.addEventListener('change', () => {
+        const voices = speechSynthesis.getVoices();
+        selectedVoice = voices.find(v => v.name === voiceSelect.value);
+        localStorage.setItem(VOICE_KEY, voiceSelect.value);
+
+        // Speak a sample to preview the voice
+        const utterance = new SpeechSynthesisUtterance('你好');
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice ? selectedVoice.lang : 'zh-CN';
+        utterance.rate = 0.8;
+        speechSynthesis.speak(utterance);
+      });
+    }
+
     function toggleSpeechRecognition() {
       if (!recognition) {
         alert('Speech recognition not supported. Please use Chrome.');
@@ -1140,9 +1220,11 @@
     }
 
     function handleShowHint() {
-      // Reveal pinyin only (doesn't count as fail)
+      // Reveal pinyin and english (doesn't count as fail)
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
+      document.getElementById('readWordEnglish').classList.remove('hidden');
+      document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('showHintBtn').classList.add('hidden');
     }
 
@@ -1178,7 +1260,12 @@
       micBtn.style.opacity = '0.5';
 
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'zh-CN';
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = 'zh-CN';
+      }
       utterance.rate = rate;
       utterance.onend = () => {
         micBtn.disabled = false;
@@ -1197,7 +1284,12 @@
       btn.style.opacity = '0.5';
 
       const utterance = new SpeechSynthesisUtterance(currentCard.sentence);
-      utterance.lang = 'zh-CN';
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = 'zh-CN';
+      }
       utterance.rate = sayItSpeed;
       utterance.onend = () => {
         btn.disabled = false;
