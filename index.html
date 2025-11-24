@@ -82,7 +82,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .file-item-trash {
+    .file-item-actions {
+      display: flex;
+      gap: 2px;
+    }
+    .file-item-btn {
       background: none;
       border: none;
       cursor: pointer;
@@ -90,7 +94,7 @@
       opacity: 0.5;
       padding: 4px;
     }
-    .file-item-trash:hover {
+    .file-item-btn:hover {
       opacity: 1;
     }
     .file-item-stats {
@@ -119,30 +123,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 15px;
       overflow-y: auto;
     }
     .main-content h1 {
       color: #333;
-      margin-bottom: 20px;
+      margin: 0 0 10px 0;
+      font-size: 22px;
     }
     .card {
       background: white;
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 15px 20px;
+      margin-bottom: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 500px;
+      max-width: 700px;
     }
     .welcome-message {
       text-align: center;
       color: #888;
-      padding: 40px;
+      padding: 20px;
     }
     .stats-panel {
       width: 100%;
-      max-width: 500px;
+      max-width: 700px;
       text-align: center;
     }
     .stats-grid {
@@ -173,7 +178,7 @@
     .play-btn:hover { background: #43A047; }
     .play-btn:disabled { background: #ccc; cursor: not-allowed; }
     /* Game screen */
-    .game-screen { display: none; width: 100%; max-width: 500px; }
+    .game-screen { display: none; width: 100%; max-width: 700px; }
     .game-screen.active { display: block; }
     .home-screen { display: block; }
     .home-screen.hidden { display: none; }
@@ -183,7 +188,7 @@
       color: #666;
       cursor: pointer;
       font-size: 14px;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
     .back-btn:hover { color: #333; }
     .mode-indicator {
@@ -192,46 +197,46 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       color: #888;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
     .mode-indicator.read { color: #2196F3; }
     .mode-indicator.write { color: #9C27B0; }
     .word-display {
       text-align: center;
-      font-size: 72px;
-      margin: 20px 0;
+      font-size: 56px;
+      margin: 10px 0;
       color: #333;
     }
     .pinyin-display {
       text-align: center;
-      font-size: 24px;
+      font-size: 20px;
       color: #666;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .sentence-display {
       text-align: center;
-      font-size: 28px;
-      margin: 20px 0;
-      line-height: 1.5;
+      font-size: 24px;
+      margin: 10px 0;
+      line-height: 1.4;
     }
     .sentence-pinyin {
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       color: #666;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .english-display {
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       color: #888;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .hidden { visibility: hidden; }
     .btn-group {
       display: flex;
       gap: 10px;
       justify-content: center;
-      margin-top: 20px;
+      margin-top: 15px;
       flex-wrap: wrap;
     }
     .btn {
@@ -290,15 +295,15 @@
       justify-content: space-around;
       font-size: 12px;
       color: #888;
-      margin-top: 20px;
-      padding-top: 20px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid #eee;
     }
     .instruction {
       text-align: center;
       color: #888;
       font-size: 14px;
-      margin: 10px 0;
+      margin: 8px 0;
     }
     .error {
       color: #d32f2f;
@@ -478,12 +483,11 @@
           <div class="sentence-pinyin hidden" id="readSentencePinyin"></div>
           <div class="english-display hidden" id="readSentenceEnglish"></div>
 
-          <div class="instruction" id="readInstruction">Pronounce the sentence above</div>
-
           <button class="mic-btn" id="micBtn">&#127908;</button>
           <input type="text" class="speech-input" id="speechInput" placeholder="Your speech will appear here..." readonly>
 
           <div class="btn-group">
+            <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
             <button class="btn btn-secondary" id="dontKnowBtn">I don't know</button>
             <button class="btn btn-success hidden" id="readNextBtn">Next card</button>
           </div>
@@ -496,15 +500,18 @@
           <div class="sentence-display" id="writeSentenceEnglish"></div>
           <div class="sentence-pinyin hidden" id="writeSentenceChinese"></div>
 
-          <div class="instruction">Can you write this in Chinese?</div>
-
           <div class="btn-group" id="writeShowGroup">
+            <button class="btn btn-secondary" id="sayItBtn">Say it</button>
             <button class="btn btn-secondary" id="showAnswerBtn">Show answer</button>
           </div>
 
           <div class="btn-group hidden" id="writeAnswerGroup">
             <button class="btn btn-danger" id="wrongBtn">Wrong</button>
             <button class="btn btn-success" id="correctBtn">Correct</button>
+          </div>
+
+          <div class="btn-group hidden" id="writeNextGroup">
+            <button class="btn btn-success" id="writeNextBtn">Next card</button>
           </div>
         </div>
 
@@ -599,7 +606,10 @@
         item.innerHTML = `
           <div class="file-item-header">
             <span class="file-item-name">${escapeHtml(file.name)}</span>
-            <button class="file-item-trash" data-id="${file.id}" title="Delete">&#128465;</button>
+            <div class="file-item-actions">
+              <button class="file-item-btn file-item-export" data-id="${file.id}" title="Export">&#128229;</button>
+              <button class="file-item-btn file-item-trash" data-id="${file.id}" title="Delete">&#128465;</button>
+            </div>
           </div>
           <div class="file-item-stats">${file.flashcards.length} words</div>
           <div class="file-item-session">
@@ -607,9 +617,13 @@
           </div>
         `;
         item.addEventListener('click', (e) => {
-          if (!e.target.classList.contains('file-item-trash')) {
+          if (!e.target.classList.contains('file-item-btn')) {
             selectFile(file.id);
           }
+        });
+        item.querySelector('.file-item-export').addEventListener('click', (e) => {
+          e.stopPropagation();
+          exportFile(file.id);
         });
         item.querySelector('.file-item-trash').addEventListener('click', (e) => {
           e.stopPropagation();
@@ -715,6 +729,29 @@
       updateSelectedFileStats();
     }
 
+    function exportFile(fileId) {
+      const file = files.find(f => f.id === fileId);
+      if (!file) return;
+
+      const exportData = {
+        name: file.name,
+        flashcards: file.flashcards,
+        progress: file.progress,
+        exportedAt: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      const filename = `${file.name.replace(/[^a-z0-9]/gi, '_')}-${timestamp}.json`;
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function setupEventListeners() {
       fileInput.addEventListener('change', handleFileUpload);
       playBtn.addEventListener('click', startGame);
@@ -722,13 +759,16 @@
 
       // Read mode
       document.getElementById('micBtn').addEventListener('click', handleMicClick);
+      document.getElementById('showHintBtn').addEventListener('click', handleShowHint);
       document.getElementById('dontKnowBtn').addEventListener('click', handleDontKnow);
       document.getElementById('readNextBtn').addEventListener('click', () => nextCard());
 
       // Write mode
+      document.getElementById('sayItBtn').addEventListener('click', handleSayIt);
       document.getElementById('showAnswerBtn').addEventListener('click', handleShowAnswer);
       document.getElementById('wrongBtn').addEventListener('click', () => handleWriteAnswer(false));
       document.getElementById('correctBtn').addEventListener('click', () => handleWriteAnswer(true));
+      document.getElementById('writeNextBtn').addEventListener('click', () => nextCard());
 
       // Hamburger menu (mobile)
       const hamburger = document.getElementById('hamburger');
@@ -774,41 +814,68 @@
         try {
           const data = JSON.parse(event.target.result);
 
-          if (!Array.isArray(data)) {
-            throw new Error('JSON must be an array of flashcards');
+          // Check if this is a backup file (exported with progress)
+          const isBackup = data.exportedAt && data.flashcards && data.progress;
+
+          if (isBackup) {
+            // Import backup file - restore flashcards and progress
+            const invalidCards = data.flashcards.filter(card => !validateFlashcard(card));
+            if (invalidCards.length > 0) {
+              throw new Error('Invalid backup: flashcards have invalid schema');
+            }
+
+            const newFile = {
+              id: generateId(),
+              name: data.name || getDefaultName(),
+              flashcards: data.flashcards,
+              progress: data.progress || {}
+            };
+
+            files.push(newFile);
+            sessionStats[newFile.id] = { correct: 0, wrong: 0 };
+            saveToStorage();
+            renderFileList();
+            selectFile(newFile.id);
+
+            uploadMsg.className = 'success-msg';
+            uploadMsg.textContent = `Restored "${newFile.name}" with ${data.flashcards.length} words and progress`;
+            uploadMsg.style.display = 'block';
+            setTimeout(() => { uploadMsg.style.display = 'none'; }, 3000);
+          } else {
+            // Import plain flashcards array
+            if (!Array.isArray(data)) {
+              throw new Error('JSON must be an array of flashcards or an exported backup');
+            }
+
+            const invalidCards = data.filter(card => !validateFlashcard(card));
+            if (invalidCards.length > 0) {
+              throw new Error('Invalid schema. Each card needs: word, word_hanyupinyin, word_english, sentence, sentence_hanyupinyin, sentence_english');
+            }
+
+            // Shuffle cards (Fisher-Yates)
+            for (let i = data.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [data[i], data[j]] = [data[j], data[i]];
+            }
+
+            const newFile = {
+              id: generateId(),
+              name: fileNameInput.value.trim() || getDefaultName(),
+              flashcards: data,
+              progress: {}
+            };
+
+            files.push(newFile);
+            sessionStats[newFile.id] = { correct: 0, wrong: 0 };
+            saveToStorage();
+            renderFileList();
+            selectFile(newFile.id);
+
+            uploadMsg.className = 'success-msg';
+            uploadMsg.textContent = `Added "${newFile.name}" with ${data.length} words`;
+            uploadMsg.style.display = 'block';
+            setTimeout(() => { uploadMsg.style.display = 'none'; }, 3000);
           }
-
-          const invalidCards = data.filter(card => !validateFlashcard(card));
-          if (invalidCards.length > 0) {
-            throw new Error('Invalid schema. Each card needs: word, word_hanyupinyin, word_english, sentence, sentence_hanyupinyin, sentence_english');
-          }
-
-          // Shuffle cards (Fisher-Yates)
-          for (let i = data.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [data[i], data[j]] = [data[j], data[i]];
-          }
-
-          // Create new file entry
-          const newFile = {
-            id: generateId(),
-            name: fileNameInput.value.trim() || getDefaultName(),
-            flashcards: data,
-            progress: {}
-          };
-
-          files.push(newFile);
-          sessionStats[newFile.id] = { correct: 0, wrong: 0 };
-          saveToStorage();
-          renderFileList();
-
-          // Select the new file
-          selectFile(newFile.id);
-
-          uploadMsg.className = 'success-msg';
-          uploadMsg.textContent = `Added "${newFile.name}" with ${data.length} words`;
-          uploadMsg.style.display = 'block';
-          setTimeout(() => { uploadMsg.style.display = 'none'; }, 3000);
 
           fileNameInput.value = '';
         } catch (err) {
@@ -916,20 +983,23 @@
       document.getElementById('readWordEnglish').classList.add('hidden');
       document.getElementById('readSentenceEnglish').classList.add('hidden');
       document.getElementById('readNextBtn').classList.add('hidden');
+      document.getElementById('showHintBtn').classList.remove('hidden');
       document.getElementById('dontKnowBtn').classList.remove('hidden');
       document.getElementById('speechInput').value = '';
       document.getElementById('speechInput').style.display = 'block';
       document.getElementById('speechInput').classList.remove('listening');
-      document.getElementById('readInstruction').textContent = 'Pronounce the sentence above';
+      document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
 
       document.getElementById('writeWordChinese').classList.add('hidden');
       document.getElementById('writeSentenceChinese').classList.add('hidden');
       document.getElementById('writeShowGroup').classList.remove('hidden');
       document.getElementById('writeAnswerGroup').classList.add('hidden');
+      document.getElementById('writeNextGroup').classList.add('hidden');
+      sayItSpeed = 0.3; // Reset speed for new card
     }
 
     function showReadMode() {
-      document.getElementById('modeIndicator').textContent = 'READ';
+      document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
       document.getElementById('modeIndicator').className = 'mode-indicator read';
       document.getElementById('readMode').style.display = 'block';
       document.getElementById('writeMode').style.display = 'none';
@@ -943,7 +1013,7 @@
     }
 
     function showWriteMode() {
-      document.getElementById('modeIndicator').textContent = 'WRITE';
+      document.getElementById('modeIndicator').textContent = 'WRITE: Can you write this in Chinese?';
       document.getElementById('modeIndicator').className = 'mode-indicator write';
       document.getElementById('readMode').style.display = 'none';
       document.getElementById('writeMode').style.display = 'block';
@@ -978,7 +1048,7 @@
           recognitionStarting = false;
           document.getElementById('micBtn').classList.add('listening');
           document.getElementById('speechInput').classList.add('listening');
-          document.getElementById('readInstruction').textContent = 'Listening... (tap mic to clear & restart)';
+          document.getElementById('modeIndicator').textContent = 'READ: Listening... (tap mic to clear & restart)';
         };
 
         recognition.onresult = (event) => {
@@ -995,7 +1065,7 @@
           console.error('Speech recognition error:', event.error);
           recognitionStarting = false;
           stopSpeechRecognition();
-          document.getElementById('readInstruction').textContent = 'Mic error. Tap to try again.';
+          document.getElementById('modeIndicator').textContent = 'READ: Mic error. Tap to try again.';
         };
 
         recognition.onend = () => {
@@ -1015,7 +1085,7 @@
         stopSpeechRecognition();
         // Clear and allow restart
         document.getElementById('speechInput').value = '';
-        document.getElementById('readInstruction').textContent = 'Cleared. Tap mic to start again.';
+        document.getElementById('modeIndicator').textContent = 'READ: Cleared. Tap mic to start again.';
       } else {
         startSpeechRecognition();
       }
@@ -1025,13 +1095,13 @@
       if (!recognition || recognitionStarting) return;
       try {
         recognitionStarting = true;
-        document.getElementById('readInstruction').textContent = 'Starting mic...';
+        document.getElementById('modeIndicator').textContent = 'READ: Starting mic...';
         document.getElementById('speechInput').value = '';
         recognition.start();
       } catch (e) {
         console.error('Failed to start recognition:', e);
         recognitionStarting = false;
-        document.getElementById('readInstruction').textContent = 'Failed to start mic. Tap to retry.';
+        document.getElementById('modeIndicator').textContent = 'READ: Failed to start mic. Tap to retry.';
       }
     }
 
@@ -1060,13 +1130,20 @@
     function handleReadSuccess() {
       recordResult(true);
       showConfetti();
-      document.getElementById('readInstruction').textContent = 'Correct!';
+      document.getElementById('modeIndicator').textContent = 'READ: Correct!';
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('readNextBtn').classList.remove('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
+    }
+
+    function handleShowHint() {
+      // Reveal pinyin only (doesn't count as fail)
+      document.getElementById('readPinyin').classList.remove('hidden');
+      document.getElementById('readSentencePinyin').classList.remove('hidden');
+      document.getElementById('showHintBtn').classList.add('hidden');
     }
 
     function handleDontKnow() {
@@ -1084,12 +1161,13 @@
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('speechInput').style.display = 'none';
+      document.getElementById('showHintBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
 
       speakSentence(currentCard.sentence, 0.3, () => {
         speakSentence(currentCard.sentence, 0.6, () => {
           document.getElementById('readNextBtn').classList.remove('hidden');
-          document.getElementById('readInstruction').textContent = 'Tap to listen again';
+          document.getElementById('modeIndicator').textContent = 'READ: Tap to listen again';
         });
       });
     }
@@ -1110,6 +1188,26 @@
       speechSynthesis.speak(utterance);
     }
 
+    // Say it speed toggle for WRITE mode
+    let sayItSpeed = 0.3;
+
+    function handleSayIt() {
+      const btn = document.getElementById('sayItBtn');
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+
+      const utterance = new SpeechSynthesisUtterance(currentCard.sentence);
+      utterance.lang = 'zh-CN';
+      utterance.rate = sayItSpeed;
+      utterance.onend = () => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        // Toggle speed for next click
+        sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
+      };
+      speechSynthesis.speak(utterance);
+    }
+
     function handleShowAnswer() {
       document.getElementById('writeWordChinese').classList.remove('hidden');
       document.getElementById('writeSentenceChinese').classList.remove('hidden');
@@ -1119,11 +1217,16 @@
 
     function handleWriteAnswer(isCorrect) {
       recordResult(isCorrect);
+      document.getElementById('writeAnswerGroup').classList.add('hidden');
+
       if (isCorrect) {
         showConfetti();
         setTimeout(() => nextCard(), 1000);
       } else {
-        nextCard();
+        // Play audio at 0.3x, then show next button
+        speakSentence(currentCard.sentence, 0.3, () => {
+          document.getElementById('writeNextGroup').classList.remove('hidden');
+        });
       }
     }
 
