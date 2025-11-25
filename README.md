@@ -80,7 +80,7 @@ npm run test:headed        # Run tests with browser visible
 npm run test:ui            # Run tests with interactive UI
 ```
 
-> **Note:** Tests run in parallel, so you may hear overlapping Chinese speech synthesis voices. This is normal.
+> **Note:** Tests run in parallel, so you may hear [overlapping speech synthesis voices](https://www.youtube.com/watch?v=atUUjSLMSiM&t=7s). This is normal.
 
 ## Privacy
 
