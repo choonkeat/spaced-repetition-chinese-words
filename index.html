@@ -1273,40 +1273,50 @@
       if (!file) return null;
 
       const now = Date.now();
-      let candidates = [];
+      let pastDueReviews = [];  // Cards with nextReview > 0 and <= now
+      let newCards = [];         // Cards with nextReview === 0 (never tried)
+      let upcomingCards = [];    // Cards with nextReview > now (future reviews)
 
       file.flashcards.forEach(card => {
         const p = file.progress[card.word] || { read: null, write: null };
 
         const readNext = p.read?.nextReview || 0;
-        if (readNext <= now) {
-          candidates.push({ card, mode: 'read', priority: readNext });
+        if (readNext > 0 && readNext <= now) {
+          pastDueReviews.push({ card, mode: 'read', priority: readNext });
+        } else if (readNext === 0) {
+          newCards.push({ card, mode: 'read', priority: 0 });
+        } else if (readNext > now) {
+          upcomingCards.push({ card, mode: 'read', priority: readNext });
         }
 
         const writeNext = p.write?.nextReview || 0;
-        if (writeNext <= now) {
-          candidates.push({ card, mode: 'write', priority: writeNext });
+        if (writeNext > 0 && writeNext <= now) {
+          pastDueReviews.push({ card, mode: 'write', priority: writeNext });
+        } else if (writeNext === 0) {
+          newCards.push({ card, mode: 'write', priority: 0 });
+        } else if (writeNext > now) {
+          upcomingCards.push({ card, mode: 'write', priority: writeNext });
         }
       });
 
-      if (candidates.length === 0) {
-        let soonest = null;
-        file.flashcards.forEach(card => {
-          const p = file.progress[card.word] || { read: null, write: null };
-          const readNext = p.read?.nextReview || Infinity;
-          const writeNext = p.write?.nextReview || Infinity;
-          const next = Math.min(readNext, writeNext);
-          if (!soonest || next < soonest.priority) {
-            soonest = { card, mode: readNext <= writeNext ? 'read' : 'write', priority: next };
-          }
-        });
-        return soonest;
+      // Priority 1: Past due reviews (prevent forgetting)
+      if (pastDueReviews.length > 0) {
+        // Randomize among past due to avoid always doing oldest first
+        return pastDueReviews[Math.floor(Math.random() * pastDueReviews.length)];
       }
 
-      candidates.sort((a, b) => a.priority - b.priority);
-      const topPriority = candidates[0].priority;
-      const topCandidates = candidates.filter(c => c.priority === topPriority);
-      return topCandidates[Math.floor(Math.random() * topCandidates.length)];
+      // Priority 2: New cards (expand vocabulary)
+      if (newCards.length > 0) {
+        return newCards[Math.floor(Math.random() * newCards.length)];
+      }
+
+      // Priority 3: Upcoming reviews (not due yet, but soonest first)
+      if (upcomingCards.length > 0) {
+        upcomingCards.sort((a, b) => a.priority - b.priority);
+        return upcomingCards[0];
+      }
+
+      return null;
     }
 
     async function startGame() {

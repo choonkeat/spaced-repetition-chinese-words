@@ -94,14 +94,30 @@
   </div>
 
   <h2>Card Selection Priority</h2>
-  <p>Cards are selected for review using this priority:</p>
-  <ol>
-    <li><strong>Due cards first</strong>: Cards where <code>nextReview &lt;= now</code></li>
-    <li><strong>New cards</strong>: Cards with no progress data (treated as due)</li>
-    <li><strong>Oldest first</strong>: Among due cards, prioritize by <code>nextReview</code> timestamp</li>
-    <li><strong>Random tiebreaker</strong>: If multiple cards have same priority, pick randomly</li>
-    <li><strong>Fallback</strong>: If no cards are due, the card with the soonest <code>nextReview</code> is selected (even if it's in the future)</li>
-  </ol>
+  <p>Cards are selected for review using the <strong>"Review First, Learn Second"</strong> principle:</p>
+
+  <div class="highlight" style="background:#e3f2fd;">
+    <h3 style="color:#1976D2; margin-top:0;">Priority 1: Past Due Reviews</h3>
+    <p>Cards where <code>nextReview &gt; 0</code> AND <code>nextReview &lt;= now</code></p>
+    <p><strong>Why first?</strong> These cards have been started but need review. Missing reviews wastes previous learning effort and causes forgetting. Spaced repetition ONLY works if you review before forgetting.</p>
+    <p>Selection: Random from all past due reviews (prevents always doing oldest first)</p>
+  </div>
+
+  <div class="highlight" style="background:#f3e5f5;">
+    <h3 style="color:#7B1FA2; margin-top:0;">Priority 2: New Cards</h3>
+    <p>Cards where <code>nextReview === 0</code> (never attempted)</p>
+    <p><strong>Why second?</strong> Expand vocabulary only after clearing reviews. Prevents the "perpetual beginner" problem of surface-level exposure without mastery.</p>
+    <p>Selection: Random from all new cards</p>
+  </div>
+
+  <div class="highlight" style="background:#fff3e0;">
+    <h3 style="color:#F57C00; margin-top:0;">Priority 3: Upcoming Reviews</h3>
+    <p>Cards where <code>nextReview &gt; now</code> (future reviews)</p>
+    <p><strong>Why last?</strong> These aren't due yet. Only shown when no past due or new cards remain.</p>
+    <p>Selection: Soonest due card first</p>
+  </div>
+
+  <p><strong>This follows proven SRS best practices</strong> used by Anki and SuperMemo. Reviews always take precedence over new material to ensure retention and prevent review backlog.</p>
 
   <h2>Separate Tracking for Read/Write</h2>
   <p>Each card has independent progress for READ and WRITE modes:</p>

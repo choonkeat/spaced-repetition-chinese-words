@@ -8,7 +8,9 @@ A static web app for learning Chinese characters using [spaced repetition](https
 
 - **Two test modes**: READ (speech recognition) and WRITE (self-grading)
 - **[Spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition)**: Cards scheduled at increasing intervals (1 min to 30 days)
+- **Review priority**: Past due reviews take precedence over new cards ("Review First, Learn Second")
 - **Multi-file support**: Upload multiple flashcard sets, each with independent progress
+- **Highscore tracking**: Records your best correct streak per set
 - **Voice selection**: Choose from available Chinese TTS voices
 - **Export/Import**: Download progress as JSON backup, restore later
 - **READ mode enhancements**: Auto-start mic, partial match highlighting, contextual hints
