@@ -661,7 +661,7 @@ test.describe('WRITE Mode', () => {
     expect(progress.intervalIndex).toBe(1);
   });
 
-  test('Wrong button records failure, resets interval, and shows next buttons', async ({ page }) => {
+  test('Wrong button records failure, resets interval, and advances to next card', async ({ page }) => {
     // Start with intervalIndex 3 to verify reset
     await setupTestFile(page, {
       readIntervalIndex: 7,
@@ -674,9 +674,6 @@ test.describe('WRITE Mode', () => {
 
     await page.click('#showAnswerBtn');
     await page.click('#wrongBtn');
-
-    // Next button group should appear immediately (no TTS after clicking Wrong)
-    await expect(page.locator('#writeNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
 
     // Verify progress was reset to 0
     const storage = await getStorageData(page);
@@ -815,7 +812,6 @@ test.describe('Spaced Repetition & Progress', () => {
     await waitForGameScreen(page);
     await page.click('#showAnswerBtn');
     await page.click('#wrongBtn');
-    await expect(page.locator('#writeNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
 
     // Should show 1 wrong in game stats
     await expect(page.locator('#gameStats')).toContainText('✗ 1');
@@ -1184,11 +1180,11 @@ test.describe('Session Goal Feature', () => {
     // Record some answers
     await page.click('#showAnswerBtn');
     await page.click('#correctBtn');
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1500); // Wait for auto-advance
 
     await page.click('#showAnswerBtn');
     await page.click('#wrongBtn');
-    await expect(page.locator('#writeNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+    await page.waitForTimeout(500); // Wait for stats update
 
     // Stats should show 1 correct, 1 wrong
     await expect(page.locator('#gameStats')).toContainText('✓ 1');

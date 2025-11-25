@@ -1963,10 +1963,32 @@
             return;
           }
 
-          // Accumulate all results from the beginning
+          // Accumulate final results + current interim result
+          // Final results are stable, interim results can change
           let transcript = '';
           for (let i = 0; i < event.results.length; i++) {
             transcript += event.results[i][0].transcript;
+          }
+
+          // Keep track of best match length to prevent visual regression
+          // (interim results can temporarily show less text before finalizing)
+          const normalizedTranscript = normalizeForSpeechMatch(transcript);
+          const normalizedSentence = currentCard ? normalizeForSpeechMatch(currentCard.sentence) : '';
+          let currentMatchLen = 0;
+          for (let len = normalizedSentence.length; len >= 1; len--) {
+            const prefix = normalizedSentence.substring(0, len);
+            const suffix = normalizedTranscript.substring(normalizedTranscript.length - len);
+            if (matchWithHomophones(prefix, suffix)) {
+              currentMatchLen = len;
+              break;
+            }
+          }
+
+          // Only update display if we matched at least as much as before
+          // This prevents visual "jumping back" during interim results
+          if (currentMatchLen < lastMatchLen && currentMatchLen > 0) {
+            // Interim result shows less - ignore it, keep showing previous match
+            return;
           }
 
           // Always show only the last N characters where N = normalized sentence length
@@ -2250,10 +2272,11 @@
       let matchLen = 0;
       const normalizedSentence = normalizeForSpeechMatch(sentence);
 
-      // Check suffix of transcript against prefix of sentence
+      // Check suffix of transcript against prefix of sentence (with homophone support)
       for (let len = normalizedSentence.length; len >= 1; len--) {
         const prefix = normalizedSentence.substring(0, len);
-        if (normalizedTranscript.endsWith(prefix)) {
+        const suffix = normalizedTranscript.substring(normalizedTranscript.length - len);
+        if (matchWithHomophones(prefix, suffix)) {
           matchLen = len;
           break;
         }
@@ -2348,6 +2371,7 @@
       ['到', '道', '盗', '盜'],        // dào (4) - arrive/road/steal
       ['岛', '島', '导', '導', '倒'],  // dǎo (3) - island/guide/pour
       ['那', '纳', '納'],              // nà (4) - that
+      ['话', '話', '画', '畫', '化', '划', '劃'],  // huà (4) - speech/draw/change
     ];
 
     // Build lookup map: character -> array of all homophones (including itself)
@@ -2676,12 +2700,9 @@
 
       if (isCorrect) {
         showConfetti();
-        setTimeout(() => nextCard(), 1000);
-      } else {
-        // Skip TTS since user already heard it when clicking "Check what I wrote"
-        // Just show the next button group immediately
-        document.getElementById('writeNextGroup').classList.remove('hidden');
       }
+      // Proceed to next card after brief delay (confetti or review time)
+      setTimeout(() => nextCard(), 1000);
     }
 
     function recordResult(success) {
