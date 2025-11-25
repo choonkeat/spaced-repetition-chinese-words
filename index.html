@@ -2046,10 +2046,14 @@
       // Show word and sentence with blur effect
       const wordEl = document.getElementById('writeWordChinese');
       const sentenceEl = document.getElementById('writeSentenceChinese');
-      wordEl.classList.remove('hidden');
+
+      // Add blur class first while still hidden
       wordEl.classList.add('hint-blur');
-      sentenceEl.classList.remove('hidden');
       sentenceEl.classList.add('hint-blur');
+
+      // Then reveal with blur already applied
+      wordEl.classList.remove('hidden');
+      sentenceEl.classList.remove('hidden');
 
       // After a brief moment, increase blur for animation effect
       setTimeout(() => {
