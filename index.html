@@ -1699,10 +1699,17 @@
       gameScreen.classList.remove('active');
       homeScreen.classList.remove('hidden');
       stopSpeechRecognition();
-      renderFileList();
-      updateSelectedFileStats();
+
+      // Reset session stats for current file
+      if (currentFileId && sessionStats[currentFileId]) {
+        sessionStats[currentFileId] = { correct: 0, wrong: 0 };
+      }
+
       // Reset session tracking
       sessionCardsCompleted = 0;
+
+      renderFileList();
+      updateSelectedFileStats();
     }
 
     function updateSessionProgress() {
