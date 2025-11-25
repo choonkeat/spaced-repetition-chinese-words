@@ -242,6 +242,53 @@ test.describe('File Upload & Management', () => {
 
     expect(download.suggestedFilename()).toMatch(/Export_Test-\d{4}-\d{2}-\d{2}.*\.json/);
   });
+
+  test('edits file name inline', async ({ page }) => {
+    await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
+
+    // Click edit button
+    await page.locator('.file-item-edit').click();
+
+    // Should show input field
+    const input = page.locator('.file-item-name-input');
+    await expect(input).toBeVisible();
+    await expect(input).toHaveValue('Original Name');
+
+    // Edit the name
+    await input.fill('New Name');
+    await input.press('Enter');
+
+    // Name should be updated
+    await expect(page.locator('.file-item-name')).toHaveText('New Name');
+
+    // Verify persistence
+    const storage = await getStorageData(page);
+    expect(storage.files[0].name).toBe('New Name');
+  });
+
+  test('cancels file name edit on Escape', async ({ page }) => {
+    await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
+
+    await page.locator('.file-item-edit').click();
+    const input = page.locator('.file-item-name-input');
+    await input.fill('Modified Name');
+    await input.press('Escape');
+
+    // Name should remain unchanged
+    await expect(page.locator('.file-item-name')).toHaveText('Original Name');
+  });
+
+  test('reverts empty file name on blur', async ({ page }) => {
+    await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
+
+    await page.locator('.file-item-edit').click();
+    const input = page.locator('.file-item-name-input');
+    await input.fill('');
+    await input.blur();
+
+    // Should revert to original name
+    await expect(page.locator('.file-item-name')).toHaveText('Original Name');
+  });
 });
 
 test.describe('Home Screen Stats', () => {

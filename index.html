@@ -82,6 +82,16 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .file-item-name-input {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+      border: 1px solid #2196F3;
+      border-radius: 4px;
+      padding: 2px 6px;
+      outline: none;
+    }
     .file-item-actions {
       display: flex;
       gap: 2px;
@@ -880,6 +890,7 @@
           <div class="file-item-header">
             <span class="file-item-name">${escapeHtml(file.name)}</span>
             <div class="file-item-actions">
+              <button class="file-item-btn file-item-edit" data-id="${escapeHtml(file.id)}" title="Edit name">&#9998;</button>
               <button class="file-item-btn file-item-export" data-id="${escapeHtml(file.id)}" title="Export">&#128229;</button>
               <button class="file-item-btn file-item-trash" data-id="${escapeHtml(file.id)}" title="Delete">&#128465;</button>
             </div>
@@ -893,6 +904,10 @@
           if (!e.target.classList.contains('file-item-btn')) {
             selectFile(file.id);
           }
+        });
+        item.querySelector('.file-item-edit').addEventListener('click', (e) => {
+          e.stopPropagation();
+          editFileName(file.id, item);
         });
         item.querySelector('.file-item-export').addEventListener('click', (e) => {
           e.stopPropagation();
@@ -989,6 +1004,50 @@
         read: { dueNow: readDue, practiced: readPracticed, mastered: readMastered },
         write: { dueNow: writeDue, practiced: writePracticed, mastered: writeMastered }
       };
+    }
+
+    function editFileName(fileId, itemElement) {
+      const file = files.find(f => f.id === fileId);
+      if (!file) return;
+
+      const nameSpan = itemElement.querySelector('.file-item-name');
+      const currentName = file.name;
+
+      // Replace span with input
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'file-item-name-input';
+      input.value = currentName;
+      nameSpan.replaceWith(input);
+      input.focus();
+      input.select();
+
+      let shouldSave = true;
+
+      function saveName() {
+        if (!shouldSave) return;
+        const newName = input.value.trim();
+        if (newName && newName !== currentName) {
+          file.name = newName;
+          saveToStorage();
+          renderFileList();
+          updateSelectedFileStats();
+        } else {
+          // Restore original if empty or unchanged
+          renderFileList();
+        }
+      }
+
+      input.addEventListener('blur', saveName);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          saveName();
+        } else if (e.key === 'Escape') {
+          shouldSave = false;
+          input.blur();
+          renderFileList();
+        }
+      });
     }
 
     function deleteFile(fileId) {
