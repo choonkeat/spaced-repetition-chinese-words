@@ -2209,8 +2209,22 @@
         confettiAnimationId = null;
       }
 
-      // Say "你真棒!" (You're awesome!)
-      const utterance = new SpeechSynthesisUtterance('你真棒!');
+      // Random encouragement phrases
+      const encouragements = [
+        '你真棒!',      // You're awesome!
+        '太好了!',      // Excellent!
+        '做得好!',      // Well done!
+        '真厉害!',      // Amazing!
+        '很棒!',        // Great!
+        '继续加油!',    // Keep it up!
+        '非常好!',      // Very good!
+        '真不错!',      // Really nice!
+        '棒极了!',      // Fantastic!
+        '了不起!'       // Remarkable!
+      ];
+      const randomPhrase = encouragements[Math.floor(Math.random() * encouragements.length)];
+
+      const utterance = new SpeechSynthesisUtterance(randomPhrase);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
         utterance.lang = selectedVoice.lang;
