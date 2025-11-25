@@ -519,7 +519,7 @@ test.describe('WRITE Mode', () => {
     await page.reload();
   });
 
-  test('displays WRITE mode UI with English and pinyin visible, Chinese hidden', async ({ page }) => {
+  test('displays WRITE mode UI with English and pinyin visible, Chinese blurred', async ({ page }) => {
     await setupWriteMode(page);
     await page.click('#playBtn');
     await waitForGameScreen(page);
@@ -533,9 +533,11 @@ test.describe('WRITE Mode', () => {
     await expect(page.locator('#writeWordEnglish')).toHaveText('you');
     await expect(page.locator('#writeWordPinyin')).toHaveText('nǐ');
 
-    // Chinese hidden
-    await expect(page.locator('#writeWordChinese')).toHaveClass(/hidden/);
-    await expect(page.locator('#writeSentenceChinese')).toHaveClass(/hidden/);
+    // Chinese visible but heavily blurred (8px)
+    await expect(page.locator('#writeWordChinese')).toBeVisible();
+    await expect(page.locator('#writeWordChinese')).toHaveClass(/hint-blur-base/);
+    await expect(page.locator('#writeSentenceChinese')).toBeVisible();
+    await expect(page.locator('#writeSentenceChinese')).toHaveClass(/hint-blur-base/);
 
     // Initial button group visible
     await expect(page.locator('#writeShowGroup')).not.toHaveClass(/hidden/);

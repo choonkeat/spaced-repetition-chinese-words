@@ -398,11 +398,18 @@
     }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
-    .hint-blur {
-      filter: blur(5px);
-      transition: filter 300ms ease-in-out;
+    .hint-blur-base {
+      filter: blur(8px);
     }
-    .hint-blur.hint-blur-full { filter: blur(7.5px); }
+    .hint-blur-instant {
+      filter: blur(3px);
+      transition: none;
+    }
+    .hint-blur {
+      filter: blur(3px);
+      transition: filter 200ms ease-in-out;
+    }
+    .hint-blur.hint-blur-full { filter: blur(7px); }
     .mic-btn {
       background: #f44336;
       color: white;
@@ -1369,10 +1376,10 @@
       document.getElementById('speechTip').classList.add('hidden');
       document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
 
-      document.getElementById('writeWordChinese').classList.add('hidden');
-      document.getElementById('writeWordChinese').classList.remove('hint-blur', 'hint-blur-full');
-      document.getElementById('writeSentenceChinese').classList.add('hidden');
-      document.getElementById('writeSentenceChinese').classList.remove('hint-blur', 'hint-blur-full');
+      // Don't hide Chinese text in WRITE mode - keep it visible but reset blur
+      document.getElementById('writeWordChinese').classList.remove('hint-blur-instant', 'hint-blur', 'hint-blur-full');
+      document.getElementById('writeSentenceChinese').classList.remove('hint-blur-instant', 'hint-blur', 'hint-blur-full');
+      // hint-blur-base will be re-added by showWriteMode if needed
       document.getElementById('writeShowGroup').classList.remove('hidden');
       document.getElementById('showHintBtn').disabled = false;
       document.getElementById('writeAnswerGroup').classList.add('hidden');
@@ -1411,6 +1418,14 @@
       document.getElementById('writeSentencePinyin').textContent = currentCard.sentence_hanyupinyin;
       document.getElementById('writeSentenceChinese').textContent = currentCard.sentence;
       document.getElementById('writeCardLabel').textContent = currentCard.label || '';
+
+      // Show Chinese word and sentence with heavy blur from the start
+      const wordEl = document.getElementById('writeWordChinese');
+      const sentenceEl = document.getElementById('writeSentenceChinese');
+      wordEl.classList.remove('hidden');
+      wordEl.classList.add('hint-blur-base');
+      sentenceEl.classList.remove('hidden');
+      sentenceEl.classList.add('hint-blur-base');
     }
 
     function updateGameStats() {
@@ -2043,23 +2058,29 @@
     let sayItSpeed = 0.3;
 
     function handleShowHint() {
-      // Show word and sentence with blur effect
+      // 8px → 3px (instant) → 7px (transition over 200ms)
       const wordEl = document.getElementById('writeWordChinese');
       const sentenceEl = document.getElementById('writeSentenceChinese');
 
-      // Add blur class first while still hidden
-      wordEl.classList.add('hint-blur');
-      sentenceEl.classList.add('hint-blur');
+      // Step 1: Remove base (8px), add instant (3px, no transition)
+      wordEl.classList.remove('hint-blur-base');
+      wordEl.classList.add('hint-blur-instant');
+      sentenceEl.classList.remove('hint-blur-base');
+      sentenceEl.classList.add('hint-blur-instant');
 
-      // Then reveal with blur already applied
-      wordEl.classList.remove('hidden');
-      sentenceEl.classList.remove('hidden');
+      // Step 2: After instant jump to 3px, add transition class
+      requestAnimationFrame(() => {
+        wordEl.classList.remove('hint-blur-instant');
+        wordEl.classList.add('hint-blur');
+        sentenceEl.classList.remove('hint-blur-instant');
+        sentenceEl.classList.add('hint-blur');
 
-      // After a brief moment, increase blur for animation effect
-      setTimeout(() => {
-        wordEl.classList.add('hint-blur-full');
-        sentenceEl.classList.add('hint-blur-full');
-      }, 10); // Small delay to ensure initial state is rendered
+        // Step 3: Trigger transition to 7px
+        requestAnimationFrame(() => {
+          wordEl.classList.add('hint-blur-full');
+          sentenceEl.classList.add('hint-blur-full');
+        });
+      });
 
       // Disable the button after clicking
       document.getElementById('showHintBtn').disabled = true;
@@ -2098,8 +2119,8 @@
       const sentenceEl = document.getElementById('writeSentenceChinese');
 
       // Remove blur effect if hint was shown
-      wordEl.classList.remove('hint-blur', 'hint-blur-full');
-      sentenceEl.classList.remove('hint-blur', 'hint-blur-full');
+      wordEl.classList.remove('hint-blur-base', 'hint-blur-instant', 'hint-blur', 'hint-blur-full');
+      sentenceEl.classList.remove('hint-blur-base', 'hint-blur-instant', 'hint-blur', 'hint-blur-full');
 
       wordEl.classList.remove('hidden');
       sentenceEl.classList.remove('hidden');
