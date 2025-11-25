@@ -1952,9 +1952,9 @@
         if (!file) return;
         const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
 
-        // Say "加油" (keep going) when score is 0-0, otherwise say the score
+        // Say "游戏开始" (game start) when score is 0-0, otherwise say the score
         const scoreText = (session.correct === 0 && session.wrong === 0)
-          ? '加油'
+          ? '游戏开始'
           : `${session.correct} 比 ${session.wrong}`;
 
         // Highlight score while speaking
