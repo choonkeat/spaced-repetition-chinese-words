@@ -707,6 +707,52 @@ test.describe('Spaced Repetition & Progress', () => {
     const storage = await getStorageData(page);
     expect(storage.files[0].progress['你'].write.failCount).toBe(1);
   });
+
+  test('highscore tracks best correct count and persists', async ({ page }) => {
+    await setupWriteMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Record 2 correct answers
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+    await page.waitForTimeout(1500); // Wait for confetti
+
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+    await page.waitForTimeout(1500);
+
+    // Back to home
+    await page.click('#backBtn');
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+
+    // Should show highscore of 2 in homepage
+    await expect(page.locator('#selectedFileHighscore')).toContainText('Highscore: 2');
+
+    // Should show highscore in sidebar
+    await expect(page.locator('.file-item-highscore')).toContainText('Highscore: 2');
+
+    // Check storage has highscore with count and timestamp
+    let storage = await getStorageData(page);
+    expect(storage.files[0].highscore).toBeTruthy();
+    expect(storage.files[0].highscore.count).toBe(2);
+    expect(storage.files[0].highscore.timestamp).toBeGreaterThan(0);
+
+    // Reload page - highscore should persist
+    await page.reload();
+    await page.locator('.file-item').click();
+    await expect(page.locator('#selectedFileHighscore')).toContainText('Highscore: 2');
+
+    // Export should include highscore
+    const downloadPromise = page.waitForEvent('download');
+    await page.click('.file-item-export');
+    const download = await downloadPromise;
+    const downloadPath = await download.path();
+    const fs = await import('fs/promises');
+    const exportData = JSON.parse(await fs.readFile(downloadPath!, 'utf8'));
+    expect(exportData.highscore).toBeTruthy();
+    expect(exportData.highscore.count).toBe(2);
+  });
 });
 
 test.describe('Voice Selection', () => {

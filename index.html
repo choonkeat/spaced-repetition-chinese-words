@@ -650,6 +650,7 @@
             <h2 id="selectedFileName"></h2>
             <div class="word-count" id="selectedFileWordCount"></div>
             <div class="last-practiced" id="selectedFileLastAttempted"></div>
+            <div class="highscore-display" id="selectedFileHighscore"></div>
           </div>
 
           <!-- Session stats -->
@@ -913,6 +914,7 @@
           <div class="file-item-session">
             Session: <span class="correct">${session.correct}</span> / <span class="wrong">${session.wrong}</span>
           </div>
+          ${file.highscore ? `<div class="file-item-highscore">Highscore: ${file.highscore.count}</div>` : ''}
         `;
         item.addEventListener('click', (e) => {
           if (!e.target.classList.contains('file-item-btn')) {
@@ -979,6 +981,9 @@
       document.getElementById('selectedFileLastAttempted').textContent = file.lastAttempted
         ? `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`
         : 'Not yet practiced';
+      document.getElementById('selectedFileHighscore').textContent = file.highscore
+        ? `Highscore: ${file.highscore.count} at ${new Date(file.highscore.timestamp).toLocaleString()}`
+        : '';
       document.getElementById('sessionCorrect').textContent = session.correct;
       document.getElementById('sessionWrong').textContent = session.wrong;
       document.getElementById('readDue').textContent = stats.read.dueNow;
@@ -1087,6 +1092,7 @@
         name: file.name,
         flashcards: file.flashcards,
         progress: file.progress,
+        highscore: file.highscore,
         exportedAt: new Date().toISOString()
       };
 
@@ -1191,7 +1197,8 @@
               id: generateId(),
               name: data.name || getDefaultName(),
               flashcards: data.flashcards,
-              progress: sanitizeProgress(data.progress)
+              progress: sanitizeProgress(data.progress),
+              highscore: data.highscore || null  // { count: number, timestamp: number }
             };
 
             files.push(newFile);
@@ -1225,7 +1232,8 @@
               id: generateId(),
               name: fileNameInput.value.trim() || getDefaultName(),
               flashcards: data,
-              progress: {}
+              progress: {},
+              highscore: null  // { count: number, timestamp: number }
             };
 
             files.push(newFile);
@@ -2165,6 +2173,13 @@
       }
       if (success) {
         sessionStats[file.id].correct++;
+        // Update highscore if current correct count exceeds previous record
+        if (!file.highscore || sessionStats[file.id].correct > file.highscore.count) {
+          file.highscore = {
+            count: sessionStats[file.id].correct,
+            timestamp: Date.now()
+          };
+        }
       } else {
         sessionStats[file.id].wrong++;
       }
