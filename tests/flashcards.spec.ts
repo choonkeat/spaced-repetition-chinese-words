@@ -953,3 +953,287 @@ test.describe('Malformed JSON Upload', () => {
     await expect(page.locator('.file-item')).toHaveCount(0);
   });
 });
+
+test.describe('Session Goal Feature', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('session goal dropdown defaults to recommended value based on reviews due', async ({ page }) => {
+    // Setup file with 45 reviews due (should recommend 20)
+    await page.evaluate(() => {
+      const flashcards = Array.from({ length: 25 }, (_, i) => ({
+        word: `字${i}`,
+        word_hanyupinyin: 'pinyin',
+        word_english: 'word',
+        sentence: '句子',
+        sentence_hanyupinyin: 'pinyin',
+        sentence_english: 'sentence'
+      }));
+      const progress: Record<string, any> = {};
+      flashcards.forEach(card => {
+        progress[card.word] = {
+          read: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 },
+          write: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 }
+        };
+      });
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards,
+        progress
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+
+    // 25 cards × 2 modes = 50 due, should recommend 20
+    await expect(page.locator('#sessionGoalSelect')).toHaveValue('20');
+    await expect(page.locator('#sessionRecommendation')).toContainText('20 cards');
+  });
+
+  test('session progress bar displays and updates during game', async ({ page }) => {
+    await setupWriteMode(page);
+
+    // Manually set goal to 5 for testing
+    await page.selectOption('#sessionGoalSelect', '5');
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Progress bar should be visible
+    await expect(page.locator('#sessionProgress')).toBeVisible();
+    await expect(page.locator('#sessionProgressText')).toHaveText('0/5 cards');
+
+    // Check progress bar starts at 0%
+    const progressBar = page.locator('#sessionProgressBar');
+    const widthBefore = await progressBar.evaluate(el => el.style.width);
+    expect(widthBefore).toBe('0%');
+
+    // Answer one card
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+    await page.waitForTimeout(500);
+
+    // Progress should update
+    await expect(page.locator('#sessionProgressText')).toHaveText('1/5 cards');
+    const widthAfter = await progressBar.evaluate(el => el.style.width);
+    expect(widthAfter).toBe('20%');
+  });
+
+  test('session complete modal appears when goal reached', async ({ page }) => {
+    await setupWriteMode(page);
+
+    // Set session goal to 1 for quick test
+    await page.selectOption('#sessionGoalSelect', '5');
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Answer 5 cards
+    for (let i = 0; i < 5; i++) {
+      await page.click('#showAnswerBtn');
+      await page.click('#correctBtn');
+      await page.waitForTimeout(500);
+    }
+
+    // Modal should appear after slight delay
+    await expect(page.locator('#sessionCompleteModal')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('#sessionCompleteModal')).toContainText('Session Complete');
+    await expect(page.locator('#modalCardsCompleted')).toHaveText('5');
+  });
+
+  test('End Session button resets session stats to 0/0', async ({ page }) => {
+    await setupWriteMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Record some answers
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+    await page.waitForTimeout(500);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#wrongBtn');
+    await expect(page.locator('#writeNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+
+    // Stats should show 1 correct, 1 wrong
+    await expect(page.locator('#gameStats')).toContainText('✓ 1');
+    await expect(page.locator('#gameStats')).toContainText('✗ 1');
+
+    // Click Back to end session
+    await page.click('#backBtn');
+
+    // Return to home screen
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+
+    // Session stats should be reset to 0/0
+    await expect(page.locator('#sessionCorrect')).toHaveText('0');
+    await expect(page.locator('#sessionWrong')).toHaveText('0');
+  });
+
+  test('End Session from modal resets session stats to 0/0', async ({ page }) => {
+    await setupWriteMode(page);
+
+    // Set goal to 1
+    await page.selectOption('#sessionGoalSelect', '5');
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Complete 5 cards
+    for (let i = 0; i < 5; i++) {
+      await page.click('#showAnswerBtn');
+      await page.click('#correctBtn');
+      await page.waitForTimeout(500);
+    }
+
+    // Modal appears
+    await expect(page.locator('#sessionCompleteModal')).toBeVisible({ timeout: 3000 });
+
+    // Click End Session
+    await page.click('#endSessionBtn');
+
+    // Should be back at home
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+
+    // Session stats should be reset
+    await expect(page.locator('#sessionCorrect')).toHaveText('0');
+    await expect(page.locator('#sessionWrong')).toHaveText('0');
+  });
+
+  test('Continue button shows extension options and extends session goal', async ({ page }) => {
+    await setupWriteMode(page);
+
+    await page.selectOption('#sessionGoalSelect', '5');
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Complete 5 cards
+    for (let i = 0; i < 5; i++) {
+      await page.click('#showAnswerBtn');
+      await page.click('#correctBtn');
+      await page.waitForTimeout(500);
+    }
+
+    await expect(page.locator('#sessionCompleteModal')).toBeVisible({ timeout: 3000 });
+
+    // Click Continue
+    await page.click('#continueSessionBtn');
+
+    // Extension options should appear
+    await expect(page.locator('#continueOptions')).toBeVisible();
+    await expect(page.locator('[data-continue="5"]')).toBeVisible();
+    await expect(page.locator('[data-continue="10"]')).toBeVisible();
+    await expect(page.locator('[data-continue="15"]')).toBeVisible();
+
+    // Click +5
+    await page.click('[data-continue="5"]');
+
+    // Modal should close and game should continue
+    await expect(page.locator('#sessionCompleteModal')).not.toBeVisible();
+    await expect(page.locator('#gameScreen')).toHaveClass(/active/);
+
+    // Progress should now show 5/10 cards
+    await expect(page.locator('#sessionProgressText')).toHaveText('5/10 cards');
+  });
+
+  test('No limit mode hides progress bar and never shows modal', async ({ page }) => {
+    await setupWriteMode(page);
+
+    await page.selectOption('#sessionGoalSelect', '999999');
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Progress bar should be hidden
+    await expect(page.locator('#sessionProgress')).not.toBeVisible();
+
+    // Answer one card (which would trigger modal if goal was 1)
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+    await page.waitForTimeout(2000); // Wait longer than modal delay
+
+    // Modal should never appear in no-limit mode
+    await expect(page.locator('#sessionCompleteModal')).not.toBeVisible();
+  });
+
+  test('reviews due badge shows correct count', async ({ page }) => {
+    // Setup with 10 cards, all due
+    await page.evaluate(() => {
+      const flashcards = Array.from({ length: 5 }, (_, i) => ({
+        word: `字${i}`,
+        word_hanyupinyin: 'pinyin',
+        word_english: 'word',
+        sentence: '句子',
+        sentence_hanyupinyin: 'pinyin',
+        sentence_english: 'sentence'
+      }));
+      const progress: Record<string, any> = {};
+      flashcards.forEach(card => {
+        progress[card.word] = {
+          read: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 },
+          write: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 }
+        };
+      });
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards,
+        progress
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+
+    // 5 cards × 2 modes = 10 due
+    await expect(page.locator('#reviewsDueCount')).toHaveText('10');
+    await expect(page.locator('#reviewsDueBadge')).toBeVisible();
+  });
+
+  test('recommendation text adjusts based on backlog severity', async ({ page }) => {
+    // Test 0 due
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 7,
+      writeNextReview: Date.now() + 9999999999,
+    });
+    await expect(page.locator('#sessionRecommendation')).toContainText('10 new cards');
+    await expect(page.locator('#sessionGoalSelect')).toHaveValue('10');
+
+    // Test high backlog (>50 due) by creating many cards
+    await clearStorage(page);
+    await page.evaluate(() => {
+      const flashcards = Array.from({ length: 30 }, (_, i) => ({
+        word: `字${i}`,
+        word_hanyupinyin: 'pinyin',
+        word_english: 'word',
+        sentence: '句子',
+        sentence_hanyupinyin: 'pinyin',
+        sentence_english: 'sentence'
+      }));
+      const progress: Record<string, any> = {};
+      flashcards.forEach(card => {
+        progress[card.word] = {
+          read: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 },
+          write: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 0 }
+        };
+      });
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards,
+        progress
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+
+    // 30 cards × 2 modes = 60 due, should recommend 25
+    await expect(page.locator('#sessionRecommendation')).toContainText('25 cards');
+    await expect(page.locator('#sessionRecommendation')).toContainText('High backlog');
+    await expect(page.locator('#sessionGoalSelect')).toHaveValue('25');
+  });
+});

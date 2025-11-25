@@ -908,6 +908,7 @@
                 <option value="10" selected>10 cards</option>
                 <option value="15">15 cards</option>
                 <option value="20">20 cards</option>
+                <option value="25">25 cards</option>
                 <option value="30">30 cards</option>
                 <option value="999999">No limit</option>
               </select>
@@ -1309,7 +1310,7 @@
       // Set session goal dropdown to match recommendation
       const goalSelect = document.getElementById('sessionGoalSelect');
       // Find closest available option to recommended value
-      const availableOptions = [5, 10, 15, 20, 30];
+      const availableOptions = [5, 10, 15, 20, 25, 30];
       const closestOption = availableOptions.reduce((prev, curr) => {
         return Math.abs(curr - recommended) < Math.abs(prev - recommended) ? curr : prev;
       });
