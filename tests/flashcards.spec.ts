@@ -432,6 +432,37 @@ test.describe('READ Mode', () => {
     await expect(warningWrite).toBeAttached();
     await expect(warningWrite).not.toHaveClass(/visible/);
   });
+
+  test('I said it correctly button marks as success and advances', async ({ page }) => {
+    await setupReadMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Click "I don't know" to reveal the "I said it correctly" button
+    await page.click('#dontKnowBtn');
+
+    // Wait for next button group to appear
+    await expect(page.locator('#readNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+    await expect(page.locator('#iSaidItCorrectlyBtn')).toBeVisible();
+
+    // Get initial storage state
+    const storageBefore = await getStorageData(page);
+    const initialStats = await page.locator('#gameStats').textContent();
+
+    // Click "I said it correctly"
+    await page.click('#iSaidItCorrectlyBtn');
+
+    // Wait briefly for the action to complete
+    await page.waitForTimeout(500);
+
+    // Stats should show 1 correct (the button was clicked after "I don't know" recorded failure)
+    await expect(page.locator('#gameStats')).toContainText('✓ 1');
+
+    // Progress should advance (override the failure from "I don't know")
+    const storageAfter = await getStorageData(page);
+    expect(storageAfter.files[0].progress['你'].read.successCount).toBe(1);
+    expect(storageAfter.files[0].progress['你'].read.intervalIndex).toBeGreaterThan(0);
+  });
 });
 
 test.describe('WRITE Mode', () => {
