@@ -1316,8 +1316,8 @@
       document.getElementById('readSentenceEnglish').textContent = currentCard.sentence_english;
       document.getElementById('readCardLabel').textContent = currentCard.label || '';
 
-      // Auto-start speech recognition
-      setTimeout(() => startSpeechRecognition(), 300);
+      // Fully restart speech recognition to clear results buffer
+      restartSpeechRecognition();
     }
 
     function showWriteMode() {
@@ -1381,6 +1381,13 @@
         };
 
         recognition.onresult = (event) => {
+          // Check if too many results accumulated (only restart if no progress)
+          if (event.results.length > 50 && lastMatchLen === 0) {
+            console.warn('Too many results accumulated without match, restarting recognition...');
+            restartSpeechRecognition();
+            return;
+          }
+
           // Accumulate all results from the beginning
           let transcript = '';
           for (let i = 0; i < event.results.length; i++) {
@@ -1402,7 +1409,17 @@
 
         recognition.onend = () => {
           if (document.getElementById('micBtn').classList.contains('listening')) {
-            recognition.start();
+            try {
+              recognition.start();
+            } catch(e) {
+              console.error('Failed to restart recognition:', e);
+              // Trigger error UI
+              recognitionStarting = false;
+              document.getElementById('micBtn').classList.remove('listening');
+              document.getElementById('micBtn').classList.add('error');
+              document.getElementById('readMode').classList.add('mic-error');
+              document.getElementById('modeIndicator').textContent = 'READ: Mic stopped. Tap anywhere to retry.';
+            }
           }
         };
       }
@@ -1546,6 +1563,29 @@
       micBtn.innerHTML = '&#127908;'; // Restore mic icon
       document.getElementById('speechInput').classList.remove('listening');
       document.getElementById('speechTip').classList.add('hidden');
+    }
+
+    function restartSpeechRecognition() {
+      // Stop existing recognition
+      if (recognition) {
+        try { recognition.stop(); } catch(e) {}
+      }
+
+      // Show loading indicator
+      const micBtn = document.getElementById('micBtn');
+      micBtn.classList.remove('listening', 'error');
+      micBtn.classList.add('starting');
+      micBtn.innerHTML = '<span class="spinner"></span>';
+      document.getElementById('speechInput').value = '';
+      document.getElementById('speechTip').textContent = 'Restarting mic...';
+      document.getElementById('speechTip').classList.remove('hidden');
+      document.getElementById('readMode').classList.remove('mic-error');
+
+      // Wait for clean shutdown, then recreate and start
+      setTimeout(() => {
+        setupSpeechRecognition(); // Recreate fresh instance
+        startSpeechRecognition();
+      }, 200);
     }
 
     // Convert Arabic numerals to Chinese characters
