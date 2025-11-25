@@ -1394,20 +1394,19 @@
             transcript += event.results[i][0].transcript;
           }
 
-          // Truncate if no match and transcript is longer than sentence
-          if (currentCard && lastMatchLen === 0) {
-            const normalizedTranscript = normalizeForSpeechMatch(transcript);
-            const normalizedSentence = normalizeForSpeechMatch(currentCard.sentence);
-            if (normalizedTranscript.length > normalizedSentence.length) {
-              // Remove first 66% of characters to help user recover from wrong start
-              const charsToRemove = Math.floor(transcript.length * 0.66);
-              transcript = transcript.substring(charsToRemove);
+          // Always show only the last N characters where N = sentence length
+          // This prevents the display from growing unbounded
+          let displayTranscript = transcript;
+          if (currentCard) {
+            const sentenceLength = currentCard.sentence.length;
+            if (transcript.length > sentenceLength) {
+              displayTranscript = transcript.substring(transcript.length - sentenceLength);
             }
           }
 
-          document.getElementById('speechInput').value = transcript;
-          updateSentenceHighlight(transcript);
-          checkSpeechMatch(transcript);
+          document.getElementById('speechInput').value = displayTranscript;
+          updateSentenceHighlight(displayTranscript);
+          checkSpeechMatch(displayTranscript);
         };
 
         recognition.onerror = (event) => {
