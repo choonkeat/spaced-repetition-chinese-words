@@ -1269,6 +1269,15 @@
         recommended = 20;
         document.getElementById('sessionRecommendation').textContent = `Recommended: 20 cards (~10 min)`;
       }
+
+      // Set session goal dropdown to match recommendation
+      const goalSelect = document.getElementById('sessionGoalSelect');
+      // Find closest available option to recommended value
+      const availableOptions = [5, 10, 15, 20, 30];
+      const closestOption = availableOptions.reduce((prev, curr) => {
+        return Math.abs(curr - recommended) < Math.abs(prev - recommended) ? curr : prev;
+      });
+      goalSelect.value = closestOption;
     }
 
     function calculateFileStats(file) {
