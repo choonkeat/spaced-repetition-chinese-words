@@ -1290,6 +1290,7 @@
       document.getElementById('showEnglishBtn').disabled = false;
       document.getElementById('dontKnowBtn').classList.remove('hidden');
       document.getElementById('dontKnowBtn').disabled = false;
+      document.getElementById('iSaidItCorrectlyBtn').style.display = 'block';
       document.getElementById('speechInput').value = '';
       document.getElementById('speechInput').style.display = 'block';
       document.getElementById('speechInput').classList.remove('listening');
@@ -1396,13 +1397,14 @@
             transcript += event.results[i][0].transcript;
           }
 
-          // Always show only the last N characters where N = sentence length
+          // Always show only the last N characters where N = normalized sentence length
+          // (without punctuation, since punctuation can't be spoken)
           // This prevents the display from growing unbounded
           let displayTranscript = transcript;
           if (currentCard) {
-            const sentenceLength = currentCard.sentence.length;
-            if (transcript.length > sentenceLength) {
-              displayTranscript = transcript.substring(transcript.length - sentenceLength);
+            const normalizedSentenceLength = normalizeForSpeechMatch(currentCard.sentence).length;
+            if (transcript.length > normalizedSentenceLength) {
+              displayTranscript = transcript.substring(transcript.length - normalizedSentenceLength);
             }
           }
 
@@ -1794,6 +1796,8 @@
       document.getElementById('showPinyinBtn').classList.add('hidden');
       document.getElementById('showEnglishBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
+      // Hide "I said it correctly" button since they already got it right
+      document.getElementById('iSaidItCorrectlyBtn').style.display = 'none';
     }
 
     function handleShowPinyin() {
