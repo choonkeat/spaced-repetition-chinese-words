@@ -465,22 +465,24 @@ test.describe('WRITE Mode', () => {
     await expect(page.locator('#showAnswerBtn')).toBeVisible();
   });
 
-  test('Show answer reveals Chinese and shows correct/wrong buttons', async ({ page }) => {
+  test('Show answer reveals Chinese and shows correct/wrong buttons after TTS', async ({ page }) => {
     await setupWriteMode(page);
     await page.click('#playBtn');
     await waitForGameScreen(page);
 
     await page.click('#showAnswerBtn');
 
-    // Chinese revealed
+    // Chinese revealed immediately
     await expect(page.locator('#writeWordChinese')).not.toHaveClass(/hidden/);
     await expect(page.locator('#writeWordChinese')).toHaveText('你');
     await expect(page.locator('#writeSentenceChinese')).not.toHaveClass(/hidden/);
     await expect(page.locator('#writeSentenceChinese')).toContainText('你好');
 
-    // Button groups swapped
+    // Show group hidden immediately
     await expect(page.locator('#writeShowGroup')).toHaveClass(/hidden/);
-    await expect(page.locator('#writeAnswerGroup')).not.toHaveClass(/hidden/);
+
+    // Answer group appears after TTS completes
+    await expect(page.locator('#writeAnswerGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
     await expect(page.locator('#wrongBtn')).toBeVisible();
     await expect(page.locator('#correctBtn')).toBeVisible();
   });

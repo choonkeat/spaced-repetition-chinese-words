@@ -335,6 +335,10 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
     .btn-secondary { background: #e0e0e0; color: #333; }
     .btn-secondary:hover { background: #d0d0d0; }
     .btn-primary { background: #2196F3; color: white; }
@@ -1873,7 +1877,13 @@
       document.getElementById('writeWordChinese').classList.remove('hidden');
       document.getElementById('writeSentenceChinese').classList.remove('hidden');
       document.getElementById('writeShowGroup').classList.add('hidden');
-      document.getElementById('writeAnswerGroup').classList.remove('hidden');
+
+      // Speak word then sentence, then show buttons
+      const wordEl = document.getElementById('writeWordChinese');
+      const sentenceEl = document.getElementById('writeSentenceChinese');
+      speakWordThenSentence(wordEl, sentenceEl, () => {
+        document.getElementById('writeAnswerGroup').classList.remove('hidden');
+      });
     }
 
     function handleWriteAnswer(isCorrect) {
