@@ -146,6 +146,15 @@
   <h2>"Mastered" Definition</h2>
   <p>A card is considered <strong>"mastered"</strong> when <code>intervalIndex &gt;= 4</code> (3+ days interval). This is displayed in the homepage stats.</p>
 
+  <h2 id="progressive-difficulty-hint-removal">Progressive Difficulty (Hint Removal)</h2>
+  <p>As you progress with a card, hints are gradually removed to ensure true recall:</p>
+  <table>
+    <tr><th>Level</th><th>READ Mode</th><th>WRITE Mode</th></tr>
+    <tr><td>0-1</td><td>"Show hanyupinyin" button available</td><td>"Show hint" button available</td></tr>
+    <tr style="background:#fff3e0;"><td>2+</td><td>No pinyin hint — must recall pronunciation</td><td>No hint button — must recall characters</td></tr>
+  </table>
+  <p><strong>Why?</strong> At levels 0-1, you're still learning the card and hints help reinforce memory. By level 2, you've succeeded twice — now it's time to prove you can recall without aids. If you fail at level 2+, you reset to level 0 and hints become available again.</p>
+
   <h2>Initial State</h2>
   <p>For new cards (no progress data):</p>
   <ul>
