@@ -689,22 +689,22 @@
     }
     .card-footer {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
       margin-top: 15px;
       padding-top: 10px;
       border-top: 1px solid #eee;
       font-size: 12px;
       color: #aaa;
     }
-    .card-label {
+    .card-level-info {
       text-align: left;
     }
-    .card-level-info {
-      text-align: right;
-    }
     .card-level-info a {
-      color: #888;
+      color: #2196F3;
+    }
+    .card-label {
+      text-align: right;
     }
     .success-msg {
       color: #2e7d32;
@@ -986,8 +986,8 @@
             <button class="btn btn-success" id="readNextBtn">Next card</button>
           </div>
           <div class="card-footer">
-            <div class="card-label" id="readCardLabel"></div>
             <div class="card-level-info" id="readLevelInfo"></div>
+            <div class="card-label" id="readCardLabel"></div>
           </div>
         </div>
 
@@ -1021,8 +1021,8 @@
             <button class="btn btn-success" id="writeNextBtn">Next card</button>
           </div>
           <div class="card-footer">
-            <div class="card-label" id="writeCardLabel"></div>
             <div class="card-level-info" id="writeLevelInfo"></div>
+            <div class="card-label" id="writeCardLabel"></div>
           </div>
         </div>
       </div>
@@ -1806,26 +1806,24 @@
       const intervalIndex = modeProgress?.intervalIndex || 0;
       const hideHints = intervalIndex >= 2;
 
-      // Build level info message
-      let levelInfo = `Level ${intervalIndex}`;
-      if (hideHints) {
-        levelInfo += ' · <a href="SPACED_REPETITION.html#progressive-difficulty-hint-removal" target="_blank">No hints</a>';
-      }
-
       if (currentMode === 'read') {
         showReadMode();
         // Hide "Show hanyupinyin" button for level 2+ cards
         if (hideHints) {
           document.getElementById('showPinyinBtn').classList.add('hidden');
+          document.getElementById('readLevelInfo').innerHTML = `Level ${intervalIndex} · No more "Show hanyupinyin" button · <a href="SPACED_REPETITION.html#progressive-difficulty-hint-removal" target="_blank">Read why</a>`;
+        } else {
+          document.getElementById('readLevelInfo').innerHTML = `Level ${intervalIndex}`;
         }
-        document.getElementById('readLevelInfo').innerHTML = levelInfo;
       } else {
         showWriteMode();
         // Hide "Show hint" button for level 2+ cards
         if (hideHints) {
           document.getElementById('showHintBtn').classList.add('hidden');
+          document.getElementById('writeLevelInfo').innerHTML = `Level ${intervalIndex} · No more "Show hint" button · <a href="SPACED_REPETITION.html#progressive-difficulty-hint-removal" target="_blank">Read why</a>`;
+        } else {
+          document.getElementById('writeLevelInfo').innerHTML = `Level ${intervalIndex}`;
         }
-        document.getElementById('writeLevelInfo').innerHTML = levelInfo;
       }
 
       updateGameStats();
