@@ -2182,6 +2182,8 @@
             count: sessionStats[file.id].correct,
             timestamp: Date.now()
           };
+          // Update sidebar immediately to reflect new highscore
+          renderFileList();
         }
       } else {
         sessionStats[file.id].wrong++;
