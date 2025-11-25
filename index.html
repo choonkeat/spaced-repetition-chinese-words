@@ -1974,10 +1974,13 @@
       // Disable "Say it again" buttons during speech (immediately)
       const readSayAgainBtn = document.getElementById('readSayAgainBtn');
       const writeSayAgainBtn = document.getElementById('writeSayAgainBtn');
+      const writeAnswerSayAgainBtn = document.getElementById('writeAnswerSayAgainBtn');
       readSayAgainBtn.disabled = true;
       readSayAgainBtn.style.opacity = '0.5';
       writeSayAgainBtn.disabled = true;
       writeSayAgainBtn.style.opacity = '0.5';
+      writeAnswerSayAgainBtn.disabled = true;
+      writeAnswerSayAgainBtn.style.opacity = '0.5';
 
       // Delay after cancel() to avoid race condition in some browsers
       setTimeout(() => {
@@ -2015,6 +2018,8 @@
               readSayAgainBtn.style.opacity = '1';
               writeSayAgainBtn.disabled = false;
               writeSayAgainBtn.style.opacity = '1';
+              writeAnswerSayAgainBtn.disabled = false;
+              writeAnswerSayAgainBtn.style.opacity = '1';
               if (callback) callback();
             };
             speechSynthesis.speak(sentenceUtterance);
