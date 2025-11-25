@@ -1951,7 +1951,11 @@
         const file = getCurrentFile();
         if (!file) return;
         const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
-        const scoreText = `${session.correct} 比 ${session.wrong}`;
+
+        // Say "加油" (keep going) when score is 0-0, otherwise say the score
+        const scoreText = (session.correct === 0 && session.wrong === 0)
+          ? '加油'
+          : `${session.correct} 比 ${session.wrong}`;
 
         // Highlight score while speaking
         const gameStats = document.getElementById('gameStats');
@@ -2204,6 +2208,17 @@
         cancelAnimationFrame(confettiAnimationId);
         confettiAnimationId = null;
       }
+
+      // Say "你真棒!" (You're awesome!)
+      const utterance = new SpeechSynthesisUtterance('你真棒!');
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = 'zh-CN';
+      }
+      utterance.rate = 1.0;
+      speechSynthesis.speak(utterance);
 
       const canvas = document.getElementById('confettiCanvas');
       const ctx = canvas.getContext('2d');
