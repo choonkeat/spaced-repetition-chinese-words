@@ -240,6 +240,62 @@
     }
     .stats-row .stat-value.due { color: #ff9800; }
     .stats-row .stat-value.mastered { color: #4CAF50; }
+    /* Session goal section */
+    .session-goal-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    .session-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .reviews-due-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 20px;
+      background: #fff3e0;
+      border-radius: 8px;
+      border: 2px solid #ff9800;
+    }
+    .badge-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff9800;
+    }
+    .badge-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+    }
+    .session-recommendation {
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+    }
+    .session-goal-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .session-goal-selector label {
+      font-weight: 600;
+      color: #333;
+    }
+    .session-goal-selector select {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+    }
     .play-btn {
       background: #4CAF50;
       color: white;
@@ -454,6 +510,141 @@
     }
     .mic-btn.retrying { animation: pulse 0.5s infinite; background: #ff9800; }
     #readMode.mic-error { cursor: pointer; }
+    /* Session progress bar */
+    .session-progress {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    .progress-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      transition: width 0.3s ease-in-out;
+      border-radius: 10px;
+    }
+    /* Session complete modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 {
+      margin: 0 0 20px 0;
+      color: #4CAF50;
+      font-size: 24px;
+    }
+    .session-summary {
+      margin: 20px 0;
+    }
+    .summary-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .summary-stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 16px;
+    }
+    .stat-correct {
+      color: #4CAF50;
+      font-weight: 600;
+    }
+    .stat-wrong {
+      color: #f44336;
+      font-weight: 600;
+    }
+    .remaining-work {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+    .remaining-work p {
+      margin: 5px 0;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #43A047;
+    }
+    .btn-secondary {
+      background: #2196F3;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #1976D2;
+    }
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .continue-options {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #e0e0e0;
+    }
+    .continue-options p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .continue-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
     .confetti {
       position: fixed;
       top: 0;
@@ -699,6 +890,30 @@
             </div>
           </div>
 
+          <!-- Session Goal Selector -->
+          <div class="session-goal-section">
+            <div class="session-info">
+              <div class="reviews-due-badge" id="reviewsDueBadge">
+                <span class="badge-number" id="reviewsDueCount">0</span>
+                <span class="badge-label">reviews due</span>
+              </div>
+              <div class="session-recommendation" id="sessionRecommendation">
+                Recommended: 10 cards (~5 min)
+              </div>
+            </div>
+            <div class="session-goal-selector">
+              <label for="sessionGoalSelect">Session goal:</label>
+              <select id="sessionGoalSelect">
+                <option value="5">5 cards</option>
+                <option value="10" selected>10 cards</option>
+                <option value="15">15 cards</option>
+                <option value="20">20 cards</option>
+                <option value="30">30 cards</option>
+                <option value="999999">No limit</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Play button -->
           <button class="play-btn" id="playBtn">Start Practice</button>
         </div>
@@ -719,6 +934,16 @@
         </div>
 
         <div class="game-stats" id="gameStats"></div>
+
+        <!-- Session Progress -->
+        <div class="session-progress" id="sessionProgress" style="display:none;">
+          <div class="progress-label">
+            <span id="sessionProgressText">0/10 cards</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="sessionProgressBar" style="width: 0%"></div>
+          </div>
+        </div>
 
         <!-- Read Mode -->
         <div id="readMode" style="display: none;">
@@ -787,6 +1012,36 @@
 
   <canvas id="confettiCanvas" class="confetti"></canvas>
 
+  <!-- Session Complete Modal -->
+  <div id="sessionCompleteModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>🎉 Session Complete! 🎉</h2>
+      <div class="session-summary">
+        <p class="summary-text">You completed <span id="modalCardsCompleted">0</span> cards</p>
+        <div class="summary-stats">
+          <span class="stat-correct">✓ <span id="modalCorrectCount">0</span> correct</span>
+          <span class="stat-wrong">✗ <span id="modalWrongCount">0</span> wrong</span>
+        </div>
+      </div>
+      <div class="remaining-work">
+        <p id="modalRemainingReviews"></p>
+        <p id="modalNewCardsAvailable"></p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="endSessionBtn">End Session</button>
+        <button class="btn btn-secondary" id="continueSessionBtn">Continue</button>
+      </div>
+      <div id="continueOptions" class="continue-options" style="display:none;">
+        <p>How many more cards?</p>
+        <div class="continue-buttons">
+          <button class="btn btn-small" data-continue="5">+5</button>
+          <button class="btn btn-small" data-continue="10">+10</button>
+          <button class="btn btn-small" data-continue="15">+15</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Storage keys
     const STORAGE_KEY = 'flashcard_files';
@@ -835,6 +1090,8 @@
     let recognition = null;
     let sessionStats = {}; // { fileId: { correct: 0, wrong: 0 } }
     let selectedVoice = null;
+    let sessionGoal = 10; // Default session goal
+    let sessionCardsCompleted = 0; // Cards completed in current session
 
     // DOM elements
     const fileInput = document.getElementById('fileInput');
@@ -992,6 +1249,26 @@
       document.getElementById('writeDue').textContent = stats.write.dueNow;
       document.getElementById('writePracticed').textContent = stats.write.practiced;
       document.getElementById('writeMastered').textContent = stats.write.mastered;
+
+      // Update reviews due badge and recommendation
+      const totalDue = stats.read.dueNow + stats.write.dueNow;
+      document.getElementById('reviewsDueCount').textContent = totalDue;
+
+      // Calculate recommended session size
+      let recommended = 10; // default
+      if (totalDue === 0) {
+        recommended = 10; // Just new cards
+        document.getElementById('sessionRecommendation').textContent = 'Recommended: 10 new cards (~5 min)';
+      } else if (totalDue <= 5) {
+        recommended = Math.min(totalDue + 5, 15);
+        document.getElementById('sessionRecommendation').textContent = `Recommended: ${recommended} cards (~5 min)`;
+      } else if (totalDue <= 15) {
+        recommended = Math.min(totalDue, 15);
+        document.getElementById('sessionRecommendation').textContent = `Recommended: ${recommended} cards (~8 min)`;
+      } else {
+        recommended = 20;
+        document.getElementById('sessionRecommendation').textContent = `Recommended: 20 cards (~10 min)`;
+      }
     }
 
     function calculateFileStats(file) {
@@ -1150,6 +1427,31 @@
         speakWordThenSentence(wordEl, sentenceEl);
       });
       document.getElementById('writeNextBtn').addEventListener('click', () => nextCard());
+
+      // Session complete modal
+      document.getElementById('endSessionBtn').addEventListener('click', () => {
+        document.getElementById('sessionCompleteModal').style.display = 'none';
+        endGame();
+      });
+
+      document.getElementById('continueSessionBtn').addEventListener('click', () => {
+        const continueOptions = document.getElementById('continueOptions');
+        if (continueOptions.style.display === 'none') {
+          continueOptions.style.display = 'block';
+        } else {
+          continueOptions.style.display = 'none';
+        }
+      });
+
+      document.querySelectorAll('[data-continue]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const additionalCards = parseInt(e.target.dataset.continue);
+          sessionGoal += additionalCards;
+          document.getElementById('sessionCompleteModal').style.display = 'none';
+          updateSessionProgress();
+          nextCard();
+        });
+      });
 
       // Hamburger menu (mobile)
       const hamburger = document.getElementById('hamburger');
@@ -1322,6 +1624,19 @@
     async function startGame() {
       if (!currentFileId) return;
 
+      // Get session goal from selector
+      sessionGoal = parseInt(document.getElementById('sessionGoalSelect').value);
+      sessionCardsCompleted = 0;
+
+      // Show/hide session progress based on goal
+      const progressEl = document.getElementById('sessionProgress');
+      if (sessionGoal < 999999) {
+        progressEl.style.display = 'block';
+        updateSessionProgress();
+      } else {
+        progressEl.style.display = 'none';
+      }
+
       // Request mic permission early (for iOS audio detection)
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1341,6 +1656,47 @@
       stopSpeechRecognition();
       renderFileList();
       updateSelectedFileStats();
+      // Reset session tracking
+      sessionCardsCompleted = 0;
+    }
+
+    function updateSessionProgress() {
+      if (sessionGoal >= 999999) return; // No limit mode
+
+      const percentage = Math.min((sessionCardsCompleted / sessionGoal) * 100, 100);
+      document.getElementById('sessionProgressText').textContent = `${sessionCardsCompleted}/${sessionGoal} cards`;
+      document.getElementById('sessionProgressBar').style.width = `${percentage}%`;
+    }
+
+    function checkSessionComplete() {
+      if (sessionGoal >= 999999) return false; // No limit mode
+      return sessionCardsCompleted >= sessionGoal;
+    }
+
+    function showSessionCompleteModal() {
+      const file = getCurrentFile();
+      if (!file) return;
+
+      const session = sessionStats[file.id] || { correct: 0, wrong: 0 };
+      const stats = calculateFileStats(file);
+      const totalDue = stats.read.dueNow + stats.write.dueNow;
+      const totalNew = file.flashcards.length * 2 - (stats.read.practiced + stats.write.practiced);
+
+      // Populate modal
+      document.getElementById('modalCardsCompleted').textContent = sessionCardsCompleted;
+      document.getElementById('modalCorrectCount').textContent = session.correct;
+      document.getElementById('modalWrongCount').textContent = session.wrong;
+
+      if (totalDue > 0) {
+        document.getElementById('modalRemainingReviews').textContent = `${totalDue} reviews still due`;
+      } else {
+        document.getElementById('modalRemainingReviews').textContent = '✓ All reviews complete!';
+      }
+
+      document.getElementById('modalNewCardsAvailable').textContent = `${totalNew} new cards available`;
+
+      // Show modal
+      document.getElementById('sessionCompleteModal').style.display = 'flex';
     }
 
     function nextCard() {
@@ -2225,8 +2581,18 @@
       modeProgress.nextReview = Date.now() + INTERVALS[modeProgress.intervalIndex];
       file.progress[currentCard.word][currentMode] = modeProgress;
 
+      // Track session progress
+      sessionCardsCompleted++;
+      updateSessionProgress();
+
       saveToStorage();
       updateGameStats();
+
+      // Check if session goal reached
+      if (checkSessionComplete()) {
+        // Delay modal slightly to allow confetti/animations to show
+        setTimeout(() => showSessionCompleteModal(), 1500);
+      }
     }
 
     // Confetti
