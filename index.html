@@ -1279,8 +1279,11 @@
       document.getElementById('readSentenceEnglish').classList.add('hidden');
       document.getElementById('readNextGroup').classList.add('hidden');
       document.getElementById('showPinyinBtn').classList.remove('hidden');
+      document.getElementById('showPinyinBtn').disabled = false;
       document.getElementById('showEnglishBtn').classList.remove('hidden');
+      document.getElementById('showEnglishBtn').disabled = false;
       document.getElementById('dontKnowBtn').classList.remove('hidden');
+      document.getElementById('dontKnowBtn').disabled = false;
       document.getElementById('speechInput').value = '';
       document.getElementById('speechInput').style.display = 'block';
       document.getElementById('speechInput').classList.remove('listening');
@@ -1684,7 +1687,9 @@
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('readNextGroup').classList.remove('hidden');
-      document.getElementById('showHintBtn').classList.add('hidden');
+      // Hide all 3 buttons when successful
+      document.getElementById('showPinyinBtn').classList.add('hidden');
+      document.getElementById('showEnglishBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
     }
 
@@ -1692,14 +1697,14 @@
       // Reveal pinyin only (doesn't count as fail)
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
-      document.getElementById('showPinyinBtn').classList.add('hidden');
+      document.getElementById('showPinyinBtn').disabled = true;
     }
 
     function handleShowEnglish() {
       // Reveal english only (doesn't count as fail)
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
-      document.getElementById('showEnglishBtn').classList.add('hidden');
+      document.getElementById('showEnglishBtn').disabled = true;
     }
 
     function handleDontKnow() {

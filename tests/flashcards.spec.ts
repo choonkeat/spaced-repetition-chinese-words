@@ -369,8 +369,8 @@ test.describe('READ Mode', () => {
     await expect(page.locator('#readWordEnglish')).toHaveClass(/hidden/);
     await expect(page.locator('#readSentenceEnglish')).toHaveClass(/hidden/);
 
-    // Show pinyin button hidden after clicking
-    await expect(page.locator('#showPinyinBtn')).toHaveClass(/hidden/);
+    // Show pinyin button disabled after clicking
+    await expect(page.locator('#showPinyinBtn')).toBeDisabled();
 
     // Click show english
     await page.click('#showEnglishBtn');
@@ -380,8 +380,8 @@ test.describe('READ Mode', () => {
     await expect(page.locator('#readWordEnglish')).toHaveText('you');
     await expect(page.locator('#readSentenceEnglish')).not.toHaveClass(/hidden/);
 
-    // Show english button hidden after clicking
-    await expect(page.locator('#showEnglishBtn')).toHaveClass(/hidden/);
+    // Show english button disabled after clicking
+    await expect(page.locator('#showEnglishBtn')).toBeDisabled();
 
     // Stats unchanged (hints don't count as wrong)
     await expect(page.locator('#gameStats')).toContainText('✓ 0');
