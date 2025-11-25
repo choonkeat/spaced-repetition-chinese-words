@@ -123,10 +123,32 @@ test.describe('File Upload & Management', () => {
     await page.reload();
   });
 
-  test('shows welcome message when no files uploaded', async ({ page }) => {
+  test('pre-populates Sample file when localStorage is empty', async ({ page }) => {
+    // Sample file should be auto-created
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
+    await expect(page.locator('.file-item-stats')).toContainText('50 words');
+
+    // Welcome message should explain spaced repetition and encourage trying the Sample
     await expect(page.locator('#welcomeMessage')).toBeVisible();
-    await expect(page.locator('#welcomeMessage')).toContainText('Upload a JSON file to get started');
-    await expect(page.locator('#selectedFileStats')).not.toBeVisible();
+    await expect(page.locator('#welcomeMessage')).toContainText('spaced repetition');
+    await expect(page.locator('#welcomeMessage')).toContainText('How it works');
+    await expect(page.locator('#welcomeMessage')).toContainText('New here?');
+    await expect(page.locator('#welcomeMessage')).toContainText('Click "Sample"');
+  });
+
+  test('Sample file is playable', async ({ page }) => {
+    // Click on Sample file
+    await page.locator('.file-item').click();
+
+    // Should show stats panel
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+    await expect(page.locator('#selectedFileName')).toContainText('Sample');
+    await expect(page.locator('#selectedFileWordCount')).toContainText('50 words');
+
+    // Start practice should work
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
   });
 
   test('uploads valid flashcard file and auto-selects it', async ({ page }) => {
@@ -136,11 +158,11 @@ test.describe('File Upload & Management', () => {
     await expect(page.locator('#uploadMsg')).toHaveClass(/success-msg/);
     await expect(page.locator('#uploadMsg')).toContainText('Added "Test Set" with 3 words');
 
-    // Check file appears in sidebar and is auto-selected
-    await expect(page.locator('.file-item')).toHaveCount(1);
-    await expect(page.locator('.file-item')).toHaveClass(/active/);
-    await expect(page.locator('.file-item-name')).toContainText('Test Set');
-    await expect(page.locator('.file-item-stats')).toContainText('3 words');
+    // Check file appears in sidebar and is auto-selected (now 2 files: Sample + uploaded)
+    await expect(page.locator('.file-item')).toHaveCount(2);
+    await expect(page.locator('.file-item.active')).toHaveCount(1);
+    await expect(page.locator('.file-item.active .file-item-name')).toContainText('Test Set');
+    await expect(page.locator('.file-item.active .file-item-stats')).toContainText('3 words');
 
     // Stats panel should be visible with correct data
     await expect(page.locator('#selectedFileStats')).toBeVisible();
@@ -151,8 +173,10 @@ test.describe('File Upload & Management', () => {
   test('uploads file with auto-generated date name when no name provided', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS);
 
-    await expect(page.locator('.file-item')).toHaveCount(1);
-    const fileName = await page.locator('.file-item-name').textContent();
+    // Now 2 files: Sample + uploaded
+    await expect(page.locator('.file-item')).toHaveCount(2);
+    // The uploaded file should be active (selected) and have an auto-generated name
+    const fileName = await page.locator('.file-item.active .file-item-name').textContent();
     // Auto-generated name should contain date components (month, day, year or similar)
     expect(fileName).toBeTruthy();
     expect(fileName!.length).toBeGreaterThan(5); // Should be longer than just a few chars
@@ -165,8 +189,9 @@ test.describe('File Upload & Management', () => {
 
     await expect(page.locator('#uploadMsg')).toHaveClass(/error/);
     await expect(page.locator('#uploadMsg')).toContainText('Invalid schema');
-    // No file should be added
-    await expect(page.locator('.file-item')).toHaveCount(0);
+    // Only Sample file should exist (no new file added)
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
   });
 
   test('uploads backup file and restores progress', async ({ page }) => {
@@ -175,33 +200,35 @@ test.describe('File Upload & Management', () => {
     await expect(page.locator('#uploadMsg')).toHaveClass(/success-msg/);
     await expect(page.locator('#uploadMsg')).toContainText('Restored "My Backup Set"');
 
-    // Verify progress was restored
+    // Verify progress was restored (2 files: Sample + restored backup)
     const storage = await getStorageData(page);
-    expect(storage.files).toHaveLength(1);
-    expect(storage.files[0].progress['谢谢']).toBeDefined();
-    expect(storage.files[0].progress['谢谢'].read.successCount).toBe(3);
-    expect(storage.files[0].progress['谢谢'].write.failCount).toBe(1);
+    expect(storage.files).toHaveLength(2);
+    const backupFile = storage.files.find((f: any) => f.name === 'My Backup Set');
+    expect(backupFile).toBeDefined();
+    expect(backupFile.progress['谢谢']).toBeDefined();
+    expect(backupFile.progress['谢谢'].read.successCount).toBe(3);
+    expect(backupFile.progress['谢谢'].write.failCount).toBe(1);
   });
 
   test('switches between multiple files', async ({ page }) => {
-    // Upload first file
+    // Upload first file (now 2 files total: Sample + uploaded)
     await uploadFile(page, VALID_FLASHCARDS, 'First Set');
-    await expect(page.locator('.file-item')).toHaveCount(1);
-
-    // Upload second file
-    await uploadFile(page, BACKUP_FLASHCARDS);
     await expect(page.locator('.file-item')).toHaveCount(2);
 
-    // Second file should be active (most recent upload)
+    // Upload second file (now 3 files total)
+    await uploadFile(page, BACKUP_FLASHCARDS);
+    await expect(page.locator('.file-item')).toHaveCount(3);
+
+    // Last uploaded file should be active (most recent upload)
     await expect(page.locator('.file-item').last()).toHaveClass(/active/);
 
-    // Click on first file
+    // Click on first file (Sample)
     await page.locator('.file-item').first().click();
-    await expect(page.locator('#selectedFileName')).toContainText('First Set');
+    await expect(page.locator('#selectedFileName')).toContainText('Sample');
     await expect(page.locator('.file-item').first()).toHaveClass(/active/);
     await expect(page.locator('.file-item').last()).not.toHaveClass(/active/);
 
-    // Click on second file
+    // Click on last file (My Backup Set)
     await page.locator('.file-item').last().click();
     await expect(page.locator('#selectedFileName')).toContainText('My Backup Set');
     await expect(page.locator('.file-item').last()).toHaveClass(/active/);
@@ -215,10 +242,12 @@ test.describe('File Upload & Management', () => {
       await dialog.accept();
     });
 
-    await page.locator('.file-item-trash').click();
+    // Delete the uploaded Test Set (the active one)
+    await page.locator('.file-item.active .file-item-trash').click();
 
-    await expect(page.locator('.file-item')).toHaveCount(0);
-    await expect(page.locator('#welcomeMessage')).toBeVisible();
+    // Should be back to just Sample file
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
   });
 
   test('cancels file deletion on dialog dismiss', async ({ page }) => {
@@ -228,16 +257,19 @@ test.describe('File Upload & Management', () => {
       await dialog.dismiss();
     });
 
-    await page.locator('.file-item-trash').click();
+    // Try to delete but cancel
+    await page.locator('.file-item.active .file-item-trash').click();
 
-    await expect(page.locator('.file-item')).toHaveCount(1);
+    // Should still have 2 files (Sample + Test Set)
+    await expect(page.locator('.file-item')).toHaveCount(2);
   });
 
   test('exports file as JSON with progress', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS, 'Export Test');
 
     const downloadPromise = page.waitForEvent('download');
-    await page.locator('.file-item-export').click();
+    // Export the active file (the one just uploaded)
+    await page.locator('.file-item.active .file-item-export').click();
     const download = await downloadPromise;
 
     expect(download.suggestedFilename()).toMatch(/Export_Test-\d{4}-\d{2}-\d{2}.*\.json/);
@@ -246,8 +278,8 @@ test.describe('File Upload & Management', () => {
   test('edits file name inline', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
 
-    // Click edit button
-    await page.locator('.file-item-edit').click();
+    // Click edit button on the active file
+    await page.locator('.file-item.active .file-item-edit').click();
 
     // Should show input field
     const input = page.locator('.file-item-name-input');
@@ -259,35 +291,36 @@ test.describe('File Upload & Management', () => {
     await input.press('Enter');
 
     // Name should be updated
-    await expect(page.locator('.file-item-name')).toHaveText('New Name');
+    await expect(page.locator('.file-item.active .file-item-name')).toHaveText('New Name');
 
     // Verify persistence
     const storage = await getStorageData(page);
-    expect(storage.files[0].name).toBe('New Name');
+    const editedFile = storage.files.find((f: any) => f.name === 'New Name');
+    expect(editedFile).toBeDefined();
   });
 
   test('cancels file name edit on Escape', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
 
-    await page.locator('.file-item-edit').click();
+    await page.locator('.file-item.active .file-item-edit').click();
     const input = page.locator('.file-item-name-input');
     await input.fill('Modified Name');
     await input.press('Escape');
 
     // Name should remain unchanged
-    await expect(page.locator('.file-item-name')).toHaveText('Original Name');
+    await expect(page.locator('.file-item.active .file-item-name')).toHaveText('Original Name');
   });
 
   test('reverts empty file name on blur', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS, 'Original Name');
 
-    await page.locator('.file-item-edit').click();
+    await page.locator('.file-item.active .file-item-edit').click();
     const input = page.locator('.file-item-name-input');
     await input.fill('');
     await input.blur();
 
     // Should revert to original name
-    await expect(page.locator('.file-item-name')).toHaveText('Original Name');
+    await expect(page.locator('.file-item.active .file-item-name')).toHaveText('Original Name');
   });
 });
 
@@ -863,12 +896,14 @@ test.describe('Mobile Responsive', () => {
 });
 
 test.describe('Edge Cases & Error Handling', () => {
-  test('handles empty file list gracefully', async ({ page }) => {
+  test('pre-populates Sample when localStorage is cleared', async ({ page }) => {
     await page.goto('/');
     await clearStorage(page);
     await page.reload();
 
-    await expect(page.locator('.file-item')).toHaveCount(0);
+    // Sample file should be auto-created when localStorage is empty
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
     await expect(page.locator('#welcomeMessage')).toBeVisible();
     await expect(page.locator('#selectedFileStats')).not.toBeVisible();
   });
@@ -904,8 +939,8 @@ test.describe('Edge Cases & Error Handling', () => {
     // Upload with XSS attempt in name
     await uploadFile(page, VALID_FLASHCARDS, '<script>alert("xss")</script>');
 
-    // The script tag should be escaped, not executed
-    const fileName = await page.locator('.file-item-name').innerHTML();
+    // The script tag should be escaped, not executed (check the active file which is the uploaded one)
+    const fileName = await page.locator('.file-item.active .file-item-name').innerHTML();
     expect(fileName).toContain('&lt;script&gt;');
     expect(fileName).not.toContain('<script>');
   });
@@ -929,7 +964,9 @@ test.describe('Empty Array Upload', () => {
 
     await expect(page.locator('#uploadMsg')).toHaveClass(/error/);
     await expect(page.locator('#uploadMsg')).toContainText('non-empty array');
-    await expect(page.locator('.file-item')).toHaveCount(0);
+    // Only Sample file should exist (no new file added)
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
   });
 });
 
@@ -950,7 +987,9 @@ test.describe('Malformed JSON Upload', () => {
     });
 
     await expect(page.locator('#uploadMsg')).toHaveClass(/error/);
-    await expect(page.locator('.file-item')).toHaveCount(0);
+    // Only Sample file should exist (no new file added)
+    await expect(page.locator('.file-item')).toHaveCount(1);
+    await expect(page.locator('.file-item-name')).toContainText('Sample');
   });
 });
 
