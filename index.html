@@ -398,6 +398,7 @@
     }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
+    .hint-blur { filter: blur(8px); }
     .mic-btn {
       background: #f44336;
       color: white;
@@ -730,7 +731,7 @@
             <button class="btn btn-danger" id="dontKnowBtn">I don't know</button>
           </div>
           <div class="btn-group hidden" id="readNextGroup">
-            <button class="btn btn-success" id="iSaidItCorrectlyBtn">I said it correctly</button>
+            <button class="btn btn-secondary" id="iSaidItCorrectlyBtn">I said it correctly</button>
             <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
             <button class="btn btn-success" id="readNextBtn">Next card</button>
           </div>
@@ -751,6 +752,7 @@
             <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="btn-group" id="writeShowGroup">
+            <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
             <button class="btn btn-primary" id="sayItBtn">Say it</button>
             <button class="btn btn-success" id="showAnswerBtn">Check what I wrote</button>
           </div>
@@ -1115,6 +1117,7 @@
       document.getElementById('readNextBtn').addEventListener('click', () => nextCard());
 
       // Write mode
+      document.getElementById('showHintBtn').addEventListener('click', handleShowHint);
       document.getElementById('sayItBtn').addEventListener('click', handleSayIt);
       document.getElementById('showAnswerBtn').addEventListener('click', handleShowAnswer);
       document.getElementById('writeAnswerSayAgainBtn').addEventListener('click', () => {
@@ -1363,8 +1366,11 @@
       document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
 
       document.getElementById('writeWordChinese').classList.add('hidden');
+      document.getElementById('writeWordChinese').classList.remove('hint-blur');
       document.getElementById('writeSentenceChinese').classList.add('hidden');
+      document.getElementById('writeSentenceChinese').classList.remove('hint-blur');
       document.getElementById('writeShowGroup').classList.remove('hidden');
+      document.getElementById('showHintBtn').disabled = false;
       document.getElementById('writeAnswerGroup').classList.add('hidden');
       document.getElementById('writeNextGroup').classList.add('hidden');
       sayItSpeed = 0.3; // Reset speed for new card
@@ -2032,6 +2038,19 @@
     // Say it speed toggle for WRITE mode
     let sayItSpeed = 0.3;
 
+    function handleShowHint() {
+      // Show word and sentence with blur effect
+      const wordEl = document.getElementById('writeWordChinese');
+      const sentenceEl = document.getElementById('writeSentenceChinese');
+      wordEl.classList.remove('hidden');
+      wordEl.classList.add('hint-blur');
+      sentenceEl.classList.remove('hidden');
+      sentenceEl.classList.add('hint-blur');
+
+      // Disable the button after clicking
+      document.getElementById('showHintBtn').disabled = true;
+    }
+
     function handleSayIt() {
       const btn = document.getElementById('sayItBtn');
       btn.disabled = true;
@@ -2061,13 +2080,18 @@
     }
 
     function handleShowAnswer() {
-      document.getElementById('writeWordChinese').classList.remove('hidden');
-      document.getElementById('writeSentenceChinese').classList.remove('hidden');
+      const wordEl = document.getElementById('writeWordChinese');
+      const sentenceEl = document.getElementById('writeSentenceChinese');
+
+      // Remove blur effect if hint was shown
+      wordEl.classList.remove('hint-blur');
+      sentenceEl.classList.remove('hint-blur');
+
+      wordEl.classList.remove('hidden');
+      sentenceEl.classList.remove('hidden');
       document.getElementById('writeShowGroup').classList.add('hidden');
 
       // Speak word then sentence, then show buttons
-      const wordEl = document.getElementById('writeWordChinese');
-      const sentenceEl = document.getElementById('writeSentenceChinese');
       speakWordThenSentence(wordEl, sentenceEl, () => {
         document.getElementById('writeAnswerGroup').classList.remove('hidden');
       });
