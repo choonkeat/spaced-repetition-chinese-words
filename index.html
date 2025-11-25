@@ -1393,6 +1393,18 @@
           for (let i = 0; i < event.results.length; i++) {
             transcript += event.results[i][0].transcript;
           }
+
+          // Truncate if no match and transcript is longer than sentence
+          if (currentCard && lastMatchLen === 0) {
+            const normalizedTranscript = normalizeForSpeechMatch(transcript);
+            const normalizedSentence = normalizeForSpeechMatch(currentCard.sentence);
+            if (normalizedTranscript.length > normalizedSentence.length) {
+              // Remove first 66% of characters to help user recover from wrong start
+              const charsToRemove = Math.floor(transcript.length * 0.66);
+              transcript = transcript.substring(charsToRemove);
+            }
+          }
+
           document.getElementById('speechInput').value = transcript;
           updateSentenceHighlight(transcript);
           checkSpeechMatch(transcript);
