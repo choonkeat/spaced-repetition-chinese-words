@@ -337,6 +337,8 @@
     }
     .btn-secondary { background: #e0e0e0; color: #333; }
     .btn-secondary:hover { background: #d0d0d0; }
+    .btn-primary { background: #2196F3; color: white; }
+    .btn-primary:hover { background: #1976D2; }
     .btn-success { background: #4CAF50; color: white; }
     .btn-success:hover { background: #43A047; }
     .btn-danger { background: #f44336; color: white; }
@@ -709,8 +711,9 @@
             <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="btn-group">
-            <button class="btn btn-secondary" id="showHintBtn">Show hint</button>
-            <button class="btn btn-secondary" id="dontKnowBtn">I don't know</button>
+            <button class="btn btn-primary" id="showPinyinBtn">Show hanyupinyin</button>
+            <button class="btn btn-success" id="showEnglishBtn">Show english</button>
+            <button class="btn btn-danger" id="dontKnowBtn">I don't know</button>
           </div>
           <div class="btn-group hidden" id="readNextGroup">
             <button class="btn btn-secondary" id="readSayAgainBtn">Say it again</button>
@@ -733,8 +736,8 @@
             <a href="IOS-SAFARI-AIRPOD-SPEECH.html" target="_blank">More info</a>
           </div>
           <div class="btn-group" id="writeShowGroup">
-            <button class="btn btn-secondary" id="sayItBtn">Say it</button>
-            <button class="btn btn-secondary" id="showAnswerBtn">Show answer</button>
+            <button class="btn btn-primary" id="sayItBtn">Say it</button>
+            <button class="btn btn-primary" id="showAnswerBtn">Check what I wrote</button>
           </div>
 
           <div class="btn-group hidden" id="writeAnswerGroup">
@@ -1035,7 +1038,8 @@
           toggleSpeechRecognition();
         }
       });
-      document.getElementById('showHintBtn').addEventListener('click', handleShowHint);
+      document.getElementById('showPinyinBtn').addEventListener('click', handleShowPinyin);
+      document.getElementById('showEnglishBtn').addEventListener('click', handleShowEnglish);
       document.getElementById('dontKnowBtn').addEventListener('click', handleDontKnow);
       document.getElementById('readSayAgainBtn').addEventListener('click', () => {
         const wordEl = document.getElementById('readWord');
@@ -1274,7 +1278,8 @@
       document.getElementById('readWordEnglish').classList.add('hidden');
       document.getElementById('readSentenceEnglish').classList.add('hidden');
       document.getElementById('readNextGroup').classList.add('hidden');
-      document.getElementById('showHintBtn').classList.remove('hidden');
+      document.getElementById('showPinyinBtn').classList.remove('hidden');
+      document.getElementById('showEnglishBtn').classList.remove('hidden');
       document.getElementById('dontKnowBtn').classList.remove('hidden');
       document.getElementById('speechInput').value = '';
       document.getElementById('speechInput').style.display = 'block';
@@ -1683,13 +1688,18 @@
       document.getElementById('dontKnowBtn').classList.add('hidden');
     }
 
-    function handleShowHint() {
-      // Reveal pinyin and english (doesn't count as fail)
+    function handleShowPinyin() {
+      // Reveal pinyin only (doesn't count as fail)
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
+      document.getElementById('showPinyinBtn').classList.add('hidden');
+    }
+
+    function handleShowEnglish() {
+      // Reveal english only (doesn't count as fail)
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
-      document.getElementById('showHintBtn').classList.add('hidden');
+      document.getElementById('showEnglishBtn').classList.add('hidden');
     }
 
     function handleDontKnow() {
@@ -1706,7 +1716,8 @@
       document.getElementById('readWordEnglish').classList.remove('hidden');
       document.getElementById('readSentenceEnglish').classList.remove('hidden');
       document.getElementById('speechInput').style.display = 'none';
-      document.getElementById('showHintBtn').classList.add('hidden');
+      document.getElementById('showPinyinBtn').classList.add('hidden');
+      document.getElementById('showEnglishBtn').classList.add('hidden');
       document.getElementById('dontKnowBtn').classList.add('hidden');
 
       const wordEl = document.getElementById('readWord');

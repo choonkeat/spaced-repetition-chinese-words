@@ -354,25 +354,36 @@ test.describe('READ Mode', () => {
     await expect(page.locator('#readSentenceEnglish')).toHaveClass(/hidden/);
   });
 
-  test('Show hint reveals pinyin and English without recording result', async ({ page }) => {
+  test('Show pinyin and english buttons reveal content separately without recording result', async ({ page }) => {
     await setupReadMode(page);
     await page.click('#playBtn');
     await waitForGameScreen(page);
 
-    await page.click('#showHintBtn');
+    // Click show pinyin
+    await page.click('#showPinyinBtn');
 
-    // Content revealed
+    // Pinyin revealed, English still hidden
     await expect(page.locator('#readPinyin')).not.toHaveClass(/hidden/);
     await expect(page.locator('#readPinyin')).toHaveText('nǐ');
+    await expect(page.locator('#readSentencePinyin')).not.toHaveClass(/hidden/);
+    await expect(page.locator('#readWordEnglish')).toHaveClass(/hidden/);
+    await expect(page.locator('#readSentenceEnglish')).toHaveClass(/hidden/);
+
+    // Show pinyin button hidden after clicking
+    await expect(page.locator('#showPinyinBtn')).toHaveClass(/hidden/);
+
+    // Click show english
+    await page.click('#showEnglishBtn');
+
+    // English now revealed
     await expect(page.locator('#readWordEnglish')).not.toHaveClass(/hidden/);
     await expect(page.locator('#readWordEnglish')).toHaveText('you');
-    await expect(page.locator('#readSentencePinyin')).not.toHaveClass(/hidden/);
     await expect(page.locator('#readSentenceEnglish')).not.toHaveClass(/hidden/);
 
-    // Show hint button hidden after clicking
-    await expect(page.locator('#showHintBtn')).toHaveClass(/hidden/);
+    // Show english button hidden after clicking
+    await expect(page.locator('#showEnglishBtn')).toHaveClass(/hidden/);
 
-    // Stats unchanged (hint doesn't count as wrong)
+    // Stats unchanged (hints don't count as wrong)
     await expect(page.locator('#gameStats')).toContainText('✓ 0');
     await expect(page.locator('#gameStats')).toContainText('✗ 0');
   });
@@ -389,7 +400,8 @@ test.describe('READ Mode', () => {
     await expect(page.locator('#readWordEnglish')).not.toHaveClass(/hidden/);
 
     // Buttons hidden
-    await expect(page.locator('#showHintBtn')).toHaveClass(/hidden/);
+    await expect(page.locator('#showPinyinBtn')).toHaveClass(/hidden/);
+    await expect(page.locator('#showEnglishBtn')).toHaveClass(/hidden/);
     await expect(page.locator('#dontKnowBtn')).toHaveClass(/hidden/);
 
     // Mic button is hidden (Say it again button replaces its function)
