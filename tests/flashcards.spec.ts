@@ -543,6 +543,52 @@ test.describe('READ Mode', () => {
     expect(storageAfter.files[0].progress['你'].read.successCount).toBe(1);
     expect(storageAfter.files[0].progress['你'].read.intervalIndex).toBeGreaterThan(0);
   });
+
+  test('shows Show hanyupinyin button for level 0-1 cards', async ({ page }) => {
+    // Level 1 card (intervalIndex = 1)
+    await setupTestFile(page, {
+      readIntervalIndex: 1,
+      readNextReview: 0,
+      writeIntervalIndex: 7,
+      writeNextReview: Date.now() + 9999999999,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hanyupinyin button should be visible
+    await expect(page.locator('#showPinyinBtn')).toBeVisible();
+    await expect(page.locator('#showPinyinBtn')).not.toHaveClass(/hidden/);
+  });
+
+  test('hides Show hanyupinyin button for level 2+ cards', async ({ page }) => {
+    // Level 2 card (intervalIndex = 2)
+    await setupTestFile(page, {
+      readIntervalIndex: 2,
+      readNextReview: 0,
+      writeIntervalIndex: 7,
+      writeNextReview: Date.now() + 9999999999,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hanyupinyin button should be hidden
+    await expect(page.locator('#showPinyinBtn')).toHaveClass(/hidden/);
+  });
+
+  test('hides Show hanyupinyin button for level 5 cards', async ({ page }) => {
+    // Level 5 card (intervalIndex = 5)
+    await setupTestFile(page, {
+      readIntervalIndex: 5,
+      readNextReview: 0,
+      writeIntervalIndex: 7,
+      writeNextReview: Date.now() + 9999999999,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hanyupinyin button should be hidden
+    await expect(page.locator('#showPinyinBtn')).toHaveClass(/hidden/);
+  });
 });
 
 test.describe('WRITE Mode', () => {
@@ -675,6 +721,52 @@ test.describe('WRITE Mode', () => {
 
     // Button should eventually re-enable (after speech)
     await expect(page.locator('#sayItBtn')).toBeEnabled({ timeout: 5000 });
+  });
+
+  test('shows Show hint button for level 0-1 cards', async ({ page }) => {
+    // Level 1 card (intervalIndex = 1)
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 1,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hint button should be visible
+    await expect(page.locator('#showHintBtn')).toBeVisible();
+    await expect(page.locator('#showHintBtn')).not.toHaveClass(/hidden/);
+  });
+
+  test('hides Show hint button for level 2+ cards', async ({ page }) => {
+    // Level 2 card (intervalIndex = 2)
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 2,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hint button should be hidden
+    await expect(page.locator('#showHintBtn')).toHaveClass(/hidden/);
+  });
+
+  test('hides Show hint button for level 5 cards', async ({ page }) => {
+    // Level 5 card (intervalIndex = 5)
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 5,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Show hint button should be hidden
+    await expect(page.locator('#showHintBtn')).toHaveClass(/hidden/);
   });
 });
 
@@ -919,9 +1011,10 @@ test.describe('Edge Cases & Error Handling', () => {
   test('footer links exist', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('a[href="SPACED_REPETITION.html"]')).toBeVisible();
-    await expect(page.locator('a[href="DEVELOPER.html"]')).toBeVisible();
-    await expect(page.locator('a[href*="github.com"]')).toBeVisible();
+    // Check sidebar footer links specifically
+    await expect(page.locator('.sidebar-footer a[href="SPACED_REPETITION.html"]')).toBeVisible();
+    await expect(page.locator('.sidebar-footer a[href="DEVELOPER.html"]')).toBeVisible();
+    await expect(page.locator('.sidebar-footer a[href*="github.com"]')).toBeVisible();
   });
 
   test('privacy notice is displayed', async ({ page }) => {

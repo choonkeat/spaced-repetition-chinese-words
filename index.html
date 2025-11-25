@@ -1782,10 +1782,25 @@
       resetCardUI();
       speakScore();
 
+      // Check if hints should be hidden (level >= 2)
+      const file = getCurrentFile();
+      const progress = file?.progress[currentCard.word];
+      const modeProgress = progress?.[currentMode];
+      const intervalIndex = modeProgress?.intervalIndex || 0;
+      const hideHints = intervalIndex >= 2;
+
       if (currentMode === 'read') {
         showReadMode();
+        // Hide "Show hanyupinyin" button for level 2+ cards
+        if (hideHints) {
+          document.getElementById('showPinyinBtn').classList.add('hidden');
+        }
       } else {
         showWriteMode();
+        // Hide "Show hint" button for level 2+ cards
+        if (hideHints) {
+          document.getElementById('showHintBtn').classList.add('hidden');
+        }
       }
 
       updateGameStats();
@@ -1824,6 +1839,7 @@
       document.getElementById('writeSentenceChinese').classList.remove('hint-blur-instant', 'hint-blur', 'hint-blur-full');
       // hint-blur-base will be re-added by showWriteMode if needed
       document.getElementById('writeShowGroup').classList.remove('hidden');
+      document.getElementById('showHintBtn').classList.remove('hidden');
       document.getElementById('showHintBtn').disabled = false;
       document.getElementById('writeAnswerGroup').classList.add('hidden');
       document.getElementById('writeNextGroup').classList.add('hidden');
