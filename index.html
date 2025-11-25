@@ -398,7 +398,11 @@
     }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
-    .hint-blur { filter: blur(8px); }
+    .hint-blur {
+      filter: blur(5px);
+      transition: filter 300ms ease-in-out;
+    }
+    .hint-blur.hint-blur-full { filter: blur(7.5px); }
     .mic-btn {
       background: #f44336;
       color: white;
@@ -1366,9 +1370,9 @@
       document.getElementById('modeIndicator').textContent = 'READ: Pronounce the sentence';
 
       document.getElementById('writeWordChinese').classList.add('hidden');
-      document.getElementById('writeWordChinese').classList.remove('hint-blur');
+      document.getElementById('writeWordChinese').classList.remove('hint-blur', 'hint-blur-full');
       document.getElementById('writeSentenceChinese').classList.add('hidden');
-      document.getElementById('writeSentenceChinese').classList.remove('hint-blur');
+      document.getElementById('writeSentenceChinese').classList.remove('hint-blur', 'hint-blur-full');
       document.getElementById('writeShowGroup').classList.remove('hidden');
       document.getElementById('showHintBtn').disabled = false;
       document.getElementById('writeAnswerGroup').classList.add('hidden');
@@ -2047,6 +2051,12 @@
       sentenceEl.classList.remove('hidden');
       sentenceEl.classList.add('hint-blur');
 
+      // After a brief moment, increase blur for animation effect
+      setTimeout(() => {
+        wordEl.classList.add('hint-blur-full');
+        sentenceEl.classList.add('hint-blur-full');
+      }, 10); // Small delay to ensure initial state is rendered
+
       // Disable the button after clicking
       document.getElementById('showHintBtn').disabled = true;
     }
@@ -2084,8 +2094,8 @@
       const sentenceEl = document.getElementById('writeSentenceChinese');
 
       // Remove blur effect if hint was shown
-      wordEl.classList.remove('hint-blur');
-      sentenceEl.classList.remove('hint-blur');
+      wordEl.classList.remove('hint-blur', 'hint-blur-full');
+      sentenceEl.classList.remove('hint-blur', 'hint-blur-full');
 
       wordEl.classList.remove('hidden');
       sentenceEl.classList.remove('hidden');
