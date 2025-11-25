@@ -2040,11 +2040,11 @@
           voiceSelect.appendChild(option);
         });
 
-        // If no saved voice or saved voice not found, select first one
+        // If no saved voice or saved voice not found, prefer Tingting, else first
         if (!selectedVoice && chineseVoices.length > 0) {
-          selectedVoice = chineseVoices[0];
+          const tingting = chineseVoices.find(v => /Tingting/i.test(v.name));
+          selectedVoice = tingting || chineseVoices[0];
           voiceSelect.value = selectedVoice.name;
-          localStorage.setItem(VOICE_KEY, selectedVoice.name);
         }
       }
 
