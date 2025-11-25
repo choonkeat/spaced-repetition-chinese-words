@@ -580,7 +580,7 @@ test.describe('WRITE Mode', () => {
     expect(progress.intervalIndex).toBe(1);
   });
 
-  test('Wrong button records failure, resets interval, and plays audio', async ({ page }) => {
+  test('Wrong button records failure, resets interval, and shows next buttons', async ({ page }) => {
     // Start with intervalIndex 3 to verify reset
     await setupTestFile(page, {
       readIntervalIndex: 7,
@@ -594,7 +594,7 @@ test.describe('WRITE Mode', () => {
     await page.click('#showAnswerBtn');
     await page.click('#wrongBtn');
 
-    // Wait for TTS and next button
+    // Next button group should appear immediately (no TTS after clicking Wrong)
     await expect(page.locator('#writeNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
 
     // Verify progress was reset to 0
@@ -605,6 +605,26 @@ test.describe('WRITE Mode', () => {
 
     // Stats show wrong
     await expect(page.locator('#gameStats')).toContainText('✗ 1');
+  });
+
+  test('Say it again button in answer group works', async ({ page }) => {
+    await setupWriteMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Click show answer to reveal the answer and buttons
+    await page.click('#showAnswerBtn');
+    await expect(page.locator('#writeAnswerGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+
+    // Verify Say it again button is visible
+    await expect(page.locator('#writeAnswerSayAgainBtn')).toBeVisible();
+
+    // Click it to trigger TTS (we can't verify audio, but we can verify no errors)
+    await page.click('#writeAnswerSayAgainBtn');
+
+    // Buttons should still be visible
+    await expect(page.locator('#wrongBtn')).toBeVisible();
+    await expect(page.locator('#correctBtn')).toBeVisible();
   });
 
   test('Say it button triggers speech and toggles speed', async ({ page }) => {

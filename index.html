@@ -756,6 +756,7 @@
           </div>
 
           <div class="btn-group hidden" id="writeAnswerGroup">
+            <button class="btn btn-secondary" id="writeAnswerSayAgainBtn">Say it again</button>
             <button class="btn btn-danger" id="wrongBtn">Wrong</button>
             <button class="btn btn-success" id="correctBtn">Correct</button>
           </div>
@@ -1116,6 +1117,11 @@
       // Write mode
       document.getElementById('sayItBtn').addEventListener('click', handleSayIt);
       document.getElementById('showAnswerBtn').addEventListener('click', handleShowAnswer);
+      document.getElementById('writeAnswerSayAgainBtn').addEventListener('click', () => {
+        const wordEl = document.getElementById('writeWordChinese');
+        const sentenceEl = document.getElementById('writeSentenceChinese');
+        speakWordThenSentence(wordEl, sentenceEl);
+      });
       document.getElementById('wrongBtn').addEventListener('click', () => handleWriteAnswer(false));
       document.getElementById('correctBtn').addEventListener('click', () => handleWriteAnswer(true));
       document.getElementById('writeSayAgainBtn').addEventListener('click', () => {
@@ -2072,11 +2078,9 @@
         showConfetti();
         setTimeout(() => nextCard(), 1000);
       } else {
-        const wordEl = document.getElementById('writeWordChinese');
-        const sentenceEl = document.getElementById('writeSentenceChinese');
-        speakWordThenSentence(wordEl, sentenceEl, () => {
-          document.getElementById('writeNextGroup').classList.remove('hidden');
-        });
+        // Skip TTS since user already heard it when clicking "Check what I wrote"
+        // Just show the next button group immediately
+        document.getElementById('writeNextGroup').classList.remove('hidden');
       }
     }
 
