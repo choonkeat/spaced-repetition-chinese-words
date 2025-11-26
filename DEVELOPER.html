@@ -132,10 +132,11 @@ type FlashcardList = Flashcard[];</code></pre>
     name: "My Flashcard Set",
     flashcards: [...],  // Array of Flashcard objects
     lastAttempted: 1234567890,  // Timestamp of last practice
+    highscore: { count: 5, timestamp: 1234567890 },  // Best streak
     progress: {
       "你": {
-        read: { intervalIndex, nextReview, successCount, failCount },
-        write: { intervalIndex, nextReview, successCount, failCount }
+        read: { /* see Extended Data Model below */ },
+        write: { /* see Extended Data Model below */ }
       }
     }
   }
@@ -143,6 +144,7 @@ type FlashcardList = Flashcard[];</code></pre>
 
 // localStorage.getItem('flashcard_voice')
 "Tingting"  // Selected TTS voice name</code></pre>
+  <p><em>See <a href="#extended-data-model">Extended Data Model</a> for full progress field structure including adaptive difficulty tracking.</em></p>
 
   <h2 id="adaptive-difficulty-implementation">Adaptive Difficulty Implementation</h2>
   <p>The app uses an adaptive difficulty system that measures implicit signals to adjust intervals per-card. See <a href="SPACED_REPETITION.html#adaptive-difficulty">SPACED_REPETITION.html</a> for the conceptual overview.</p>
