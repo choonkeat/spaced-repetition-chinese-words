@@ -2689,27 +2689,56 @@
       btn.disabled = true;
       btn.style.opacity = '0.5';
 
-      // Highlight sentence pinyin while speaking
-      const pinyinEl = document.getElementById('writeSentencePinyin');
-      const originalPinyin = pinyinEl.textContent;
-      pinyinEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_hanyupinyin)}</span>`;
+      speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(currentCard.sentence);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        utterance.lang = selectedVoice.lang;
-      } else {
-        utterance.lang = 'zh-CN';
-      }
-      utterance.rate = sayItSpeed;
-      utterance.onend = () => {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        pinyinEl.textContent = originalPinyin; // Remove highlight
-        // Toggle speed for next click
-        sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
-      };
-      speechSynthesis.speak(utterance);
+      const wordPinyinEl = document.getElementById('writeWordPinyin');
+      const sentencePinyinEl = document.getElementById('writeSentencePinyin');
+
+      // Clear any existing highlights first
+      wordPinyinEl.textContent = currentCard.word_hanyupinyin;
+      sentencePinyinEl.textContent = currentCard.sentence_hanyupinyin;
+
+      // Delay after cancel() to avoid race condition in some browsers
+      setTimeout(() => {
+        // Highlight word pinyin and speak word first
+        wordPinyinEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word_hanyupinyin)}</span>`;
+
+        const wordUtterance = new SpeechSynthesisUtterance(currentCard.word);
+        if (selectedVoice) {
+          wordUtterance.voice = selectedVoice;
+          wordUtterance.lang = selectedVoice.lang;
+        } else {
+          wordUtterance.lang = 'zh-CN';
+        }
+        wordUtterance.rate = 0.6;
+
+        wordUtterance.onend = () => {
+          wordPinyinEl.textContent = currentCard.word_hanyupinyin;
+          // Pause 1 second, then speak sentence
+          setTimeout(() => {
+            sentencePinyinEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_hanyupinyin)}</span>`;
+
+            const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence);
+            if (selectedVoice) {
+              sentenceUtterance.voice = selectedVoice;
+              sentenceUtterance.lang = selectedVoice.lang;
+            } else {
+              sentenceUtterance.lang = 'zh-CN';
+            }
+            sentenceUtterance.rate = sayItSpeed;
+
+            sentenceUtterance.onend = () => {
+              sentencePinyinEl.textContent = currentCard.sentence_hanyupinyin;
+              btn.disabled = false;
+              btn.style.opacity = '1';
+              // Toggle speed for next click
+              sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
+            };
+            speechSynthesis.speak(sentenceUtterance);
+          }, 1000);
+        };
+        speechSynthesis.speak(wordUtterance);
+      }, 50);
     }
 
     function handleShowAnswer() {
