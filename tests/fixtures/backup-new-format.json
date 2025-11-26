@@ -1,0 +1,40 @@
+{
+  "name": "New Format Backup",
+  "flashcards": [
+    {
+      "word": "学习",
+      "word_hanyupinyin": "xuéxí",
+      "word_english": "to study",
+      "sentence": "我喜欢学习。",
+      "sentence_hanyupinyin": "Wǒ xǐhuān xuéxí.",
+      "sentence_english": "I like to study."
+    }
+  ],
+  "progress": {
+    "学习": {
+      "read": {
+        "intervalIndex": 5,
+        "nextReview": 0,
+        "successCount": 10,
+        "failCount": 2,
+        "lapseCount": 1,
+        "avgResponseTime": 2500,
+        "lastResponseTime": 2200,
+        "hintUseCount": 3,
+        "difficultyScore": 1.15
+      },
+      "write": {
+        "intervalIndex": 4,
+        "nextReview": 0,
+        "successCount": 8,
+        "failCount": 3,
+        "lapseCount": 2,
+        "avgResponseTime": 3500,
+        "lastResponseTime": 3000,
+        "hintUseCount": 5,
+        "difficultyScore": 1.3
+      }
+    }
+  },
+  "exportedAt": "2024-06-01T10:30:00.000Z"
+}
