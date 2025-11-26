@@ -245,25 +245,6 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .reviews-due-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px 20px;
-      background: #fff3e0;
-      border-radius: 8px;
-      border: 2px solid #ff9800;
-    }
-    .badge-number {
-      font-size: 28px;
-      font-weight: bold;
-      color: #ff9800;
-    }
-    .badge-label {
-      font-size: 12px;
-      color: #666;
-      text-transform: uppercase;
-    }
     .session-recommendation {
       font-size: 14px;
       color: #666;
@@ -875,14 +856,8 @@
 
           <!-- Session Goal Selector -->
           <div class="session-goal-section">
-            <div class="session-info">
-              <div class="reviews-due-badge" id="reviewsDueBadge">
-                <span class="badge-number" id="reviewsDueCount">0</span>
-                <span class="badge-label">reviews due</span>
-              </div>
-              <div class="session-recommendation" id="sessionRecommendation">
-                Recommended: 10 cards (~5 min)
-              </div>
+            <div class="session-recommendation" id="sessionRecommendation">
+              Recommended: 10 cards (~5 min)
             </div>
             <div class="session-goal-selector">
               <label for="sessionGoalSelect">Session goal:</label>
@@ -1261,9 +1236,6 @@
       const masteredEl = document.getElementById('totalMastered');
       masteredEl.textContent = totalMastered;
       masteredEl.title = `Reading: ${stats.read.mastered}, Writing: ${stats.write.mastered}`;
-
-      // Update reviews due badge and recommendation
-      document.getElementById('reviewsDueCount').textContent = totalDue;
 
       // Calculate recommended session size based on backlog
       let recommended = 10; // default
