@@ -1139,6 +1139,32 @@
     let selectedVoice = null;
     let sessionGoal = 10; // Default session goal
 
+    // Adaptive difficulty tracking (per-card state)
+    let responseTimerStart = null; // Timestamp when card became ready for response
+    let currentCardUsedHint = false; // Whether hint was used for current card
+
+    // Start response timer when card is ready for user response
+    function startResponseTimer() {
+      responseTimerStart = Date.now();
+    }
+
+    // Get elapsed time since timer started (ms), or null if not started
+    function getResponseTime() {
+      if (responseTimerStart === null) return null;
+      return Date.now() - responseTimerStart;
+    }
+
+    // Mark that hint was used for current card
+    function markHintUsed() {
+      currentCardUsedHint = true;
+    }
+
+    // Reset per-card tracking state (called when showing new card)
+    function resetCardTracking() {
+      responseTimerStart = null;
+      currentCardUsedHint = false;
+    }
+
     function getSessionCardsCompleted() {
       const file = getCurrentFile();
       if (!file || !sessionStats[file.id]) return 0;
@@ -1880,6 +1906,9 @@
       // Cancel any ongoing speech to prevent callbacks from firing on old card
       speechSynthesis.cancel();
 
+      // Reset adaptive difficulty tracking for new card
+      resetCardTracking();
+
       // Reset card state
       cardCompleted = false;
       lastMatchLen = 0;
@@ -1955,6 +1984,10 @@
 
       // Fully restart speech recognition to clear results buffer
       restartSpeechRecognition();
+
+      // Start response timer when card is ready (READ mode)
+      // Timer will be read when user responds (speech match or "I don't know")
+      startResponseTimer();
     }
 
     function showWriteMode() {
@@ -1978,6 +2011,10 @@
       wordEl.classList.add('hint-blur-base');
       sentenceEl.classList.remove('hidden');
       sentenceEl.classList.add('hint-blur-base');
+
+      // Start response timer when card is ready (WRITE mode)
+      // Timer will be read when user clicks "I wrote correctly" or "I wrote wrong"
+      startResponseTimer();
     }
 
     function updateGameStats() {
@@ -2542,7 +2579,8 @@
     }
 
     function handleShowPinyin() {
-      // Reveal pinyin only (doesn't count as fail)
+      // Reveal pinyin only (doesn't count as fail, but marks hint usage for adaptive difficulty)
+      markHintUsed();
       document.getElementById('readPinyin').classList.remove('hidden');
       document.getElementById('readSentencePinyin').classList.remove('hidden');
       document.getElementById('showPinyinBtn').disabled = true;
@@ -2732,6 +2770,9 @@
     let sayItSpeed = 0.3;
 
     function handleShowHint() {
+      // Mark hint usage for adaptive difficulty (prevents level advancement)
+      markHintUsed();
+
       // 8px → 3px (instant) → 7px (transition over 200ms)
       const wordEl = document.getElementById('writeWordChinese');
       const sentenceEl = document.getElementById('writeSentenceChinese');

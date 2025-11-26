@@ -434,19 +434,19 @@ When a card is a leech, consider showing:
 - [x] Verify existing localStorage data loads correctly (no errors, no data loss)
 - [x] Verify old backup files import correctly
 
-### Phase 2: Timer and Hint Tracking
+### Phase 2: Timer and Hint Tracking ✅ COMPLETED
 
-- [ ] Add `responseTimerStart` variable
-- [ ] Add `startResponseTimer()` function
-- [ ] Add `getResponseTime()` function
-- [ ] Call `startResponseTimer()` at appropriate times:
-  - READ mode: After sentence TTS `onend` callback
-  - WRITE mode: When card is displayed
-- [ ] Add `currentCardUsedHint` variable, reset per card
-- [ ] Add `markHintUsed()` function
-- [ ] Call `markHintUsed()` when "Show hanyupinyin" clicked (READ mode)
-- [ ] Call `markHintUsed()` when "Show hint" clicked (WRITE mode)
-- [ ] Do NOT call `markHintUsed()` for "Show English" (that's acceptable lookup)
+- [x] Add `responseTimerStart` variable
+- [x] Add `startResponseTimer()` function
+- [x] Add `getResponseTime()` function
+- [x] Call `startResponseTimer()` at appropriate times:
+  - READ mode: When card is displayed (in `showReadMode()`)
+  - WRITE mode: When card is displayed (in `showWriteMode()`)
+- [x] Add `currentCardUsedHint` variable, reset per card (via `resetCardTracking()`)
+- [x] Add `markHintUsed()` function
+- [x] Call `markHintUsed()` when "Show hanyupinyin" clicked (READ mode)
+- [x] Call `markHintUsed()` when "Show hint" clicked (WRITE mode)
+- [x] Do NOT call `markHintUsed()` for "Show English" (that's acceptable lookup)
 
 ### Phase 3: Recording Results
 
