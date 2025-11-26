@@ -2921,24 +2921,140 @@
       }
 
       // Get normalized progress with all fields (including new adaptive fields)
-      let modeProgress = getModeProgress(file.progress[currentCard.word][currentMode]);
+      const modeProgress = getModeProgress(file.progress[currentCard.word][currentMode]);
 
-      if (success) {
-        modeProgress.successCount++;
-        modeProgress.intervalIndex = Math.min(modeProgress.intervalIndex + 1, INTERVALS.length - 1);
-      } else {
-        modeProgress.failCount++;
-        modeProgress.intervalIndex = 0;
-      }
+      // Get response time and hint usage from current card tracking
+      const responseTime = getResponseTime();
+      const usedHint = currentCardUsedHint;
 
-      modeProgress.nextReview = Date.now() + INTERVALS[modeProgress.intervalIndex];
-      file.progress[currentCard.word][currentMode] = modeProgress;
+      // Calculate updated progress using adaptive difficulty algorithm
+      const updatedProgress = calculateNewProgress(success, responseTime, usedHint, modeProgress);
+      file.progress[currentCard.word][currentMode] = updatedProgress;
 
       // Update session progress display
       updateSessionProgress();
 
       saveToStorage();
       updateGameStats();
+    }
+
+    /**
+     * Calculates updated progress using the adaptive difficulty algorithm.
+     *
+     * @param {boolean} correct - Whether the answer was correct
+     * @param {number|null} responseTime - Time taken to respond (ms), or null
+     * @param {boolean} usedHint - Whether hint was used for this card
+     * @param {Object} modeProgress - Current progress for this mode
+     * @returns {Object} - Updated progress object
+     */
+    function calculateNewProgress(correct, responseTime, usedHint, modeProgress) {
+      const {
+        intervalIndex,
+        avgResponseTime,
+        difficultyScore,
+        lapseCount,
+        successCount,
+        failCount,
+        hintUseCount
+      } = modeProgress;
+
+      const wasLearned = intervalIndex >= 2;
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 1: Classify response time
+      // ═══════════════════════════════════════════════════════════════
+      let timeCategory = 'normal';
+
+      if (responseTime !== null && avgResponseTime !== null) {
+        if (responseTime < avgResponseTime * 0.7) {
+          timeCategory = 'fast';    // 30% faster than average
+        } else if (responseTime > avgResponseTime * 1.5) {
+          timeCategory = 'slow';    // 50% slower than average
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 2: Calculate level advancement
+      // ═══════════════════════════════════════════════════════════════
+      let levelDelta;
+      let newLapseCount = lapseCount;
+
+      if (!correct) {
+        // WRONG: Reset to level 0
+        levelDelta = -intervalIndex;
+        if (wasLearned) newLapseCount++;
+      } else if (usedHint) {
+        // CORRECT WITH HINT: No advancement
+        levelDelta = 0;
+      } else if (timeCategory === 'fast') {
+        // FAST CORRECT: Skip ahead +2 levels
+        levelDelta = 2;
+      } else {
+        // NORMAL/SLOW CORRECT: Standard +1 level
+        levelDelta = 1;
+      }
+
+      const newIntervalIndex = Math.max(0, Math.min(INTERVALS.length - 1, intervalIndex + levelDelta));
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 3: Update difficulty score
+      // ═══════════════════════════════════════════════════════════════
+      let newDifficultyScore = difficultyScore;
+
+      if (!correct) {
+        newDifficultyScore *= 1.2;         // Failed → harder
+      } else if (usedHint) {
+        newDifficultyScore *= 1.1;         // Needed help → harder
+      } else if (timeCategory === 'fast') {
+        newDifficultyScore *= 0.9;         // Fast recall → easier
+      } else if (timeCategory === 'slow') {
+        newDifficultyScore *= 1.05;        // Slow recall → slightly harder
+      }
+      // Normal speed correct: no change to difficulty
+
+      // Clamp difficulty to valid range
+      newDifficultyScore = Math.max(0.5, Math.min(2.0, newDifficultyScore));
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 4: Calculate next review time
+      // ═══════════════════════════════════════════════════════════════
+      const baseInterval = INTERVALS[newIntervalIndex];
+      const adjustedInterval = baseInterval / newDifficultyScore;
+
+      // Add fuzz factor (±5%) to prevent review clustering
+      const fuzz = 0.95 + Math.random() * 0.1;
+      const finalInterval = adjustedInterval * fuzz;
+
+      const nextReview = Date.now() + finalInterval;
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 5: Update rolling average response time
+      // ═══════════════════════════════════════════════════════════════
+      let newAvgResponseTime = avgResponseTime;
+
+      if (responseTime !== null) {
+        if (avgResponseTime === null) {
+          newAvgResponseTime = responseTime;
+        } else {
+          // Exponential moving average: 80% old, 20% new
+          newAvgResponseTime = avgResponseTime * 0.8 + responseTime * 0.2;
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 6: Return updated progress
+      // ═══════════════════════════════════════════════════════════════
+      return {
+        intervalIndex: newIntervalIndex,
+        nextReview: nextReview,
+        successCount: correct ? successCount + 1 : successCount,
+        failCount: correct ? failCount : failCount + 1,
+        lapseCount: newLapseCount,
+        avgResponseTime: newAvgResponseTime,
+        lastResponseTime: responseTime,
+        hintUseCount: usedHint ? hintUseCount + 1 : hintUseCount,
+        difficultyScore: newDifficultyScore
+      };
     }
 
     // Confetti

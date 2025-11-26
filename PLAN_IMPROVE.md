@@ -448,13 +448,13 @@ When a card is a leech, consider showing:
 - [x] Call `markHintUsed()` when "Show hint" clicked (WRITE mode)
 - [x] Do NOT call `markHintUsed()` for "Show English" (that's acceptable lookup)
 
-### Phase 3: Recording Results
+### Phase 3: Recording Results ✅ COMPLETED
 
-- [ ] Implement new `recordResult()` function
-- [ ] Update all places that record correct/wrong to use new function
-- [ ] Pass `responseTime` (from `getResponseTime()`) to `recordResult()`
-- [ ] Pass `usedHint` (from `currentCardUsedHint`) to `recordResult()`
-- [ ] Verify progress is saved correctly to localStorage
+- [x] Implement new `recordResult()` function (refactored into `calculateNewProgress()`)
+- [x] Update all places that record correct/wrong to use new function
+- [x] Pass `responseTime` (from `getResponseTime()`) to `recordResult()`
+- [x] Pass `usedHint` (from `currentCardUsedHint`) to `recordResult()`
+- [x] Verify progress is saved correctly to localStorage
 
 ### Phase 4: Leech Detection (Optional)
 
