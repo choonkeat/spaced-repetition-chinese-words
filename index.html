@@ -2605,8 +2605,16 @@
     }
 
     function handleReadSuccess() {
-      recordResult(true);
-      showConfetti();
+      const scenario = recordResult(true);
+
+      // Speak scenario-based feedback
+      speakFeedback(scenario);
+
+      // Show confetti only for correct without hints
+      if (shouldShowConfetti(scenario)) {
+        showConfetti();
+      }
+
       document.getElementById('modeIndicator').textContent = 'READ: Correct!';
       document.getElementById('speechTip').textContent = 'Perfect!';
       document.getElementById('readPinyin').classList.remove('hidden');
@@ -2654,7 +2662,7 @@
 
       cardCompleted = true;
       stopSpeechRecognition();
-      recordResult(false);
+      const scenario = recordResult(false);
 
       // Hide mic button (Say it again button replaces its function)
       document.getElementById('micBtn').style.display = 'none';
@@ -2670,9 +2678,13 @@
 
       const wordEl = document.getElementById('readWord');
       const sentenceEl = document.getElementById('readSentence');
-      speakWordThenSentence(wordEl, sentenceEl, () => {
-        document.getElementById('readNextGroup').classList.remove('hidden');
-        document.getElementById('modeIndicator').textContent = 'READ: Listen again or continue';
+
+      // Speak feedback first, then word+sentence for teaching
+      speakFeedback(scenario, () => {
+        speakWordThenSentence(wordEl, sentenceEl, () => {
+          document.getElementById('readNextGroup').classList.remove('hidden');
+          document.getElementById('modeIndicator').textContent = 'READ: Listen again or continue';
+        });
       });
     }
 
@@ -2690,6 +2702,8 @@
 
       const file = getCurrentFile();
       if (!file) return;
+
+      let scenario;
 
       // If overriding a previous failure, restore original state and record success properly
       if (wasAlreadyCompleted && savedProgressForOverride !== null) {
@@ -2714,6 +2728,7 @@
         // Update progress and session stats
         file.progress[currentCard.word][currentMode] = updatedProgress;
         sessionStats[file.id].correct++;
+        scenario = updatedProgress.scenario;
 
         // Update highscore if needed
         if (!file.highscore || sessionStats[file.id].correct > file.highscore.count) {
@@ -2730,14 +2745,20 @@
       } else {
         // Normal case: not overriding, just record success
         console.log('[SRS] Recording success (not an override)');
-        recordResult(true);
+        scenario = recordResult(true);
       }
 
-      showConfetti();
+      // Show confetti only for correct without hints
+      if (shouldShowConfetti(scenario)) {
+        showConfetti();
+      }
 
       document.getElementById('modeIndicator').textContent = 'READ: Marked correct!';
-      // Just proceed to next card without showing answer
-      setTimeout(() => nextCard(), 1500);
+
+      // Speak feedback, then proceed to next card
+      speakFeedback(scenario, () => {
+        nextCard();
+      });
     }
 
     function speakScore() {
@@ -2967,14 +2988,18 @@
     function handleWriteAnswer(isCorrect) {
       if (cardCompleted) return; // Prevent double recording
       cardCompleted = true;
-      recordResult(isCorrect);
+      const scenario = recordResult(isCorrect);
       document.getElementById('writeAnswerGroup').classList.add('hidden');
 
-      if (isCorrect) {
+      // Show confetti only for correct without hints
+      if (shouldShowConfetti(scenario)) {
         showConfetti();
       }
-      // Proceed to next card after brief delay (confetti or review time)
-      setTimeout(() => nextCard(), 1000);
+
+      // Speak feedback, then proceed to next card
+      speakFeedback(scenario, () => {
+        nextCard();
+      });
     }
 
     function recordResult(success) {
@@ -3032,6 +3057,9 @@
 
       saveToStorage();
       updateGameStats();
+
+      // Return the scenario for feedback
+      return updatedProgress.scenario;
     }
 
     /**
@@ -3153,7 +3181,29 @@
       }
 
       // ═══════════════════════════════════════════════════════════════
-      // STEP 6: Return updated progress
+      // STEP 6: Determine scenario for feedback
+      // ═══════════════════════════════════════════════════════════════
+      let scenario;
+      if (correct && !usedHint && timeCategory === 'fast') {
+        scenario = 'fast_correct';        // +2 levels, strong recall
+      } else if (correct && !usedHint && timeCategory === 'normal') {
+        scenario = 'normal_correct';      // +1 level, good recall
+      } else if (correct && !usedHint && timeCategory === 'slow') {
+        scenario = 'slow_correct';        // +1 level, weak but recalled
+      } else if (correct && usedHint) {
+        scenario = 'hint_correct';        // +0 levels, needed help
+      } else if (!correct && !usedHint && timeCategory === 'fast') {
+        scenario = 'fast_wrong';          // Complete blank
+      } else if (!correct && !usedHint) {
+        scenario = 'slow_wrong';          // Tried but failed (normal or slow)
+      } else if (!correct && usedHint && timeCategory !== 'slow') {
+        scenario = 'hint_wrong_fast';     // Hint didn't help
+      } else {
+        scenario = 'hint_wrong_slow';     // Potential leech
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      // STEP 7: Return updated progress with scenario
       // ═══════════════════════════════════════════════════════════════
       const result = {
         intervalIndex: newIntervalIndex,
@@ -3164,10 +3214,12 @@
         avgResponseTime: newAvgResponseTime,
         lastResponseTime: responseTime,
         hintUseCount: usedHint ? hintUseCount + 1 : hintUseCount,
-        difficultyScore: newDifficultyScore
+        difficultyScore: newDifficultyScore,
+        scenario: scenario
       };
 
       console.log('[SRS] Result:', {
+        scenario,
         difficultyChange: `${difficultyScore.toFixed(2)} → ${newDifficultyScore.toFixed(2)}`,
         intervalMs: finalInterval,
         intervalHuman: formatInterval(finalInterval),
@@ -3185,6 +3237,57 @@
       return `${Math.round(ms / 86400000)}d`;
     }
 
+    // Scenario-based feedback phrases (The Eight Scenarios)
+    const SCENARIO_FEEDBACK = {
+      // Correct scenarios
+      fast_correct:    '太棒了！',      // Tài bàng le! - Excellent! (+2 levels)
+      normal_correct:  '很好！',        // Hěn hǎo! - Very good! (+1 level)
+      slow_correct:    '不错',          // Bùcuò - Not bad (+1 level)
+      hint_correct:    '还可以，继续加油', // Hái kěyǐ, jìxù jiāyóu - Okay, keep trying (+0 levels)
+      // Wrong scenarios
+      fast_wrong:      '再试一次',      // Zài shì yī cì - Try again
+      slow_wrong:      '没关系',        // Méi guānxi - It's okay
+      hint_wrong_fast: '别灰心',        // Bié huīxīn - Don't be discouraged
+      hint_wrong_slow: '慢慢来'         // Màn man lái - Take your time (potential leech)
+    };
+
+    /**
+     * Speaks scenario-based feedback phrase in Chinese.
+     * @param {string} scenario - One of the 8 scenario keys
+     * @param {function} [callback] - Optional callback after speech ends
+     */
+    function speakFeedback(scenario, callback) {
+      const phrase = SCENARIO_FEEDBACK[scenario];
+      if (!phrase) {
+        console.warn('[SRS] Unknown scenario:', scenario);
+        if (callback) callback();
+        return;
+      }
+
+      console.log('[SRS] Speaking feedback:', scenario, phrase);
+      const utterance = new SpeechSynthesisUtterance(phrase);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = 'zh-CN';
+      }
+      utterance.rate = 1.0;
+
+      if (callback) {
+        utterance.onend = callback;
+      }
+
+      speechSynthesis.speak(utterance);
+    }
+
+    /**
+     * Returns true if the scenario should show confetti (correct without hint)
+     */
+    function shouldShowConfetti(scenario) {
+      return scenario === 'fast_correct' || scenario === 'normal_correct' || scenario === 'slow_correct';
+    }
+
     // Confetti
     let confettiAnimationId = null;
 
@@ -3195,30 +3298,7 @@
         confettiAnimationId = null;
       }
 
-      // Random encouragement phrases
-      const encouragements = [
-        '你真棒!',      // You're awesome!
-        '太好了!',      // Excellent!
-        '做得好!',      // Well done!
-        '真厉害!',      // Amazing!
-        '很棒!',        // Great!
-        '继续加油!',    // Keep it up!
-        '非常好!',      // Very good!
-        '真不错!',      // Really nice!
-        '棒极了!',      // Fantastic!
-        '了不起!'       // Remarkable!
-      ];
-      const randomPhrase = encouragements[Math.floor(Math.random() * encouragements.length)];
-
-      const utterance = new SpeechSynthesisUtterance(randomPhrase);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        utterance.lang = selectedVoice.lang;
-      } else {
-        utterance.lang = 'zh-CN';
-      }
-      utterance.rate = 1.0;
-      speechSynthesis.speak(utterance);
+      // Note: Speech is now handled by speakFeedback() with scenario-specific phrases
 
       const canvas = document.getElementById('confettiCanvas');
       const ctx = canvas.getContext('2d');
