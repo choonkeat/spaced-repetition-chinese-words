@@ -1180,12 +1180,18 @@
       // Clear override tracking state
       savedResponseTimeForOverride = null;
       savedProgressForOverride = null;
+      // Clear WRITE mode response time
+      savedResponseTimeForWrite = null;
     }
 
     // State for "I said it correctly" override functionality
     // These are saved when "I don't know" is clicked, allowing proper undo
     let savedResponseTimeForOverride = null;  // Response time at moment of "I don't know"
     let savedProgressForOverride = null;      // Progress state before wrong answer was recorded
+
+    // State for WRITE mode - captures response time when "Check what I wrote" is clicked
+    // (before TTS plays, so we measure actual recall time, not TTS wait time)
+    let savedResponseTimeForWrite = null;
 
     // Save state for potential override (called before recording wrong answer)
     function saveStateForOverride(responseTime, progressBeforeWrong) {
@@ -2968,6 +2974,11 @@
     }
 
     function handleShowAnswer() {
+      // Capture response time NOW, before TTS plays
+      // This measures actual recall time, not TTS wait time
+      savedResponseTimeForWrite = getResponseTime();
+      console.log('[SRS] WRITE mode: captured response time at "Check what I wrote":', savedResponseTimeForWrite);
+
       const wordEl = document.getElementById('writeWordChinese');
       const sentenceEl = document.getElementById('writeSentenceChinese');
 
@@ -3045,7 +3056,11 @@
       const modeProgress = getModeProgress(file.progress[currentCard.word][currentMode]);
 
       // Get response time and hint usage from current card tracking
-      const responseTime = getResponseTime();
+      // For WRITE mode, use the time captured at "Check what I wrote" (before TTS)
+      // For READ mode, use current time (speech recognition ends naturally)
+      const responseTime = (currentMode === 'write' && savedResponseTimeForWrite !== null)
+        ? savedResponseTimeForWrite
+        : getResponseTime();
       const usedHint = currentCardUsedHint;
 
       // Calculate updated progress using adaptive difficulty algorithm
