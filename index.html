@@ -1825,6 +1825,9 @@
     }
 
     function resetCardUI() {
+      // Cancel any ongoing speech to prevent callbacks from firing on old card
+      speechSynthesis.cancel();
+
       // Reset card state
       cardCompleted = false;
       lastMatchLen = 0;
@@ -1833,6 +1836,25 @@
       micBtn.innerHTML = '&#127908;'; // Mic icon
       micBtn.style.display = 'block';
       micBtn.classList.remove('listening');
+      micBtn.disabled = false;
+      micBtn.style.opacity = '1';
+
+      // Reset all "Say it" and "Say it again" buttons that may have been disabled during speech
+      const sayItBtn = document.getElementById('sayItBtn');
+      sayItBtn.disabled = false;
+      sayItBtn.style.opacity = '1';
+
+      const readSayAgainBtn = document.getElementById('readSayAgainBtn');
+      readSayAgainBtn.disabled = false;
+      readSayAgainBtn.style.opacity = '1';
+
+      const writeSayAgainBtn = document.getElementById('writeSayAgainBtn');
+      writeSayAgainBtn.disabled = false;
+      writeSayAgainBtn.style.opacity = '1';
+
+      const writeAnswerSayAgainBtn = document.getElementById('writeAnswerSayAgainBtn');
+      writeAnswerSayAgainBtn.disabled = false;
+      writeAnswerSayAgainBtn.style.opacity = '1';
 
       document.getElementById('readPinyin').classList.add('hidden');
       document.getElementById('readSentencePinyin').classList.add('hidden');

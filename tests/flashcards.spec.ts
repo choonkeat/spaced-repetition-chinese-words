@@ -1230,7 +1230,7 @@ test.describe('Session Goal Feature', () => {
     await expect(page.locator('#sessionWrong')).toHaveText('0');
   });
 
-  test('Continue button shows extension options and extends session goal', async ({ page }) => {
+  test('Session complete modal shows continue options directly', async ({ page }) => {
     await setupWriteMode(page);
 
     await page.selectOption('#sessionGoalSelect', '5');
@@ -1246,16 +1246,13 @@ test.describe('Session Goal Feature', () => {
 
     await expect(page.locator('#sessionCompleteModal')).toBeVisible({ timeout: 3000 });
 
-    // Click Continue
-    await page.click('#continueSessionBtn');
-
-    // Extension options should appear
-    await expect(page.locator('#continueOptions')).toBeVisible();
+    // All continue options should be visible directly (no 2-step flow)
+    await expect(page.locator('#endSessionBtn')).toBeVisible();
     await expect(page.locator('[data-continue="5"]')).toBeVisible();
     await expect(page.locator('[data-continue="10"]')).toBeVisible();
     await expect(page.locator('[data-continue="15"]')).toBeVisible();
 
-    // Click +5
+    // Click "5 more"
     await page.click('[data-continue="5"]');
 
     // Modal should close and game should continue
