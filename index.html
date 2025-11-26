@@ -1265,56 +1265,34 @@
       // Update reviews due badge and recommendation
       document.getElementById('reviewsDueCount').textContent = totalDue;
 
-      // Calculate recommended session size based on backlog severity and SRS research
+      // Calculate recommended session size based on backlog
       let recommended = 10; // default
       let timeEstimate = '';
-      let contextMessage = '';
 
       if (totalDue === 0) {
-        // No reviews due: focus on learning new cards
         recommended = 10;
         timeEstimate = '~5 min';
-        contextMessage = 'Recommended: 10 new cards';
       } else if (totalDue <= 5) {
-        // Very light load: clear all due + add some new cards
         recommended = Math.min(totalDue + 5, 15);
         timeEstimate = '~5 min';
-        contextMessage = `Recommended: ${recommended} cards (${totalDue} due + new)`;
       } else if (totalDue <= 15) {
-        // Manageable: clear all due reviews
         recommended = totalDue;
         timeEstimate = '~8 min';
-        contextMessage = `Recommended: ${recommended} cards (clear all due)`;
       } else if (totalDue <= 50) {
-        // Moderate backlog: standard session size
         recommended = 20;
         timeEstimate = '~10 min';
-        const daysToClrear = Math.ceil(totalDue / 20);
-        contextMessage = `Recommended: 20 cards (~${daysToClrear} sessions to clear ${totalDue} due)`;
       } else if (totalDue <= 200) {
-        // High backlog: increase session size
         recommended = 25;
         timeEstimate = '~12 min';
-        const daysToClrear = Math.ceil(totalDue / 25);
-        contextMessage = `High backlog: 25 cards (~${daysToClrear} sessions to clear ${totalDue} due)`;
-      } else if (totalDue <= 500) {
-        // Very high backlog: maximum comfortable session
-        recommended = 30;
-        timeEstimate = '~15 min';
-        const daysToClrear = Math.ceil(totalDue / 30);
-        contextMessage = `Very high backlog: 30 cards (~${daysToClrear} sessions to clear ${totalDue} due)`;
       } else {
-        // Severe backlog: cap at 30 but provide realistic guidance
         recommended = 30;
         timeEstimate = '~15 min';
-        const sessionsNeeded = Math.ceil(totalDue / 30);
-        if (sessionsNeeded > 30) {
-          contextMessage = `Severe backlog: 30 cards now. ${totalDue} due total—chip away daily!`;
-        } else {
-          contextMessage = `Severe backlog: 30 cards now (~${sessionsNeeded} sessions to clear ${totalDue} due)`;
-        }
       }
 
+      // Simple message: "X due · Y cards today (~Z min)" or just "Y cards today (~Z min)" for small backlogs
+      const contextMessage = totalDue > 15
+        ? `${totalDue} due · ${recommended} cards today`
+        : `${recommended} cards today`;
       document.getElementById('sessionRecommendation').textContent = `${contextMessage} (${timeEstimate})`;
 
       // Set session goal dropdown to match recommendation
