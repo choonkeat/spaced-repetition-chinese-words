@@ -243,21 +243,17 @@
     .stats-row .stat-value.mastered { color: #4CAF50; }
     /* Session goal section */
     .session-goal-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
       margin: 20px 0;
       padding: 15px;
       background: #f5f5f5;
       border-radius: 8px;
-    }
-    .session-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
       flex-wrap: wrap;
-      gap: 10px;
     }
     .session-recommendation {
-      font-size: 14px;
+      font-size: 13px;
       color: #666;
       font-style: italic;
     }
@@ -278,15 +274,19 @@
       background: white;
       cursor: pointer;
     }
+    .play-btn-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 15px;
+    }
     .play-btn {
       background: #4CAF50;
       color: white;
       border: none;
-      padding: 15px 40px;
-      font-size: 18px;
-      border-radius: 8px;
+      padding: 12px 30px;
+      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
-      width: 100%;
     }
     .play-btn:hover { background: #43A047; }
     .play-btn:disabled { background: #ccc; cursor: not-allowed; }
@@ -868,9 +868,6 @@
 
           <!-- Session Goal Selector -->
           <div class="session-goal-section">
-            <div class="session-recommendation" id="sessionRecommendation">
-              Recommended: 10 cards (~5 min)
-            </div>
             <div class="session-goal-selector">
               <label for="sessionGoalSelect">Session goal:</label>
               <select id="sessionGoalSelect">
@@ -883,10 +880,15 @@
                 <option value="999999">No limit</option>
               </select>
             </div>
+            <div class="session-recommendation" id="sessionRecommendation">
+              Recommended: 10 cards (~5 min)
+            </div>
           </div>
 
           <!-- Play button -->
-          <button class="play-btn" id="playBtn">Start Practice</button>
+          <div class="play-btn-wrapper">
+            <button class="play-btn" id="playBtn">Start Practice</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1289,11 +1291,8 @@
         timeEstimate = '~15 min';
       }
 
-      // Simple message: "X due · Y cards today (~Z min)" or just "Y cards today (~Z min)" for small backlogs
-      const contextMessage = totalDue > 15
-        ? `${totalDue} due · ${recommended} cards today`
-        : `${recommended} cards today`;
-      document.getElementById('sessionRecommendation').textContent = `${contextMessage} (${timeEstimate})`;
+      // Simple recommendation message
+      document.getElementById('sessionRecommendation').textContent = `Recommended: ${recommended} cards (${timeEstimate})`;
 
       // Set session goal dropdown to match recommendation
       const goalSelect = document.getElementById('sessionGoalSelect');
