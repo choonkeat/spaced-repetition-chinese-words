@@ -144,6 +144,195 @@ type FlashcardList = Flashcard[];</code></pre>
 // localStorage.getItem('flashcard_voice')
 "Tingting"  // Selected TTS voice name</code></pre>
 
+  <h2 id="adaptive-difficulty-implementation">Adaptive Difficulty Implementation</h2>
+  <p>The app uses an adaptive difficulty system that measures implicit signals to adjust intervals per-card. See <a href="SPACED_REPETITION.html#adaptive-difficulty">SPACED_REPETITION.html</a> for the conceptual overview.</p>
+
+  <h3 id="extended-data-model">Extended Data Model</h3>
+  <p>Each card's progress includes difficulty tracking fields:</p>
+  <pre><code>progress[word] = {
+  read: {
+    intervalIndex: 0,
+    nextReview: timestamp,
+    successCount: 0,
+    failCount: 0,
+    // Adaptive difficulty fields
+    lapseCount: 0,         // Failures after reaching level 2+
+    avgResponseTime: null, // Rolling average in milliseconds
+    lastResponseTime: null,
+    hintUseCount: 0,       // Times hint used (levels 0-1 only)
+    difficultyScore: 1.0   // Multiplier: 0.5 (easy) to 2.0 (hard)
+  },
+  write: { /* same structure */ }
+}</code></pre>
+
+  <h3 id="interval-calculation">Interval Calculation</h3>
+  <pre><code>// Base intervals (milliseconds)
+const INTERVALS = [
+  1 * 60 * 1000,        // 0: 1 minute
+  10 * 60 * 1000,       // 1: 10 minutes
+  60 * 60 * 1000,       // 2: 1 hour
+  24 * 60 * 60 * 1000,  // 3: 1 day
+  3 * 24 * 60 * 60 * 1000,   // 4: 3 days (mastered threshold)
+  7 * 24 * 60 * 60 * 1000,   // 5: 7 days
+  14 * 24 * 60 * 60 * 1000,  // 6: 14 days
+  30 * 24 * 60 * 60 * 1000,  // 7: 30 days
+  60 * 24 * 60 * 60 * 1000,  // 8: 60 days
+  90 * 24 * 60 * 60 * 1000   // 9: 90 days (maximum)
+];
+
+// Difficulty-adjusted interval
+function getNextInterval(intervalIndex, difficultyScore) {
+  const baseInterval = INTERVALS[intervalIndex];
+  // Easy cards (score < 1): longer intervals
+  // Hard cards (score > 1): shorter intervals
+  return baseInterval / difficultyScore;
+}
+
+// Example:
+// difficultyScore 0.5 (easy): 7-day becomes 14 days
+// difficultyScore 2.0 (hard): 7-day becomes 3.5 days</code></pre>
+
+  <h3 id="recording-result-algorithm">Recording Result Algorithm</h3>
+  <pre><code>function recordResult(correct, responseTime, usedHint, modeProgress) {
+  const { intervalIndex, avgResponseTime, difficultyScore, lapseCount } = modeProgress;
+  const wasLearned = intervalIndex >= 2;
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 1: Classify response time
+  // ═══════════════════════════════════════════════════════════════
+  let timeCategory;  // 'fast' | 'normal' | 'slow'
+  if (avgResponseTime === null) {
+    timeCategory = 'normal';  // No baseline yet
+  } else if (responseTime < avgResponseTime * 0.7) {
+    timeCategory = 'fast';    // 30% faster than average
+  } else if (responseTime > avgResponseTime * 1.5) {
+    timeCategory = 'slow';    // 50% slower than average
+  } else {
+    timeCategory = 'normal';
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 2: Calculate level advancement
+  // ═══════════════════════════════════════════════════════════════
+  let levelDelta;
+  let newLapseCount = lapseCount;
+
+  if (!correct) {
+    levelDelta = -intervalIndex;  // Reset to 0
+    if (wasLearned) newLapseCount++;
+  } else if (usedHint) {
+    levelDelta = 0;  // No advancement when hint used
+  } else if (timeCategory === 'fast') {
+    levelDelta = 2;  // Skip ahead for fast recall
+  } else {
+    levelDelta = 1;  // Standard advancement
+  }
+
+  const newIntervalIndex = Math.max(0, Math.min(9, intervalIndex + levelDelta));
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 3: Update difficulty score
+  // ═══════════════════════════════════════════════════════════════
+  let newDifficultyScore = difficultyScore;
+
+  if (!correct) {
+    newDifficultyScore *= 1.2;       // Failed → harder
+  } else if (usedHint) {
+    newDifficultyScore *= 1.1;       // Needed help → harder
+  } else if (timeCategory === 'fast') {
+    newDifficultyScore *= 0.9;       // Fast recall → easier
+  } else if (timeCategory === 'slow') {
+    newDifficultyScore *= 1.05;      // Slow recall → slightly harder
+  }
+  // Normal speed correct: no change
+
+  newDifficultyScore = Math.max(0.5, Math.min(2.0, newDifficultyScore));
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 4: Calculate next review time
+  // ═══════════════════════════════════════════════════════════════
+  const baseInterval = INTERVALS[newIntervalIndex];
+  const adjustedInterval = baseInterval / newDifficultyScore;
+
+  // Add fuzz factor (±5%) to prevent review clustering
+  const fuzz = 0.95 + Math.random() * 0.1;
+  const finalInterval = adjustedInterval * fuzz;
+
+  const nextReview = Date.now() + finalInterval;
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 5: Update rolling average response time
+  // ═══════════════════════════════════════════════════════════════
+  let newAvgResponseTime;
+  if (avgResponseTime === null) {
+    newAvgResponseTime = responseTime;
+  } else {
+    newAvgResponseTime = avgResponseTime * 0.8 + responseTime * 0.2;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // STEP 6: Return updated progress
+  // ═══════════════════════════════════════════════════════════════
+  return {
+    intervalIndex: newIntervalIndex,
+    nextReview: nextReview,
+    successCount: correct ? modeProgress.successCount + 1 : modeProgress.successCount,
+    failCount: correct ? modeProgress.failCount : modeProgress.failCount + 1,
+    lapseCount: newLapseCount,
+    avgResponseTime: newAvgResponseTime,
+    lastResponseTime: responseTime,
+    hintUseCount: usedHint ? modeProgress.hintUseCount + 1 : modeProgress.hintUseCount,
+    difficultyScore: newDifficultyScore
+  };
+}</code></pre>
+
+  <h3 id="outcome-matrix">Quick Reference: Outcome Matrix</h3>
+  <table>
+    <tr>
+      <th>Scenario</th>
+      <th>Level Δ</th>
+      <th>Difficulty Δ</th>
+      <th>Lapse?</th>
+    </tr>
+    <tr style="background:#c8e6c9;">
+      <td>Fast + No hint + Correct</td>
+      <td><code>+2</code></td>
+      <td><code>× 0.9</code></td>
+      <td>No</td>
+    </tr>
+    <tr style="background:#dcedc8;">
+      <td>Normal + No hint + Correct</td>
+      <td><code>+1</code></td>
+      <td><code>× 1.0</code></td>
+      <td>No</td>
+    </tr>
+    <tr style="background:#dcedc8;">
+      <td>Slow + No hint + Correct</td>
+      <td><code>+1</code></td>
+      <td><code>× 1.05</code></td>
+      <td>No</td>
+    </tr>
+    <tr style="background:#fff9c4;">
+      <td>Any + Hint + Correct</td>
+      <td><code>+0</code></td>
+      <td><code>× 1.1</code></td>
+      <td>No</td>
+    </tr>
+    <tr style="background:#ffcdd2;">
+      <td>Any + Any + Wrong</td>
+      <td><code>→ 0</code></td>
+      <td><code>× 1.2</code></td>
+      <td>If level ≥ 2</td>
+    </tr>
+  </table>
+
+  <h3 id="leech-detection-implementation">Leech Detection</h3>
+  <pre><code>function isLeech(modeProgress) {
+  const { lapseCount, difficultyScore, successCount } = modeProgress;
+  return (lapseCount >= 4) || (difficultyScore >= 1.8 && successCount >= 6);
+}</code></pre>
+  <p>See <a href="SPACED_REPETITION.html#leech-detection">SPACED_REPETITION.html</a> for leech recovery strategies.</p>
+
   <h2>Key Features</h2>
 
   <h3>Spaced Repetition with Review Priority</h3>
