@@ -2131,6 +2131,7 @@
       // Always clear and restart (not toggle)
       stopSpeechRecognition();
       document.getElementById('speechInput').value = '';
+      document.getElementById('speechTip').textContent = 'Restarting...';
       if (currentCard) {
         document.getElementById('readSentence').textContent = currentCard.sentence; // Reset highlighting
       }
