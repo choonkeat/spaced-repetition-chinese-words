@@ -111,12 +111,6 @@
       font-size: 11px;
       color: #888;
     }
-    .file-item-session {
-      font-size: 11px;
-      margin-top: 4px;
-    }
-    .file-item-session .correct { color: #4CAF50; }
-    .file-item-session .wrong { color: #f44336; }
     .sidebar-footer {
       padding: 15px;
       border-top: 1px solid #eee;
@@ -1181,9 +1175,6 @@
             </div>
           </div>
           <div class="file-item-stats">${file.flashcards.length} words</div>
-          <div class="file-item-session">
-            Session: <span class="correct">${session.correct}</span> / <span class="wrong">${session.wrong}</span>
-          </div>
           ${file.highscore ? `<div class="file-item-highscore">Highscore: ${file.highscore.count}</div>` : ''}
         `;
         item.addEventListener('click', (e) => {
