@@ -204,25 +204,21 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
     .stats-card {
       background: #fafafa;
       border-radius: 8px;
       padding: 15px;
+      margin-bottom: 20px;
     }
-    .stats-card h4 {
-      margin: 0 0 12px 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .stats-card.combined {
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .stats-card.read h4 { color: #2196F3; }
-    .stats-card.write h4 { color: #9C27B0; }
+    .stats-card .stat-value[title]:not([title=""]) {
+      cursor: help;
+      border-bottom: 1px dotted #999;
+    }
     .stats-row {
       display: flex;
       justify-content: space-between;
@@ -794,12 +790,11 @@
       .session-stat .number {
         font-size: 20px;
       }
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
       .stats-card {
         padding: 12px;
+      }
+      .stats-card.combined {
+        max-width: none;
       }
     }
   </style>
@@ -869,37 +864,19 @@
             </div>
           </div>
 
-          <!-- Stats grid -->
-          <div class="stats-grid">
-            <div class="stats-card read">
-              <h4>读</h4>
-              <div class="stats-row">
-                <span class="stat-label">Due now</span>
-                <span class="stat-value due" id="readDue">0</span>
-              </div>
-              <div class="stats-row">
-                <span class="stat-label">Practiced</span>
-                <span class="stat-value" id="readPracticed">0</span>
-              </div>
-              <div class="stats-row">
-                <span class="stat-label">Mastered</span>
-                <span class="stat-value mastered" id="readMastered">0</span>
-              </div>
+          <!-- Stats grid - combined -->
+          <div class="stats-card combined">
+            <div class="stats-row">
+              <span class="stat-label">Due now</span>
+              <span class="stat-value due" id="totalDue" title="">0</span>
             </div>
-            <div class="stats-card write">
-              <h4>写</h4>
-              <div class="stats-row">
-                <span class="stat-label">Due now</span>
-                <span class="stat-value due" id="writeDue">0</span>
-              </div>
-              <div class="stats-row">
-                <span class="stat-label">Practiced</span>
-                <span class="stat-value" id="writePracticed">0</span>
-              </div>
-              <div class="stats-row">
-                <span class="stat-label">Mastered</span>
-                <span class="stat-value mastered" id="writeMastered">0</span>
-              </div>
+            <div class="stats-row">
+              <span class="stat-label">Practiced</span>
+              <span class="stat-value" id="totalPracticed" title="">0</span>
+            </div>
+            <div class="stats-row">
+              <span class="stat-label">Mastered</span>
+              <span class="stat-value mastered" id="totalMastered" title="">0</span>
             </div>
           </div>
 
@@ -1280,15 +1257,25 @@
         : '';
       document.getElementById('sessionCorrect').textContent = session.correct;
       document.getElementById('sessionWrong').textContent = session.wrong;
-      document.getElementById('readDue').textContent = stats.read.dueNow;
-      document.getElementById('readPracticed').textContent = stats.read.practiced;
-      document.getElementById('readMastered').textContent = stats.read.mastered;
-      document.getElementById('writeDue').textContent = stats.write.dueNow;
-      document.getElementById('writePracticed').textContent = stats.write.practiced;
-      document.getElementById('writeMastered').textContent = stats.write.mastered;
+
+      // Combined stats with tooltips for breakdown
+      const totalDue = stats.read.dueNow + stats.write.dueNow;
+      const totalPracticed = stats.read.practiced + stats.write.practiced;
+      const totalMastered = stats.read.mastered + stats.write.mastered;
+
+      const dueEl = document.getElementById('totalDue');
+      dueEl.textContent = totalDue;
+      dueEl.title = `Reading: ${stats.read.dueNow}, Writing: ${stats.write.dueNow}`;
+
+      const practicedEl = document.getElementById('totalPracticed');
+      practicedEl.textContent = totalPracticed;
+      practicedEl.title = `Reading: ${stats.read.practiced}, Writing: ${stats.write.practiced}`;
+
+      const masteredEl = document.getElementById('totalMastered');
+      masteredEl.textContent = totalMastered;
+      masteredEl.title = `Reading: ${stats.read.mastered}, Writing: ${stats.write.mastered}`;
 
       // Update reviews due badge and recommendation
-      const totalDue = stats.read.dueNow + stats.write.dueNow;
       document.getElementById('reviewsDueCount').textContent = totalDue;
 
       // Calculate recommended session size based on backlog severity and SRS research
