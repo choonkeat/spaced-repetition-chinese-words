@@ -849,7 +849,6 @@
             <h2 id="selectedFileName"></h2>
             <div class="word-count" id="selectedFileWordCount"></div>
             <div class="last-practiced" id="selectedFileLastAttempted"></div>
-            <div class="highscore-display" id="selectedFileHighscore"></div>
           </div>
 
           <!-- Session stats -->
@@ -1252,9 +1251,6 @@
       document.getElementById('selectedFileLastAttempted').textContent = file.lastAttempted
         ? `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`
         : 'Not yet practiced';
-      document.getElementById('selectedFileHighscore').textContent = file.highscore
-        ? `Highscore: ${file.highscore.count} at ${new Date(file.highscore.timestamp).toLocaleString()}`
-        : '';
       document.getElementById('sessionCorrect').textContent = session.correct;
       document.getElementById('sessionWrong').textContent = session.wrong;
 
