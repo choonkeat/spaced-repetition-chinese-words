@@ -1113,7 +1113,12 @@
     let sessionStats = {}; // { fileId: { correct: 0, wrong: 0 } }
     let selectedVoice = null;
     let sessionGoal = 10; // Default session goal
-    let sessionCardsCompleted = 0; // Cards completed in current session
+
+    function getSessionCardsCompleted() {
+      const file = getCurrentFile();
+      if (!file || !sessionStats[file.id]) return 0;
+      return sessionStats[file.id].correct + sessionStats[file.id].wrong;
+    }
 
     // DOM elements
     const fileInput = document.getElementById('fileInput');
@@ -1705,7 +1710,6 @@
 
       // Get session goal from selector
       sessionGoal = parseInt(document.getElementById('sessionGoalSelect').value);
-      sessionCardsCompleted = 0;
 
       // Show/hide session progress based on goal
       const progressEl = document.getElementById('sessionProgress');
@@ -1739,9 +1743,6 @@
         sessionStats[currentFileId] = { correct: 0, wrong: 0 };
       }
 
-      // Reset session tracking
-      sessionCardsCompleted = 0;
-
       renderFileList();
       updateSelectedFileStats();
     }
@@ -1749,14 +1750,15 @@
     function updateSessionProgress() {
       if (sessionGoal >= 999999) return; // No limit mode
 
-      const percentage = Math.min((sessionCardsCompleted / sessionGoal) * 100, 100);
-      document.getElementById('sessionProgressText').textContent = `${sessionCardsCompleted}/${sessionGoal} cards`;
+      const completed = getSessionCardsCompleted();
+      const percentage = Math.min((completed / sessionGoal) * 100, 100);
+      document.getElementById('sessionProgressText').textContent = `${completed}/${sessionGoal} cards`;
       document.getElementById('sessionProgressBar').style.width = `${percentage}%`;
     }
 
     function checkSessionComplete() {
       if (sessionGoal >= 999999) return false; // No limit mode
-      return sessionCardsCompleted >= sessionGoal;
+      return getSessionCardsCompleted() >= sessionGoal;
     }
 
     function showSessionCompleteModal() {
@@ -1769,7 +1771,7 @@
       const totalNew = file.flashcards.length * 2 - (stats.read.practiced + stats.write.practiced);
 
       // Populate modal
-      document.getElementById('modalCardsCompleted').textContent = sessionCardsCompleted;
+      document.getElementById('modalCardsCompleted').textContent = getSessionCardsCompleted();
       document.getElementById('modalCorrectCount').textContent = session.correct;
       document.getElementById('modalWrongCount').textContent = session.wrong;
 
@@ -1786,6 +1788,13 @@
     }
 
     function nextCard() {
+      // Check if session goal reached before loading next card
+      // This allows user to review current card (e.g., "Actually, I said correctly") before modal appears
+      if (checkSessionComplete()) {
+        showSessionCompleteModal();
+        return;
+      }
+
       const next = getNextScheduledCard();
       if (!next) {
         alert('No cards to review!');
@@ -2488,10 +2497,29 @@
 
     function handleISaidItCorrectly() {
       // Allow this even if cardCompleted is true - this is an override button
+      const wasAlreadyCompleted = cardCompleted;
       cardCompleted = true;
       stopSpeechRecognition();
 
-      // Record as success (override any previous failure)
+      // If overriding a previous failure, undo it first
+      if (wasAlreadyCompleted) {
+        const file = getCurrentFile();
+        if (file) {
+          // Undo session stats
+          if (sessionStats[file.id] && sessionStats[file.id].wrong > 0) {
+            sessionStats[file.id].wrong--;
+          }
+          // Undo progress failCount
+          if (file.progress[currentCard.word] && file.progress[currentCard.word][currentMode]) {
+            const modeProgress = file.progress[currentCard.word][currentMode];
+            if (modeProgress.failCount > 0) {
+              modeProgress.failCount--;
+            }
+          }
+        }
+      }
+
+      // Record as success
       recordResult(true);
       showConfetti();
 
@@ -2757,18 +2785,11 @@
       modeProgress.nextReview = Date.now() + INTERVALS[modeProgress.intervalIndex];
       file.progress[currentCard.word][currentMode] = modeProgress;
 
-      // Track session progress
-      sessionCardsCompleted++;
+      // Update session progress display
       updateSessionProgress();
 
       saveToStorage();
       updateGameStats();
-
-      // Check if session goal reached
-      if (checkSessionComplete()) {
-        // Delay modal slightly to allow confetti/animations to show
-        setTimeout(() => showSessionCompleteModal(), 1500);
-      }
     }
 
     // Confetti
