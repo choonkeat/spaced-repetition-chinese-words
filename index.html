@@ -177,11 +177,17 @@
     .session-banner {
       display: flex;
       justify-content: center;
-      gap: 40px;
+      align-items: center;
+      gap: 20px;
       padding: 15px 20px;
       background: #f8f9fa;
       border-radius: 8px;
       margin-bottom: 20px;
+    }
+    .session-label {
+      font-size: 13px;
+      color: #666;
+      font-weight: 500;
     }
     .session-stat {
       text-align: center;
@@ -826,8 +832,9 @@
             <div class="last-practiced" id="selectedFileLastAttempted"></div>
           </div>
 
-          <!-- Session stats -->
+          <!-- Current session stats (hidden when 0/0) -->
           <div class="session-banner">
+            <div class="session-label">Current session:</div>
             <div class="session-stat">
               <div class="number correct" id="sessionCorrect">0</div>
               <div class="label">Correct</div>
@@ -1214,11 +1221,27 @@
 
       document.getElementById('selectedFileName').textContent = file.name;
       document.getElementById('selectedFileWordCount').textContent = `${file.flashcards.length} words`;
-      document.getElementById('selectedFileLastAttempted').textContent = file.lastAttempted
-        ? `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`
-        : 'Not yet practiced';
-      document.getElementById('sessionCorrect').textContent = session.correct;
-      document.getElementById('sessionWrong').textContent = session.wrong;
+
+      // Show last practiced with score if available
+      let lastPracticedText = 'Not yet practiced';
+      if (file.lastSession) {
+        const date = new Date(file.lastSession.timestamp).toLocaleString();
+        lastPracticedText = `Last practiced: ${date} - ${file.lastSession.correct} correct, ${file.lastSession.wrong} wrong`;
+      } else if (file.lastAttempted) {
+        // Fallback for old data without lastSession
+        lastPracticedText = `Last practiced: ${new Date(file.lastAttempted).toLocaleString()}`;
+      }
+      document.getElementById('selectedFileLastAttempted').textContent = lastPracticedText;
+
+      // Show/hide current session banner based on activity
+      const sessionBanner = document.querySelector('.session-banner');
+      if (session.correct === 0 && session.wrong === 0) {
+        sessionBanner.style.display = 'none';
+      } else {
+        sessionBanner.style.display = 'flex';
+        document.getElementById('sessionCorrect').textContent = session.correct;
+        document.getElementById('sessionWrong').textContent = session.wrong;
+      }
 
       // Combined stats with tooltips for breakdown
       const totalDue = stats.read.dueNow + stats.write.dueNow;
@@ -1651,8 +1674,21 @@
       homeScreen.classList.remove('hidden');
       stopSpeechRecognition();
 
-      // Reset session stats for current file
+      // Save last session stats before resetting (if any activity occurred)
       if (currentFileId && sessionStats[currentFileId]) {
+        const session = sessionStats[currentFileId];
+        if (session.correct > 0 || session.wrong > 0) {
+          const file = files.find(f => f.id === currentFileId);
+          if (file) {
+            file.lastSession = {
+              correct: session.correct,
+              wrong: session.wrong,
+              timestamp: Date.now()
+            };
+            saveToStorage();
+          }
+        }
+        // Reset session stats for current file
         sessionStats[currentFileId] = { correct: 0, wrong: 0 };
       }
 
