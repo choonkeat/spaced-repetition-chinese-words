@@ -539,9 +539,7 @@ Before implementing ANY changes, run the existing test suite to establish a base
 npx playwright test
 ```
 
-**Note:** As of the baseline run, there are 50 passing tests and 11 pre-existing failing tests. The failing tests appear to be due to UI changes that haven't been reflected in the test suite. Focus on:
-1. Not breaking any currently passing tests
-2. Fixing the failing tests if they relate to features you're modifying
+**Note:** All 61 existing tests pass. Do not break any of these tests.
 
 Key test areas that must not regress:
 

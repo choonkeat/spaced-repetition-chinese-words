@@ -124,17 +124,15 @@ test.describe('File Upload & Management', () => {
   });
 
   test('pre-populates Sample file when localStorage is empty', async ({ page }) => {
-    // Sample file should be auto-created
+    // Sample file should be auto-created and auto-selected
     await expect(page.locator('.file-item')).toHaveCount(1);
     await expect(page.locator('.file-item-name')).toContainText('Sample');
     await expect(page.locator('.file-item-stats')).toContainText('50 words');
 
-    // Welcome message should explain spaced repetition and encourage trying the Sample
-    await expect(page.locator('#welcomeMessage')).toBeVisible();
-    await expect(page.locator('#welcomeMessage')).toContainText('spaced repetition');
-    await expect(page.locator('#welcomeMessage')).toContainText('How it works');
-    await expect(page.locator('#welcomeMessage')).toContainText('New here?');
-    await expect(page.locator('#welcomeMessage')).toContainText('Click "Sample"');
+    // Sample is auto-selected, so stats panel is visible (not welcome message)
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+    await expect(page.locator('#selectedFileName')).toContainText('Sample');
+    await expect(page.locator('#welcomeMessage')).not.toBeVisible();
   });
 
   test('Sample file is playable', async ({ page }) => {
@@ -334,14 +332,10 @@ test.describe('Home Screen Stats', () => {
   test('shows correct initial stats for new file', async ({ page }) => {
     await uploadFile(page, VALID_FLASHCARDS, 'Test Set');
 
-    // All cards should be "due" initially
-    await expect(page.locator('#readDue')).toHaveText('3');
-    await expect(page.locator('#readPracticed')).toHaveText('0');
-    await expect(page.locator('#readMastered')).toHaveText('0');
-
-    await expect(page.locator('#writeDue')).toHaveText('3');
-    await expect(page.locator('#writePracticed')).toHaveText('0');
-    await expect(page.locator('#writeMastered')).toHaveText('0');
+    // All cards should be "due" initially (3 cards × 2 modes = 6 total)
+    await expect(page.locator('#totalDue')).toHaveText('6');
+    await expect(page.locator('#totalPracticed')).toHaveText('0');
+    await expect(page.locator('#totalMastered')).toHaveText('0');
 
     // Session stats at zero
     await expect(page.locator('#sessionCorrect')).toHaveText('0');
@@ -785,10 +779,11 @@ test.describe('Spaced Repetition & Progress', () => {
       ]
     });
 
-    // 1 mastered (你 at level 4), 1 not mastered (好 at level 3)
-    await expect(page.locator('#readMastered')).toHaveText('1');
-    await expect(page.locator('#writeMastered')).toHaveText('1');
-    await expect(page.locator('#readPracticed')).toHaveText('2');
+    // Combined stats: 你 at level 4 (mastered), 好 at level 3 (not mastered)
+    // totalMastered = 1 (read) + 1 (write) = 2
+    // totalPracticed = 2 (read) + 2 (write) = 4
+    await expect(page.locator('#totalMastered')).toHaveText('2');
+    await expect(page.locator('#totalPracticed')).toHaveText('4');
   });
 
   test('progress persists across page reload', async ({ page }) => {
@@ -847,10 +842,7 @@ test.describe('Spaced Repetition & Progress', () => {
     await page.click('#backBtn');
     await expect(page.locator('#selectedFileStats')).toBeVisible();
 
-    // Should show highscore of 2 in homepage
-    await expect(page.locator('#selectedFileHighscore')).toContainText('Highscore: 2');
-
-    // Should show highscore in sidebar
+    // Should show highscore in sidebar (main area highscore was removed)
     await expect(page.locator('.file-item-highscore')).toContainText('Highscore: 2');
 
     // Check storage has highscore with count and timestamp
@@ -859,10 +851,10 @@ test.describe('Spaced Repetition & Progress', () => {
     expect(storage.files[0].highscore.count).toBe(2);
     expect(storage.files[0].highscore.timestamp).toBeGreaterThan(0);
 
-    // Reload page - highscore should persist
+    // Reload page - highscore should persist in sidebar
     await page.reload();
     await page.locator('.file-item').click();
-    await expect(page.locator('#selectedFileHighscore')).toContainText('Highscore: 2');
+    await expect(page.locator('.file-item-highscore')).toContainText('Highscore: 2');
 
     // Export should include highscore
     const downloadPromise = page.waitForEvent('download');
@@ -938,18 +930,18 @@ test.describe('Mobile Responsive', () => {
     await clearStorage(page);
     await page.reload();
 
-    // On mobile with no files, sidebar auto-opens
-    await expect(page.locator('#sidebar')).toHaveClass(/open/);
-
-    // Click hamburger to close
-    await page.click('#hamburger');
+    // Sidebar starts closed (Sample is auto-selected, so no auto-open)
     await expect(page.locator('#sidebar')).not.toHaveClass(/open/);
-    await expect(page.locator('#hamburger')).not.toHaveClass(/open/);
 
-    // Click again to open
+    // Click hamburger to open
     await page.click('#hamburger');
     await expect(page.locator('#sidebar')).toHaveClass(/open/);
     await expect(page.locator('#hamburger')).toHaveClass(/open/);
+
+    // Click again to close
+    await page.click('#hamburger');
+    await expect(page.locator('#sidebar')).not.toHaveClass(/open/);
+    await expect(page.locator('#hamburger')).not.toHaveClass(/open/);
   });
 
   test('sidebar overlay closes sidebar on click', async ({ page }) => {
@@ -958,7 +950,8 @@ test.describe('Mobile Responsive', () => {
     await clearStorage(page);
     await page.reload();
 
-    // On mobile with no files, sidebar auto-opens
+    // Open sidebar first
+    await page.click('#hamburger');
     await expect(page.locator('#sidebar')).toHaveClass(/open/);
 
     // Click overlay to close
@@ -972,7 +965,8 @@ test.describe('Mobile Responsive', () => {
     await clearStorage(page);
     await page.reload();
 
-    // Sidebar is open
+    // Open sidebar first
+    await page.click('#hamburger');
     await expect(page.locator('#sidebar')).toHaveClass(/open/);
 
     // Upload file (which auto-selects it)
@@ -989,11 +983,11 @@ test.describe('Edge Cases & Error Handling', () => {
     await clearStorage(page);
     await page.reload();
 
-    // Sample file should be auto-created when localStorage is empty
+    // Sample file should be auto-created and auto-selected when localStorage is empty
     await expect(page.locator('.file-item')).toHaveCount(1);
     await expect(page.locator('.file-item-name')).toContainText('Sample');
-    await expect(page.locator('#welcomeMessage')).toBeVisible();
-    await expect(page.locator('#selectedFileStats')).not.toBeVisible();
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+    await expect(page.locator('#welcomeMessage')).not.toBeVisible();
   });
 
   test('sample data download link exists and is accessible', async ({ page }) => {
@@ -1282,8 +1276,8 @@ test.describe('Session Goal Feature', () => {
     await expect(page.locator('#sessionCompleteModal')).not.toBeVisible();
   });
 
-  test('reviews due badge shows correct count', async ({ page }) => {
-    // Setup with 10 cards, all due
+  test('due count shows correct value in stats', async ({ page }) => {
+    // Setup with 5 cards, all due
     await page.evaluate(() => {
       const flashcards = Array.from({ length: 5 }, (_, i) => ({
         word: `字${i}`,
@@ -1311,20 +1305,19 @@ test.describe('Session Goal Feature', () => {
     await page.reload();
     await page.locator('.file-item').click();
 
-    // 5 cards × 2 modes = 10 due
-    await expect(page.locator('#reviewsDueCount')).toHaveText('10');
-    await expect(page.locator('#reviewsDueBadge')).toBeVisible();
+    // 5 cards × 2 modes = 10 due (shown in combined stats)
+    await expect(page.locator('#totalDue')).toHaveText('10');
   });
 
-  test('recommendation text adjusts based on backlog severity', async ({ page }) => {
-    // Test 0 due
+  test('recommendation text adjusts based on backlog size', async ({ page }) => {
+    // Test 0 due - should recommend 10 cards
     await setupTestFile(page, {
       readIntervalIndex: 7,
       readNextReview: Date.now() + 9999999999,
       writeIntervalIndex: 7,
       writeNextReview: Date.now() + 9999999999,
     });
-    await expect(page.locator('#sessionRecommendation')).toContainText('10 new cards');
+    await expect(page.locator('#sessionRecommendation')).toContainText('Recommended: 10 cards');
     await expect(page.locator('#sessionGoalSelect')).toHaveValue('10');
 
     // Test high backlog (>50 due) by creating many cards
@@ -1356,9 +1349,8 @@ test.describe('Session Goal Feature', () => {
     await page.reload();
     await page.locator('.file-item').click();
 
-    // 30 cards × 2 modes = 60 due, should recommend 25
-    await expect(page.locator('#sessionRecommendation')).toContainText('25 cards');
-    await expect(page.locator('#sessionRecommendation')).toContainText('High backlog');
+    // 30 cards × 2 modes = 60 due, should recommend 25 cards
+    await expect(page.locator('#sessionRecommendation')).toContainText('Recommended: 25 cards');
     await expect(page.locator('#sessionGoalSelect')).toHaveValue('25');
   });
 });
