@@ -1131,6 +1131,7 @@
     function init() {
       loadFromStorage();
       renderFileList();
+      updateSelectedFileStats();
       setupEventListeners();
       setupSpeechRecognition();
       setupVoiceSelector();
@@ -1158,6 +1159,8 @@
         };
         files.push(sampleFile);
         saveToStorage();
+        // Auto-select the sample file for new users
+        currentFileId = sampleFile.id;
       }
       // Initialize session stats for each file
       files.forEach(f => {
