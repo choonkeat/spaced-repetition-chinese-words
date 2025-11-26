@@ -1218,18 +1218,30 @@
       if (stored) {
         files = JSON.parse(stored);
         // Normalize progress data for backward compatibility with old format
+        let needsSave = false;
         for (const file of files) {
           if (file.progress) {
             for (const word of Object.keys(file.progress)) {
               const entry = file.progress[word];
               if (entry) {
+                const normalizedRead = entry.read ? getModeProgress(entry.read) : null;
+                const normalizedWrite = entry.write ? getModeProgress(entry.write) : null;
+                // Check if normalization added new fields (old format data)
+                if ((entry.read && entry.read.difficultyScore === undefined) ||
+                    (entry.write && entry.write.difficultyScore === undefined)) {
+                  needsSave = true;
+                }
                 file.progress[word] = {
-                  read: entry.read ? getModeProgress(entry.read) : null,
-                  write: entry.write ? getModeProgress(entry.write) : null
+                  read: normalizedRead,
+                  write: normalizedWrite
                 };
               }
             }
           }
+        }
+        // Save normalized data back to localStorage if old format was detected
+        if (needsSave) {
+          saveToStorage();
         }
       }
       // Pre-populate with Sample flashcards if no files exist

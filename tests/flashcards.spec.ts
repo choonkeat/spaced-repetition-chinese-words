@@ -4,6 +4,8 @@ import path from 'path';
 const VALID_FLASHCARDS = path.join(__dirname, 'fixtures/valid-flashcards.json');
 const INVALID_FLASHCARDS = path.join(__dirname, 'fixtures/invalid-missing-fields.json');
 const BACKUP_FLASHCARDS = path.join(__dirname, 'fixtures/backup-flashcards.json');
+const BACKUP_OLD_FORMAT = path.join(__dirname, 'fixtures/backup-old-format.json');
+const BACKUP_NEW_FORMAT = path.join(__dirname, 'fixtures/backup-new-format.json');
 
 // Helper to clear localStorage before each test
 async function clearStorage(page: Page) {
@@ -1352,5 +1354,434 @@ test.describe('Session Goal Feature', () => {
     // 30 cards × 2 modes = 60 due, should recommend 25 cards
     await expect(page.locator('#sessionRecommendation')).toContainText('Recommended: 25 cards');
     await expect(page.locator('#sessionGoalSelect')).toHaveValue('25');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ADAPTIVE DIFFICULTY SYSTEM TESTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+test.describe('Adaptive Difficulty System - Backward Compatibility', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('loads old localStorage data without new fields', async ({ page }) => {
+    // Setup old format data directly in localStorage
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Old Data',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 3, nextReview: 0, successCount: 5, failCount: 1 },
+            write: { intervalIndex: 2, nextReview: 0, successCount: 3, failCount: 0 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+
+    // Select file and verify it loads without errors
+    await page.locator('.file-item').click();
+    await expect(page.locator('#selectedFileStats')).toBeVisible();
+
+    // Verify original data is preserved
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['好'].read.intervalIndex).toBe(3);
+    expect(storage.files[0].progress['好'].read.successCount).toBe(5);
+    expect(storage.files[0].progress['好'].write.intervalIndex).toBe(2);
+
+    // Start practice to verify game works
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+  });
+
+  test('imports old backup file and adds default new fields', async ({ page }) => {
+    await uploadFile(page, BACKUP_OLD_FORMAT);
+
+    await expect(page.locator('#uploadMsg')).toHaveClass(/success-msg/);
+
+    // Verify progress was imported with defaults for new fields
+    const storage = await getStorageData(page);
+    const progress = storage.files.find((f: any) => f.name === 'Old Format Backup').progress['学习'];
+
+    // Original fields preserved
+    expect(progress.read.intervalIndex).toBe(3);
+    expect(progress.read.successCount).toBe(5);
+    expect(progress.read.failCount).toBe(1);
+
+    // New fields should have defaults
+    expect(progress.read.lapseCount).toBe(0);
+    expect(progress.read.avgResponseTime).toBeNull();
+    expect(progress.read.lastResponseTime).toBeNull();
+    expect(progress.read.hintUseCount).toBe(0);
+    expect(progress.read.difficultyScore).toBeDefined();
+  });
+
+  test('imports new backup file and preserves all fields', async ({ page }) => {
+    await uploadFile(page, BACKUP_NEW_FORMAT);
+
+    await expect(page.locator('#uploadMsg')).toHaveClass(/success-msg/);
+
+    const storage = await getStorageData(page);
+    const progress = storage.files.find((f: any) => f.name === 'New Format Backup').progress['学习'];
+
+    // All new fields preserved
+    expect(progress.read.lapseCount).toBe(1);
+    expect(progress.read.avgResponseTime).toBe(2500);
+    expect(progress.read.lastResponseTime).toBe(2200);
+    expect(progress.read.hintUseCount).toBe(3);
+    expect(progress.read.difficultyScore).toBe(1.15);
+  });
+
+  test('infers difficulty from high fail rate', async ({ page }) => {
+    // Setup old data with high fail rate (>50%)
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'High Fail Rate',
+        flashcards: [{
+          word: '难', word_hanyupinyin: 'nán', word_english: 'difficult',
+          sentence: '很难', sentence_hanyupinyin: 'hěn nán', sentence_english: 'very difficult'
+        }],
+        progress: {
+          '难': {
+            read: { intervalIndex: 2, nextReview: 0, successCount: 2, failCount: 5 },
+            write: { intervalIndex: 1, nextReview: 0, successCount: 1, failCount: 4 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+
+    const storage = await getStorageData(page);
+    // High fail rate should infer harder difficulty (1.3)
+    expect(storage.files[0].progress['难'].read.difficultyScore).toBe(1.3);
+  });
+
+  test('infers difficulty from low fail rate and high level', async ({ page }) => {
+    // Setup old data with low fail rate (<15%) and high level (>=5)
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Easy Card',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 6, nextReview: 0, successCount: 20, failCount: 1 },
+            write: { intervalIndex: 5, nextReview: 0, successCount: 15, failCount: 0 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+
+    const storage = await getStorageData(page);
+    // Low fail rate + high level should infer easier difficulty (0.8)
+    expect(storage.files[0].progress['好'].read.difficultyScore).toBe(0.8);
+  });
+});
+
+test.describe('Adaptive Difficulty System - Extended Intervals', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('allows intervalIndex up to 9', async ({ page }) => {
+    // Setup card at level 8
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'High Level',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 7, nextReview: Date.now() + 9999999999 },
+            write: { intervalIndex: 8, nextReview: 0, difficultyScore: 1.0 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Answer correctly
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    // Verify level advanced to 9
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['好'].write.intervalIndex).toBe(9);
+  });
+
+  test('clamps intervalIndex at 9 maximum', async ({ page }) => {
+    // Setup card already at level 9
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Max Level',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 7, nextReview: Date.now() + 9999999999 },
+            write: { intervalIndex: 9, nextReview: 0, difficultyScore: 1.0 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    // Level should stay at 9
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['好'].write.intervalIndex).toBe(9);
+  });
+});
+
+test.describe('Adaptive Difficulty System - Hint Usage', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('hint usage prevents level advancement (WRITE mode)', async ({ page }) => {
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 1,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Click show hint button
+    await page.click('#showHintBtn');
+
+    // Then answer correctly
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    // Level should NOT advance (stayed at 1)
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['你'].write.intervalIndex).toBe(1);
+    expect(storage.files[0].progress['你'].write.hintUseCount).toBe(1);
+  });
+
+  test('hint usage increases difficulty score', async ({ page }) => {
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 1,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    await page.click('#showHintBtn');
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    // Difficulty should increase (× 1.1)
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['你'].write.difficultyScore).toBeCloseTo(1.1, 1);
+  });
+});
+
+test.describe('Adaptive Difficulty System - Difficulty Score', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('wrong answer increases difficulty (×1.2)', async ({ page }) => {
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 3,
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#wrongBtn');
+
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['你'].write.difficultyScore).toBeCloseTo(1.2, 1);
+  });
+
+  test('difficulty score is clamped to 2.0 maximum', async ({ page }) => {
+    // Start with difficulty already at 1.9
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 7, nextReview: Date.now() + 9999999999 },
+            write: { intervalIndex: 3, nextReview: 0, difficultyScore: 1.9 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Wrong answer would push to 2.28, but should clamp to 2.0
+    await page.click('#showAnswerBtn');
+    await page.click('#wrongBtn');
+
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['好'].write.difficultyScore).toBe(2.0);
+  });
+});
+
+test.describe('Adaptive Difficulty System - Lapse Count', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('lapse count increases on failure at level 2+', async ({ page }) => {
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 3,  // Level 3 = "learned"
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#wrongBtn');
+
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['你'].write.lapseCount).toBe(1);
+  });
+
+  test('lapse count does NOT increase on failure at level 0-1', async ({ page }) => {
+    await setupTestFile(page, {
+      readIntervalIndex: 7,
+      readNextReview: Date.now() + 9999999999,
+      writeIntervalIndex: 1,  // Level 1 = not yet "learned"
+      writeNextReview: 0,
+    });
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#wrongBtn');
+
+    const storage = await getStorageData(page);
+    expect(storage.files[0].progress['你'].write.lapseCount).toBe(0);
+  });
+});
+
+test.describe('Adaptive Difficulty System - Response Time', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('records response time in progress', async ({ page }) => {
+    await setupWriteMode(page);
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Wait a moment to accumulate some response time
+    await page.waitForTimeout(1000);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    const storage = await getStorageData(page);
+    // Response time should be recorded (at least 1000ms from our wait)
+    expect(storage.files[0].progress['你'].write.lastResponseTime).toBeGreaterThan(500);
+    expect(storage.files[0].progress['你'].write.avgResponseTime).toBeGreaterThan(500);
+  });
+
+  test('rolling average updates with 80/20 weight', async ({ page }) => {
+    // Setup with existing avgResponseTime
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: { intervalIndex: 7, nextReview: Date.now() + 9999999999 },
+            write: {
+              intervalIndex: 1,
+              nextReview: 0,
+              avgResponseTime: 5000,  // Existing average: 5 seconds
+              difficultyScore: 1.0
+            }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Wait exactly 1 second
+    await page.waitForTimeout(1000);
+
+    await page.click('#showAnswerBtn');
+    await page.click('#correctBtn');
+
+    const storage = await getStorageData(page);
+    // New avg should be approximately: 5000 * 0.8 + 1000 * 0.2 = 4200
+    // Allow some tolerance for timing variations
+    expect(storage.files[0].progress['好'].write.avgResponseTime).toBeGreaterThan(3500);
+    expect(storage.files[0].progress['好'].write.avgResponseTime).toBeLessThan(4800);
   });
 });
