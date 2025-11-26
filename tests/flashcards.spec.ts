@@ -1719,6 +1719,146 @@ test.describe('Adaptive Difficulty System - Lapse Count', () => {
   });
 });
 
+test.describe('Adaptive Difficulty System - Override Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await clearStorage(page);
+    await page.reload();
+  });
+
+  test('"I said it correctly" properly undoes wrong answer and records success', async ({ page }) => {
+    // Setup card at level 3 (so lapse would be counted if wrong)
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: {
+              intervalIndex: 3,
+              nextReview: 0,
+              successCount: 3,
+              failCount: 0,
+              lapseCount: 0,
+              difficultyScore: 1.0,
+              avgResponseTime: null,
+              lastResponseTime: null,
+              hintUseCount: 0
+            },
+            write: { intervalIndex: 7, nextReview: Date.now() + 9999999999 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Wait a bit to accumulate response time
+    await page.waitForTimeout(500);
+
+    // Click "I don't know" (would normally record wrong)
+    await page.click('#dontKnowBtn');
+
+    // Wait for answer to be revealed and buttons to appear
+    await expect(page.locator('#readNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+
+    // Click "Actually, I said it correctly" to override
+    await page.click('#iSaidItCorrectlyBtn');
+
+    // Wait for next card transition
+    await page.waitForTimeout(2000);
+
+    // Verify the result
+    const storage = await getStorageData(page);
+    const progress = storage.files[0].progress['好'].read;
+
+    // Should have advanced level (3 -> 4), NOT reset to 0
+    expect(progress.intervalIndex).toBe(4);
+
+    // Should have 1 success, 0 fails (the wrong was undone)
+    expect(progress.successCount).toBe(4); // was 3, +1 for success
+    expect(progress.failCount).toBe(0);    // wrong was undone
+
+    // Lapse count should NOT have been incremented (wrong was undone)
+    expect(progress.lapseCount).toBe(0);
+
+    // Difficulty should be ~1.0 (not 1.2 from wrong answer)
+    expect(progress.difficultyScore).toBeCloseTo(1.0, 1);
+
+    // Response time should have been recorded
+    expect(progress.lastResponseTime).toBeGreaterThan(0);
+  });
+
+  test('"I said it correctly" uses response time from when "I don\'t know" was clicked', async ({ page }) => {
+    // Setup with existing avgResponseTime to detect if response time is used correctly
+    await page.evaluate(() => {
+      const files = [{
+        id: 'test-id',
+        name: 'Test',
+        flashcards: [{
+          word: '好', word_hanyupinyin: 'hǎo', word_english: 'good',
+          sentence: '你好', sentence_hanyupinyin: 'nǐ hǎo', sentence_english: 'hello'
+        }],
+        progress: {
+          '好': {
+            read: {
+              intervalIndex: 1,
+              nextReview: 0,
+              successCount: 1,
+              failCount: 0,
+              lapseCount: 0,
+              difficultyScore: 1.0,
+              avgResponseTime: 1000, // 1 second average
+              lastResponseTime: 1000,
+              hintUseCount: 0
+            },
+            write: { intervalIndex: 7, nextReview: Date.now() + 9999999999 }
+          }
+        }
+      }];
+      localStorage.setItem('flashcard_files', JSON.stringify(files));
+    });
+    await page.reload();
+    await page.locator('.file-item').click();
+    await page.click('#playBtn');
+    await waitForGameScreen(page);
+
+    // Wait 500ms before clicking "I don't know"
+    await page.waitForTimeout(500);
+
+    // Click "I don't know" - response time should be ~500ms at this point
+    await page.click('#dontKnowBtn');
+
+    // Wait for answer to be revealed
+    await expect(page.locator('#readNextGroup')).not.toHaveClass(/hidden/, { timeout: 10000 });
+
+    // Wait another 3 seconds (simulating user listening to TTS)
+    await page.waitForTimeout(3000);
+
+    // Click "Actually, I said it correctly"
+    // The response time should be ~500ms (from when "I don't know" was clicked)
+    // NOT ~3500ms (from now)
+    await page.click('#iSaidItCorrectlyBtn');
+
+    await page.waitForTimeout(2000);
+
+    const storage = await getStorageData(page);
+    const progress = storage.files[0].progress['好'].read;
+
+    // Response time should be close to 500ms, not 3500ms
+    // Allow some tolerance for test execution time
+    expect(progress.lastResponseTime).toBeLessThan(2000);
+    expect(progress.lastResponseTime).toBeGreaterThan(200);
+  });
+});
+
 test.describe('Adaptive Difficulty System - Response Time', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');

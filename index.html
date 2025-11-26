@@ -1177,6 +1177,24 @@
     function resetCardTracking() {
       responseTimerStart = null;
       currentCardUsedHint = false;
+      // Clear override tracking state
+      savedResponseTimeForOverride = null;
+      savedProgressForOverride = null;
+    }
+
+    // State for "I said it correctly" override functionality
+    // These are saved when "I don't know" is clicked, allowing proper undo
+    let savedResponseTimeForOverride = null;  // Response time at moment of "I don't know"
+    let savedProgressForOverride = null;      // Progress state before wrong answer was recorded
+
+    // Save state for potential override (called before recording wrong answer)
+    function saveStateForOverride(responseTime, progressBeforeWrong) {
+      savedResponseTimeForOverride = responseTime;
+      savedProgressForOverride = progressBeforeWrong ? { ...progressBeforeWrong } : null;
+      console.log('[SRS] Saved state for potential override:', {
+        responseTime: responseTime ? `${responseTime}ms` : null,
+        progressBeforeWrong: savedProgressForOverride
+      });
     }
 
     function getSessionCardsCompleted() {
@@ -2621,6 +2639,19 @@
 
     function handleDontKnow() {
       if (cardCompleted) return; // Prevent double recording
+      console.log('[SRS] handleDontKnow called - recording WRONG answer');
+
+      // Save state for potential "I said it correctly" override
+      const responseTimeAtDontKnow = getResponseTime();
+      const file = getCurrentFile();
+      let progressBeforeWrong = null;
+      if (file && file.progress[currentCard.word] && file.progress[currentCard.word][currentMode]) {
+        progressBeforeWrong = getModeProgress(file.progress[currentCard.word][currentMode]);
+      } else {
+        progressBeforeWrong = getDefaultModeProgress();
+      }
+      saveStateForOverride(responseTimeAtDontKnow, progressBeforeWrong);
+
       cardCompleted = true;
       stopSpeechRecognition();
       recordResult(false);
@@ -2648,29 +2679,60 @@
     function handleISaidItCorrectly() {
       // Allow this even if cardCompleted is true - this is an override button
       const wasAlreadyCompleted = cardCompleted;
+      console.log('[SRS] handleISaidItCorrectly called:', {
+        wasAlreadyCompleted,
+        willOverride: wasAlreadyCompleted,
+        savedResponseTime: savedResponseTimeForOverride,
+        savedProgress: savedProgressForOverride
+      });
       cardCompleted = true;
       stopSpeechRecognition();
 
-      // If overriding a previous failure, undo it first
-      if (wasAlreadyCompleted) {
-        const file = getCurrentFile();
-        if (file) {
-          // Undo session stats
-          if (sessionStats[file.id] && sessionStats[file.id].wrong > 0) {
-            sessionStats[file.id].wrong--;
-          }
-          // Undo progress failCount
-          if (file.progress[currentCard.word] && file.progress[currentCard.word][currentMode]) {
-            const modeProgress = file.progress[currentCard.word][currentMode];
-            if (modeProgress.failCount > 0) {
-              modeProgress.failCount--;
-            }
-          }
+      const file = getCurrentFile();
+      if (!file) return;
+
+      // If overriding a previous failure, restore original state and record success properly
+      if (wasAlreadyCompleted && savedProgressForOverride !== null) {
+        console.log('[SRS] Overriding wrong answer - restoring original progress and using saved response time');
+
+        // Undo session stats
+        if (sessionStats[file.id] && sessionStats[file.id].wrong > 0) {
+          sessionStats[file.id].wrong--;
         }
+
+        // Restore original progress (before wrong answer was recorded)
+        if (!file.progress[currentCard.word]) {
+          file.progress[currentCard.word] = { read: null, write: null };
+        }
+        file.progress[currentCard.word][currentMode] = savedProgressForOverride;
+
+        // Calculate new progress using SAVED response time (from when "I don't know" was clicked)
+        const responseTime = savedResponseTimeForOverride;
+        const usedHint = currentCardUsedHint;
+        const updatedProgress = calculateNewProgress(true, responseTime, usedHint, savedProgressForOverride);
+
+        // Update progress and session stats
+        file.progress[currentCard.word][currentMode] = updatedProgress;
+        sessionStats[file.id].correct++;
+
+        // Update highscore if needed
+        if (!file.highscore || sessionStats[file.id].correct > file.highscore.count) {
+          file.highscore = {
+            count: sessionStats[file.id].correct,
+            timestamp: Date.now()
+          };
+          renderFileList();
+        }
+
+        updateSessionProgress();
+        saveToStorage();
+        updateGameStats();
+      } else {
+        // Normal case: not overriding, just record success
+        console.log('[SRS] Recording success (not an override)');
+        recordResult(true);
       }
 
-      // Record as success
-      recordResult(true);
       showConfetti();
 
       document.getElementById('modeIndicator').textContent = 'READ: Marked correct!';
@@ -2919,6 +2981,14 @@
       const file = getCurrentFile();
       if (!file) return;
 
+      console.log('[SRS] recordResult called:', {
+        success,
+        word: currentCard?.word,
+        mode: currentMode,
+        responseTimerStart,
+        currentCardUsedHint
+      });
+
       // Track last attempted timestamp
       file.lastAttempted = Date.now();
 
@@ -2974,6 +3044,12 @@
      * @returns {Object} - Updated progress object
      */
     function calculateNewProgress(correct, responseTime, usedHint, modeProgress) {
+      console.log('[SRS] calculateNewProgress called:', {
+        correct,
+        responseTime: responseTime ? `${responseTime}ms` : null,
+        usedHint,
+        currentProgress: { ...modeProgress }
+      });
       const {
         intervalIndex,
         avgResponseTime,
@@ -3021,6 +3097,15 @@
       }
 
       const newIntervalIndex = Math.max(0, Math.min(INTERVALS.length - 1, intervalIndex + levelDelta));
+
+      console.log('[SRS] Level calculation:', {
+        timeCategory,
+        wasLearned,
+        levelDelta,
+        oldLevel: intervalIndex,
+        newLevel: newIntervalIndex,
+        lapseIncremented: newLapseCount > lapseCount
+      });
 
       // ═══════════════════════════════════════════════════════════════
       // STEP 3: Update difficulty score
@@ -3070,7 +3155,7 @@
       // ═══════════════════════════════════════════════════════════════
       // STEP 6: Return updated progress
       // ═══════════════════════════════════════════════════════════════
-      return {
+      const result = {
         intervalIndex: newIntervalIndex,
         nextReview: nextReview,
         successCount: correct ? successCount + 1 : successCount,
@@ -3081,6 +3166,23 @@
         hintUseCount: usedHint ? hintUseCount + 1 : hintUseCount,
         difficultyScore: newDifficultyScore
       };
+
+      console.log('[SRS] Result:', {
+        difficultyChange: `${difficultyScore.toFixed(2)} → ${newDifficultyScore.toFixed(2)}`,
+        intervalMs: finalInterval,
+        intervalHuman: formatInterval(finalInterval),
+        newProgress: result
+      });
+
+      return result;
+    }
+
+    // Helper to format interval for logging
+    function formatInterval(ms) {
+      if (ms < 60000) return `${Math.round(ms / 1000)}s`;
+      if (ms < 3600000) return `${Math.round(ms / 60000)}min`;
+      if (ms < 86400000) return `${Math.round(ms / 3600000)}h`;
+      return `${Math.round(ms / 86400000)}d`;
     }
 
     // Confetti
