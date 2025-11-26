@@ -103,7 +103,8 @@
     <h3 style="color:#1976D2; margin-top:0;">Priority 1: Past Due Reviews</h3>
     <p>Cards where <code>nextReview &gt; 0</code> AND <code>nextReview &lt;= now</code></p>
     <p><strong>Why first?</strong> These cards have been started but need review. Missing reviews wastes previous learning effort and causes forgetting. Spaced repetition ONLY works if you review before forgetting.</p>
-    <p>Selection: Random from all past due reviews (prevents always doing oldest first)</p>
+    <p>Selection: <strong>Same-session wrong cards first</strong> (if any are due), then random from remaining past due reviews.</p>
+    <p><em>Same-session preference:</em> Cards answered wrong earlier in this session get priority when they become due again. This reinforces corrections while the context is fresh, without bypassing SRS intervals — the 1-minute wait still applies.</p>
   </div>
 
   <div class="highlight" style="background:#f3e5f5;">

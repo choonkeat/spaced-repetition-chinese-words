@@ -1150,6 +1150,7 @@
     let currentMode = 'read';
     let recognition = null;
     let sessionStats = {}; // { fileId: { correct: 0, wrong: 0 } }
+    let sessionWrongCards = new Set(); // Tracks "word:mode" keys for cards answered wrong this session
     let selectedVoice = null;
     let sessionGoal = 10; // Default session goal
 
@@ -1788,7 +1789,19 @@
 
       // Priority 1: Past due reviews (prevent forgetting)
       if (pastDueReviews.length > 0) {
-        // Randomize among past due to avoid always doing oldest first
+        // Prefer same-session wrong cards for reinforcement
+        // (These were answered wrong earlier in this session and are now due again)
+        const sameSessionWrong = pastDueReviews.filter(item => {
+          const cardKey = `${item.card.word}:${item.mode}`;
+          return sessionWrongCards.has(cardKey);
+        });
+
+        if (sameSessionWrong.length > 0) {
+          // Randomize among same-session wrong cards
+          return sameSessionWrong[Math.floor(Math.random() * sameSessionWrong.length)];
+        }
+
+        // Otherwise, randomize among all past due to avoid always doing oldest first
         return pastDueReviews[Math.floor(Math.random() * pastDueReviews.length)];
       }
 
@@ -1856,6 +1869,9 @@
         // Reset session stats for current file
         sessionStats[currentFileId] = { correct: 0, wrong: 0 };
       }
+
+      // Clear same-session wrong cards tracking
+      sessionWrongCards.clear();
 
       renderFileList();
       updateSelectedFileStats();
@@ -2720,6 +2736,10 @@
           sessionStats[file.id].wrong--;
         }
 
+        // Remove from same-session wrong cards (since it's now correct)
+        const cardKey = `${currentCard.word}:${currentMode}`;
+        sessionWrongCards.delete(cardKey);
+
         // Restore original progress (before wrong answer was recorded)
         if (!file.progress[currentCard.word]) {
           file.progress[currentCard.word] = { read: null, write: null };
@@ -3032,8 +3052,12 @@
       if (!sessionStats[file.id]) {
         sessionStats[file.id] = { correct: 0, wrong: 0 };
       }
+      // Track same-session wrong cards for preferential re-review
+      const cardKey = `${currentCard.word}:${currentMode}`;
       if (success) {
         sessionStats[file.id].correct++;
+        // Remove from wrong cards if previously failed this session (now corrected)
+        sessionWrongCards.delete(cardKey);
         // Update highscore if current correct count exceeds previous record
         if (!file.highscore || sessionStats[file.id].correct > file.highscore.count) {
           file.highscore = {
@@ -3045,6 +3069,8 @@
         }
       } else {
         sessionStats[file.id].wrong++;
+        // Track this card as wrong for preferential re-review when due
+        sessionWrongCards.add(cardKey);
       }
 
       // Update progress
