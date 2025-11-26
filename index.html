@@ -2009,6 +2009,7 @@
           document.getElementById('micBtn').classList.add('error');
           document.getElementById('readMode').classList.add('mic-error');
           document.getElementById('modeIndicator').textContent = 'READ: Mic error. Tap anywhere to retry.';
+          document.getElementById('speechInput').value = '⚠️ Mic error - tap anywhere to retry';
         };
 
         recognition.onend = () => {
@@ -2023,6 +2024,7 @@
               document.getElementById('micBtn').classList.add('error');
               document.getElementById('readMode').classList.add('mic-error');
               document.getElementById('modeIndicator').textContent = 'READ: Mic stopped. Tap anywhere to retry.';
+              document.getElementById('speechInput').value = '⚠️ Mic stopped - tap anywhere to retry';
             }
           }
         };
