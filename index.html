@@ -1110,6 +1110,20 @@
       };
     }
 
+    // Checks if a card is a "leech" (consumes review time without being learned)
+    // Leeches need special attention - consider breaking them down or using mnemonics
+    function isLeech(modeProgress) {
+      const { lapseCount, difficultyScore, successCount } = modeProgress;
+
+      // Condition 1: Failed 4+ times after previously learning (level 2+)
+      if (lapseCount >= 4) return true;
+
+      // Condition 2: Persistently difficult despite many attempts
+      if (difficultyScore >= 1.8 && successCount >= 6) return true;
+
+      return false;
+    }
+
     // Validate and sanitize progress data from imports
     function sanitizeProgress(progress) {
       if (!progress || typeof progress !== 'object') return {};

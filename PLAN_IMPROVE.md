@@ -456,10 +456,10 @@ When a card is a leech, consider showing:
 - [x] Pass `usedHint` (from `currentCardUsedHint`) to `recordResult()`
 - [x] Verify progress is saved correctly to localStorage
 
-### Phase 4: Leech Detection (Optional)
+### Phase 4: Leech Detection (Optional) ✅ COMPLETED
 
-- [ ] Add `isLeech()` function
-- [ ] Add visual indicator for leech cards (can be minimal)
+- [x] Add `isLeech()` function
+- [ ] Add visual indicator for leech cards (deferred - can be added later)
 
 ### Phase 5: Testing
 
