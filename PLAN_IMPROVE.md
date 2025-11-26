@@ -424,15 +424,15 @@ When a card is a leech, consider showing:
 
 ## Implementation Checklist
 
-### Phase 1: Data Layer (Do First)
+### Phase 1: Data Layer (Do First) ✅ COMPLETED
 
-- [ ] Add `getModeProgress()`, `getDefaultModeProgress()`, `inferDifficultyFromHistory()` functions
-- [ ] Update `INTERVALS` array to include levels 8 and 9
-- [ ] Apply `getModeProgress()` when loading from localStorage
-- [ ] Apply `getModeProgress()` when importing backup files
-- [ ] Apply `getModeProgress()` when accessing card progress during review
-- [ ] Verify existing localStorage data loads correctly (no errors, no data loss)
-- [ ] Verify old backup files import correctly
+- [x] Add `getModeProgress()`, `getDefaultModeProgress()`, `inferDifficultyFromHistory()` functions
+- [x] Update `INTERVALS` array to include levels 8 and 9
+- [x] Apply `getModeProgress()` when loading from localStorage
+- [x] Apply `getModeProgress()` when importing backup files
+- [x] Apply `getModeProgress()` when accessing card progress during review
+- [x] Verify existing localStorage data loads correctly (no errors, no data loss)
+- [x] Verify old backup files import correctly
 
 ### Phase 2: Timer and Hint Tracking
 
