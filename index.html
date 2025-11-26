@@ -454,6 +454,7 @@
     }
     .match-correct { background: #333; color: #fff; padding: 2px 4px; border-radius: 3px; }
     .match-pending { color: #666; }
+    .match-partial { background: #ddd; color: #333; padding: 2px 4px; border-radius: 3px; }
     .hint-blur-base {
       filter: blur(8px);
     }
@@ -1047,16 +1048,10 @@
         <p id="modalNewCardsAvailable"></p>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-primary" id="endSessionBtn">End Session</button>
-        <button class="btn btn-secondary" id="continueSessionBtn">Continue</button>
-      </div>
-      <div id="continueOptions" class="continue-options" style="display:none;">
-        <p>How many more cards?</p>
-        <div class="continue-buttons">
-          <button class="btn btn-small" data-continue="5">+5</button>
-          <button class="btn btn-small" data-continue="10">+10</button>
-          <button class="btn btn-small" data-continue="15">+15</button>
-        </div>
+        <button class="btn" id="endSessionBtn" style="background: #f44336; color: white;">End Session</button>
+        <button class="btn" data-continue="5" style="background: #2196F3; color: white;">5 more</button>
+        <button class="btn" data-continue="10" style="background: #FF9800; color: white;">10 more</button>
+        <button class="btn" data-continue="15" style="background: #4CAF50; color: white;">15 more</button>
       </div>
     </div>
   </div>
@@ -1516,15 +1511,6 @@
       document.getElementById('endSessionBtn').addEventListener('click', () => {
         document.getElementById('sessionCompleteModal').style.display = 'none';
         endGame();
-      });
-
-      document.getElementById('continueSessionBtn').addEventListener('click', () => {
-        const continueOptions = document.getElementById('continueOptions');
-        if (continueOptions.style.display === 'none') {
-          continueOptions.style.display = 'block';
-        } else {
-          continueOptions.style.display = 'none';
-        }
       });
 
       document.querySelectorAll('[data-continue]').forEach(btn => {
@@ -2294,7 +2280,29 @@
       // Build highlighted HTML
       const speechTip = document.getElementById('speechTip');
       if (matchLen === 0) {
-        sentenceEl.innerHTML = sentence;
+        // No consecutive match from beginning - check for partial matches
+        // Get the last character from the transcript
+        const lastTranscriptChar = normalizedTranscript.length > 0
+          ? normalizedTranscript[normalizedTranscript.length - 1]
+          : '';
+
+        if (lastTranscriptChar) {
+          // Find all positions in sentence where this character (or homophone) matches
+          let html = '';
+          for (let i = 0; i < sentence.length; i++) {
+            const char = sentence[i];
+            const normalizedChar = normalizeForSpeechMatch(char);
+            if (normalizedChar && matchWithHomophones(normalizedChar, lastTranscriptChar)) {
+              html += `<span class="match-partial">${escapeHtml(char)}</span>`;
+            } else {
+              html += escapeHtml(char);
+            }
+          }
+          sentenceEl.innerHTML = html;
+        } else {
+          sentenceEl.innerHTML = sentence;
+        }
+
         // Show oops if we had a previous match, and keep showing it
         if (lastMatchLen > 0) {
           speechTip.textContent = 'Oops! Try again from the beginning.';
