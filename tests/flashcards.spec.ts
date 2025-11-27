@@ -1003,17 +1003,17 @@ test.describe('Edge Cases & Error Handling', () => {
   test('footer links exist', async ({ page }) => {
     await page.goto('/');
 
-    // Check sidebar footer links specifically
-    await expect(page.locator('.sidebar-footer a[href="SPACED_REPETITION.html"]')).toBeVisible();
-    await expect(page.locator('.sidebar-footer a[href="DEVELOPER.html"]')).toBeVisible();
-    await expect(page.locator('.sidebar-footer a[href*="github.com"]')).toBeVisible();
+    // Check app footer links in main content area
+    await expect(page.locator('.app-footer a[href="SPACED_REPETITION.html"]')).toBeVisible();
+    await expect(page.locator('.app-footer a[href="DEVELOPER.html"]')).toBeVisible();
+    await expect(page.locator('.app-footer a[href*="github.com"]')).toBeVisible();
   });
 
   test('privacy notice is displayed', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('.sidebar-footer')).toContainText('No data sent to server');
-    await expect(page.locator('.sidebar-footer')).toContainText('browser');
+    await expect(page.locator('.app-footer')).toContainText('No data sent to server');
+    await expect(page.locator('.app-footer')).toContainText('browser');
   });
 
   test('escapes HTML in file names to prevent XSS', async ({ page }) => {
