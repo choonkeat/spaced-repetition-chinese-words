@@ -119,15 +119,26 @@
     .file-item-highscore {
       color: #ff9800;
     }
-    .sidebar-footer {
-      padding: 15px;
+    .main-footer {
+      padding: 20px 15px;
       border-top: 1px solid #eee;
       font-size: 12px;
       text-align: center;
+      margin-top: 40px;
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .sidebar-footer a {
+    .main-footer a {
       color: #888;
       margin: 0 8px;
+      text-decoration: none;
+    }
+    .main-footer a:hover {
+      color: #333;
+      text-decoration: underline;
     }
     /* Main content */
     .main-content {
@@ -785,6 +796,11 @@
       .stats-card.combined {
         max-width: none;
       }
+      .main-footer {
+        margin-top: 30px;
+        padding: 15px 10px;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
@@ -810,12 +826,6 @@
     </div>
     <div class="file-list" id="fileList">
       <!-- File items will be inserted here -->
-    </div>
-    <div class="sidebar-footer">
-      <a href="SPACED_REPETITION.html">How it works</a>
-      <a href="DEVELOPER.html">Developer</a>
-      <a href="https://github.com/choonkeat/spaced-repetition-chinese-words" rel="noopener noreferrer">GitHub</a>
-      <div style="margin-top:10px; font-size:10px; color:#aaa;">No data sent to server. All progress stored in your browser. Use 💾 to export and transfer to another device.</div>
     </div>
   </div>
 
@@ -989,6 +999,13 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="main-footer">
+      <a href="SPACED_REPETITION.html">How it works</a>
+      <a href="DEVELOPER.html">Developer</a>
+      <a href="https://github.com/choonkeat/spaced-repetition-chinese-words" rel="noopener noreferrer">GitHub</a>
+      <div style="margin-top:10px; font-size:10px; color:#aaa;">No data sent to server. All progress stored in your browser. Use 💾 to export and transfer to another device.</div>
     </div>
   </div>
 
