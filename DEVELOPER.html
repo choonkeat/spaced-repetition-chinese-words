@@ -59,12 +59,11 @@
   <p>A static single-page web application for learning Chinese characters using <a href="https://en.wikipedia.org/wiki/Spaced_repetition" target="_blank">spaced repetition</a>. Built with vanilla HTML, CSS, and JavaScript - no build tools required.</p>
 
   <h2>Project Structure</h2>
-  <pre><code>claude/
-├── index.html              # Main application
+  <pre><code>├── index.html              # Main application
 ├── README.md               # Project documentation
 ├── DEVELOPER.html          # This file
-├── REVIEW.md               # Code review findings
 ├── SPACED_REPETITION.html  # Algorithm documentation
+├── Makefile                # Build/test targets
 ├── tests/
 │   └── flashcards.spec.ts  # Playwright test suite
 ├── package.json            # npm dependencies
@@ -105,7 +104,9 @@ mcp__playwright__browser_close()</code></pre>
 
   <h2>Running the Test Suite</h2>
   <p>Run the automated Playwright tests:</p>
-  <pre><code>npm test</code></pre>
+  <pre><code>make test          # Install deps + run tests (headless)
+make test-headed   # Run tests with browser visible
+make test-ui       # Run tests with interactive UI</code></pre>
   <p><strong>Note:</strong> Tests run in parallel with multiple browser instances, so you may hear <a href="https://www.youtube.com/watch?v=atUUjSLMSiM&t=7s" target="_blank">overlapping speech synthesis voices</a>. This is normal.</p>
 
   <h2>Data Schema</h2>

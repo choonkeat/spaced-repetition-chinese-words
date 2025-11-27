@@ -76,12 +76,9 @@ python3 -m http.server 8765
 ### Running Tests
 
 ```bash
-npm install                # Install dependencies
-npx playwright install chromium  # Install browser
-
-npm test                   # Run tests (headless)
-npm run test:headed        # Run tests with browser visible
-npm run test:ui            # Run tests with interactive UI
+make test          # Install deps + run tests (headless)
+make test-headed   # Run tests with browser visible
+make test-ui       # Run tests with interactive UI
 ```
 
 > **Note:** Tests run in parallel, so you may hear [overlapping speech synthesis voices](https://www.youtube.com/watch?v=atUUjSLMSiM&t=7s). This is normal.
