@@ -2958,14 +2958,30 @@
 
             sentenceUtterance.onend = () => {
               sentenceEl.textContent = originalSentence;
-              // Re-enable "Say it again" buttons
-              readSayAgainBtn.disabled = false;
-              readSayAgainBtn.style.opacity = '1';
-              writeSayAgainBtn.disabled = false;
-              writeSayAgainBtn.style.opacity = '1';
-              writeAnswerSayAgainBtn.disabled = false;
-              writeAnswerSayAgainBtn.style.opacity = '1';
-              if (callback) callback();
+              // Pause 1 second, then speak English sentence
+              setTimeout(() => {
+                // Highlight English sentence while speaking
+                const englishEl = document.getElementById(currentMode === 'read' ? 'readSentenceEnglish' : 'writeSentenceEnglish');
+                const originalEnglish = englishEl.textContent;
+                englishEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
+
+                const englishUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+                englishUtterance.lang = 'en-US';
+                englishUtterance.rate = 1.0;
+
+                englishUtterance.onend = () => {
+                  englishEl.textContent = originalEnglish;
+                  // Re-enable "Say it again" buttons
+                  readSayAgainBtn.disabled = false;
+                  readSayAgainBtn.style.opacity = '1';
+                  writeSayAgainBtn.disabled = false;
+                  writeSayAgainBtn.style.opacity = '1';
+                  writeAnswerSayAgainBtn.disabled = false;
+                  writeAnswerSayAgainBtn.style.opacity = '1';
+                  if (callback) callback();
+                };
+                speechSynthesis.speak(englishUtterance);
+              }, 1000);
             };
             speechSynthesis.speak(sentenceUtterance);
           }, 1000);
@@ -3054,10 +3070,26 @@
 
             sentenceUtterance.onend = () => {
               sentencePinyinEl.textContent = currentCard.sentence_hanyupinyin;
-              btn.disabled = false;
-              btn.style.opacity = '1';
-              // Toggle speed for next click
-              sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
+              // Pause 1 second, then speak English sentence
+              setTimeout(() => {
+                // Highlight English sentence while speaking
+                const englishEl = document.getElementById('writeSentenceEnglish');
+                const originalEnglish = englishEl.textContent;
+                englishEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
+
+                const englishUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+                englishUtterance.lang = 'en-US';
+                englishUtterance.rate = 1.0;
+
+                englishUtterance.onend = () => {
+                  englishEl.textContent = originalEnglish;
+                  btn.disabled = false;
+                  btn.style.opacity = '1';
+                  // Toggle speed for next click
+                  sayItSpeed = sayItSpeed === 0.3 ? 0.5 : 0.3;
+                };
+                speechSynthesis.speak(englishUtterance);
+              }, 1000);
             };
             speechSynthesis.speak(sentenceUtterance);
           }, 1000);
