@@ -2586,56 +2586,57 @@
     // Single-character homophones for speech recognition matching
     // ONLY exact homophones (same pinyin AND same tone) - speaker must use correct tone
     // Each inner array is a group of homophones that sound identical
+    // NOTE: Limited to basic gender pairs for performance - uncomment others as needed
     const homophoneGroups = [
       ['他', '她', '它', '祂', '牠'],  // tā (1) - he/she/it
       ['你', '妳'],                    // nǐ (3) - you
-      ['的', '得', '地'],              // de (neutral) - structural particles
-      ['在', '再'],                    // zài (4) - at/again
-      ['做', '作', '坐', '座'],        // zuò (4) - do/make/sit
-      ['之', '支', '汁', '枝', '知', '织', '織', '芝'],  // zhī (1)
-      ['只', '隻', '纸', '紙', '指', '止'],  // zhǐ (3) - only/paper/finger
-      ['里', '裡', '理', '李', '礼', '禮'],  // lǐ (3) - inside/reason/plum
-      ['机', '機', '鸡', '雞', '基', '激'],  // jī (1) - machine/chicken
-      ['几', '幾', '己', '挤', '擠'],  // jǐ (3) - how many/self
-      ['十', '时', '時', '食', '石', '实', '實'],  // shí (2) - ten/time/eat
-      ['一', '衣', '医', '醫', '依'],  // yī (1) - one/clothes/doctor
-      ['是', '事', '市', '式', '试', '試', '视', '視', '室', '示', '世', '势', '勢'],  // shì (4)
-      ['四', '似'],                    // sì (4) - four/similar
-      ['不', '布', '步', '部'],        // bù (4) - not/cloth/step
-      ['和', '河', '合', '何'],        // hé (2) - and/river/combine
-      ['有', '友'],                    // yǒu (3) - have/friend
-      ['又', '右', '幼', '佑'],        // yòu (4) - again/right
-      ['油', '游', '遊', '由', '尤', '邮', '郵'],  // yóu (2) - oil/travel
-      ['优', '優', '忧', '憂', '悠'],  // yōu (1) - excellent/worry
-      ['这', '這'],                    // zhè (4) - this
-      ['着', '著'],                    // zhe - aspect particle
-      ['号', '號'],                    // hào (4) - number
-      ['课', '課', '客', '刻', '克'],  // kè (4) - class/guest/carve
-      ['大', '达', '達'],              // dà (4) - big/reach
-      ['笑', '校', '效', '孝'],        // xiào (4) - laugh/school
-      ['上', '尚'],                    // shàng (4) - up/still
-      ['商', '伤', '傷'],              // shāng (1) - commerce/wound
-      ['下', '吓', '嚇', '夏'],        // xià (4) - down/scare/summer
-      ['妈', '媽'],                    // mā (1) - mom
-      ['马', '馬', '码', '碼'],        // mǎ (3) - horse/code
-      ['骂', '罵'],                    // mà (4) - scold
-      ['吗', '嗎'],                    // ma (neutral) - question particle
-      ['八', '巴'],                    // bā (1) - eight/cling
-      ['个', '個', '各'],              // gè (4) - measure word
-      ['歌', '哥', '割'],              // gē (1) - song/brother
-      ['九', '酒', '久'],              // jiǔ (3) - nine/wine/long
-      ['就', '旧', '舊', '救', '舅'],  // jiù (4) - then/old/save
-      ['会', '會', '汇', '匯', '惠'],  // huì (4) - will/meet/exchange
-      ['要', '药', '藥', '耀', '钥', '鑰'],  // yào (4) - want/medicine
-      ['没', '沒', '煤', '霉', '眉', '梅'],  // méi (2) - not have/coal
-      ['美', '每'],                    // měi (3) - beautiful/every
-      ['去', '趣', '取'],              // qù (4) - go/interest/take
-      ['来', '來'],                    // lái (2) - come
-      ['对', '對', '队', '隊', '兑', '兌'],  // duì (4) - correct/team
-      ['到', '道', '盗', '盜'],        // dào (4) - arrive/road/steal
-      ['岛', '島', '导', '導', '倒'],  // dǎo (3) - island/guide/pour
-      ['那', '纳', '納'],              // nà (4) - that
-      ['话', '話', '画', '畫', '化', '划', '劃'],  // huà (4) - speech/draw/change
+      // ['的', '得', '地'],              // de (neutral) - structural particles
+      // ['在', '再'],                    // zài (4) - at/again
+      // ['做', '作', '坐', '座'],        // zuò (4) - do/make/sit
+      // ['之', '支', '汁', '枝', '知', '织', '織', '芝'],  // zhī (1)
+      // ['只', '隻', '纸', '紙', '指', '止'],  // zhǐ (3) - only/paper/finger
+      // ['里', '裡', '理', '李', '礼', '禮'],  // lǐ (3) - inside/reason/plum
+      // ['机', '機', '鸡', '雞', '基', '激'],  // jī (1) - machine/chicken
+      // ['几', '幾', '己', '挤', '擠'],  // jǐ (3) - how many/self
+      // ['十', '时', '時', '食', '石', '实', '實'],  // shí (2) - ten/time/eat
+      // ['一', '衣', '医', '醫', '依'],  // yī (1) - one/clothes/doctor
+      // ['是', '事', '市', '式', '试', '試', '视', '視', '室', '示', '世', '势', '勢'],  // shì (4)
+      // ['四', '似'],                    // sì (4) - four/similar
+      // ['不', '布', '步', '部'],        // bù (4) - not/cloth/step
+      // ['和', '河', '合', '何'],        // hé (2) - and/river/combine
+      // ['有', '友'],                    // yǒu (3) - have/friend
+      // ['又', '右', '幼', '佑'],        // yòu (4) - again/right
+      // ['油', '游', '遊', '由', '尤', '邮', '郵'],  // yóu (2) - oil/travel
+      // ['优', '優', '忧', '憂', '悠'],  // yōu (1) - excellent/worry
+      // ['这', '這'],                    // zhè (4) - this
+      // ['着', '著'],                    // zhe - aspect particle
+      // ['号', '號'],                    // hào (4) - number
+      // ['课', '課', '客', '刻', '克'],  // kè (4) - class/guest/carve
+      // ['大', '达', '達'],              // dà (4) - big/reach
+      // ['笑', '校', '效', '孝'],        // xiào (4) - laugh/school
+      // ['上', '尚'],                    // shàng (4) - up/still
+      // ['商', '伤', '傷'],              // shāng (1) - commerce/wound
+      // ['下', '吓', '嚇', '夏'],        // xià (4) - down/scare/summer
+      // ['妈', '媽'],                    // mā (1) - mom
+      // ['马', '馬', '码', '碼'],        // mǎ (3) - horse/code
+      // ['骂', '罵'],                    // mà (4) - scold
+      // ['吗', '嗎'],                    // ma (neutral) - question particle
+      // ['八', '巴'],                    // bā (1) - eight/cling
+      // ['个', '個', '各'],              // gè (4) - measure word
+      // ['歌', '哥', '割'],              // gē (1) - song/brother
+      // ['九', '酒', '久'],              // jiǔ (3) - nine/wine/long
+      // ['就', '旧', '舊', '救', '舅'],  // jiù (4) - then/old/save
+      // ['会', '會', '汇', '匯', '惠'],  // huì (4) - will/meet/exchange
+      // ['要', '药', '藥', '耀', '钥', '鑰'],  // yào (4) - want/medicine
+      // ['没', '沒', '煤', '霉', '眉', '梅'],  // méi (2) - not have/coal
+      // ['美', '每'],                    // měi (3) - beautiful/every
+      // ['去', '趣', '取'],              // qù (4) - go/interest/take
+      // ['来', '來'],                    // lái (2) - come
+      // ['对', '對', '队', '隊', '兑', '兌'],  // duì (4) - correct/team
+      // ['到', '道', '盗', '盜'],        // dào (4) - arrive/road/steal
+      // ['岛', '島', '导', '導', '倒'],  // dǎo (3) - island/guide/pour
+      // ['那', '纳', '納'],              // nà (4) - that
+      // ['话', '話', '画', '畫', '化', '划', '劃'],  // huà (4) - speech/draw/change
     ];
 
     // Build lookup map: character -> array of all homophones (including itself)
