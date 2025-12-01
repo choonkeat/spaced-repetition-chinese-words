@@ -2144,9 +2144,52 @@
       sentenceEl.classList.remove('hidden');
       sentenceEl.classList.add('hint-blur-base');
 
+      // Speak English word and sentence to prompt the user
+      speakEnglishPrompt();
+
       // Start response timer when card is ready (WRITE mode)
       // Timer will be read when user clicks "I wrote correctly" or "I wrote wrong"
       startResponseTimer();
+    }
+
+    /**
+     * Speaks the English word and sentence for WRITE mode prompt.
+     * Highlights each element while speaking.
+     */
+    function speakEnglishPrompt() {
+      speechSynthesis.cancel();
+
+      const wordEl = document.getElementById('writeWordEnglish');
+      const sentenceEl = document.getElementById('writeSentenceEnglish');
+
+      setTimeout(() => {
+        // Highlight and speak word
+        const originalWord = wordEl.textContent;
+        wordEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word_english)}</span>`;
+
+        const wordUtterance = new SpeechSynthesisUtterance(currentCard.word_english);
+        wordUtterance.lang = 'en-US';
+        wordUtterance.rate = 0.9;
+
+        wordUtterance.onend = () => {
+          wordEl.textContent = originalWord;
+          // Pause, then speak sentence
+          setTimeout(() => {
+            const originalSentence = sentenceEl.textContent;
+            sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
+
+            const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+            sentenceUtterance.lang = 'en-US';
+            sentenceUtterance.rate = 1.0;
+
+            sentenceUtterance.onend = () => {
+              sentenceEl.textContent = originalSentence;
+            };
+            speechSynthesis.speak(sentenceUtterance);
+          }, 500);
+        };
+        speechSynthesis.speak(wordUtterance);
+      }, 50);
     }
 
     function updateGameStats() {
