@@ -1575,6 +1575,11 @@
       return div.innerHTML;
     }
 
+    // Format English text for TTS: replace "/" with pause
+    function formatForTTS(text) {
+      return text.replace(/\//g, '. ');
+    }
+
     function selectFile(fileId) {
       currentFileId = fileId;
       // If in game mode, go back to homepage
@@ -2325,7 +2330,7 @@
         const originalWord = wordEl.textContent;
         wordEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.word_english)}</span>`;
 
-        const wordUtterance = new SpeechSynthesisUtterance(currentCard.word_english);
+        const wordUtterance = new SpeechSynthesisUtterance(formatForTTS(currentCard.word_english));
         wordUtterance.lang = 'en-US';
         wordUtterance.rate = 0.9;
 
@@ -2336,7 +2341,7 @@
             const originalSentence = sentenceEl.textContent;
             sentenceEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
 
-            const sentenceUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+            const sentenceUtterance = new SpeechSynthesisUtterance(formatForTTS(currentCard.sentence_english));
             sentenceUtterance.lang = 'en-US';
             sentenceUtterance.rate = 1.0;
 
@@ -3167,7 +3172,7 @@
                 const originalEnglish = englishEl.textContent;
                 englishEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
 
-                const englishUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+                const englishUtterance = new SpeechSynthesisUtterance(formatForTTS(currentCard.sentence_english));
                 englishUtterance.lang = 'en-US';
                 englishUtterance.rate = 1.0;
 
@@ -3279,7 +3284,7 @@
                 const originalEnglish = englishEl.textContent;
                 englishEl.innerHTML = `<span class="match-correct">${escapeHtml(currentCard.sentence_english)}</span>`;
 
-                const englishUtterance = new SpeechSynthesisUtterance(currentCard.sentence_english);
+                const englishUtterance = new SpeechSynthesisUtterance(formatForTTS(currentCard.sentence_english));
                 englishUtterance.lang = 'en-US';
                 englishUtterance.rate = 1.0;
 
