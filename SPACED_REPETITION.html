@@ -335,16 +335,22 @@
   <p>Each card has independent progress for READ and WRITE modes:</p>
   <pre><code>progress[word] = {
   read: {
-    intervalIndex: 0,      // Current level (0-7)
+    intervalIndex: 0,      // Current level (0-9)
     nextReview: timestamp, // When card is due
     successCount: 0,       // Total correct answers
-    failCount: 0           // Total wrong answers
+    failCount: 0,          // Total wrong answers
+    lapseCount: 0,         // Times failed after reaching level 2+
+    avgResponseTime: null, // Rolling average response time (ms)
+    difficultyScore: 1.0   // Card difficulty (0.5-2.0)
   },
   write: {
     intervalIndex: 0,
     nextReview: timestamp,
     successCount: 0,
-    failCount: 0
+    failCount: 0,
+    lapseCount: 0,
+    avgResponseTime: null,
+    difficultyScore: 1.0
   }
 }</code></pre>
 
@@ -564,15 +570,15 @@ SLOW = responseTime > avgResponseTime * 1.5   // 50% slower than usual</code></p
     <li><strong>Persistently hard:</strong> Difficulty score ≥ 1.8 despite 6+ attempts</li>
   </ul>
 
-  <h3>Leech Indicators</h3>
-  <p>Leech cards are marked with visual indicators:</p>
+  <h3>Leech Indicators <span style="background:#fff3e0; color:#F57C00; padding:2px 8px; border-radius:4px; font-size:0.7em; font-weight:normal;">Planned</span></h3>
+  <p>Leech cards will be marked with visual indicators:</p>
   <ul>
     <li><strong>Homepage:</strong> Warning icon next to card count</li>
     <li><strong>During review:</strong> Subtle border or badge on card</li>
     <li><strong>Stats:</strong> "X cards need attention" summary</li>
   </ul>
 
-  <h3>Leech Recovery Strategies</h3>
+  <h3>Leech Recovery Strategies <span style="background:#fff3e0; color:#F57C00; padding:2px 8px; border-radius:4px; font-size:0.7em; font-weight:normal;">Planned</span></h3>
   <p>When a card is flagged as a leech, suggested actions:</p>
   <ol>
     <li><strong>Mnemonic prompt:</strong> "This card is tricky. Try creating a memory story!"</li>
