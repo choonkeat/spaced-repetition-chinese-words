@@ -49,6 +49,90 @@
     }
     .back-link:hover { text-decoration: underline; }
     .highlight { background: #fff3e0; padding: 15px; border-radius: 8px; margin: 15px 0; }
+
+    /* Slideshow styles */
+    .slideshow {
+      background: linear-gradient(135deg, #f3e5f5 0%, #e8f5e9 100%);
+      border-radius: 16px;
+      padding: 30px;
+      margin: 20px 0 30px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .slide {
+      display: none;
+      text-align: center;
+      min-height: 200px;
+    }
+    .slide.active { display: block; }
+    .slide-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+    .slide-title {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #7B1FA2;
+      margin-bottom: 10px;
+    }
+    .slide-content {
+      font-size: 1.1em;
+      color: #333;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .slide-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .interval-box {
+      background: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .arrow { color: #9C27B0; font-size: 20px; }
+    .slideshow-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .slideshow-nav button {
+      background: #9C27B0;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .slideshow-nav button:hover { background: #7B1FA2; }
+    .slideshow-nav button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .slide-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .slide-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .slide-dot.active { background: #9C27B0; }
   </style>
 </head>
 <body>
@@ -57,6 +141,122 @@
   <h1><a href="https://en.wikipedia.org/wiki/Spaced_repetition" target="_blank" style="color: inherit; text-decoration: none;">Spaced Repetition</a> Algorithm</h1>
 
   <h2>Overview</h2>
+
+  <!-- Quick visual slideshow for casual readers -->
+  <div class="slideshow">
+    <div class="slide active">
+      <div class="slide-icon">🧠</div>
+      <div class="slide-title">What is Spaced Repetition?</div>
+      <div class="slide-content">
+        A learning technique that shows you cards <strong>just before you forget them</strong>.
+        Instead of cramming, you review at optimal intervals for long-term memory.
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-icon">📈</div>
+      <div class="slide-title">How It Works</div>
+      <div class="slide-content">
+        Each time you get a card right, the wait time before the next review gets longer:
+      </div>
+      <div class="slide-visual">
+        <span class="interval-box">1 min</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">10 min</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">1 hour</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">1 day</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">3 days</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">...</span>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-icon">🔄</div>
+      <div class="slide-title">What If You Forget?</div>
+      <div class="slide-content">
+        No problem! If you get a card wrong, it resets to 1 minute.
+        You'll see it again soon and build up the intervals fresh.
+      </div>
+      <div class="slide-visual">
+        <span class="interval-box" style="background:#ffcdd2;">Wrong answer</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">Back to 1 min</span>
+        <span class="arrow">→</span>
+        <span class="interval-box">Start again</span>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-icon">⚡</div>
+      <div class="slide-title">Smart Adaptation</div>
+      <div class="slide-content">
+        The app tracks <strong>how fast</strong> you answer and <strong>if you need hints</strong>.
+        Quick, confident answers? You'll skip ahead. Need help? More practice.
+      </div>
+      <div class="slide-visual">
+        <span class="interval-box" style="background:#c8e6c9;">Fast & correct = +2 levels</span>
+        <span class="interval-box" style="background:#fff9c4;">Used hint = stay same</span>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-icon">🎯</div>
+      <div class="slide-title">The Result</div>
+      <div class="slide-content">
+        You spend <strong>less time on easy cards</strong> and <strong>more time on hard ones</strong>.
+        Once you hit 3+ days interval, a card is considered "mastered"!
+      </div>
+      <div class="slide-visual">
+        <span class="interval-box" style="background:#e8f5e9; border: 2px solid #4CAF50;">Level 4+ = Mastered ✓</span>
+      </div>
+    </div>
+
+    <div class="slideshow-nav">
+      <button onclick="changeSlide(-1)" id="prevBtn">‹</button>
+      <div class="slide-dots" id="slideDots"></div>
+      <button onclick="changeSlide(1)" id="nextBtn">›</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const dotsContainer = document.getElementById('slideDots');
+      let currentSlide = 0;
+
+      // Create dots
+      slides.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+      });
+
+      function updateSlides() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+        document.querySelectorAll('.slide-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+        document.getElementById('prevBtn').disabled = currentSlide === 0;
+        document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+      }
+
+      window.changeSlide = function(dir) {
+        currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + dir));
+        updateSlides();
+      };
+
+      window.goToSlide = function(i) {
+        currentSlide = i;
+        updateSlides();
+      };
+
+      updateSlides();
+    })();
+  </script>
+
   <p>This app uses a simplified <a href="https://en.wikipedia.org/wiki/Spaced_repetition" target="_blank">spaced repetition</a> system inspired by SM-2. Cards are scheduled for review at increasing intervals based on successful recall.</p>
 
   <h2>Interval Levels</h2>
