@@ -54,22 +54,21 @@
       overflow-y: auto;
       padding: 10px;
     }
-    .loading-indicator {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-      font-size: 14px;
+    .file-item-loading {
+      opacity: 0.6;
+      cursor: default;
     }
-    .loading-indicator::before {
+    .file-item-loading .file-item-stats::before {
       content: '';
-      display: block;
-      width: 24px;
-      height: 24px;
-      margin: 0 auto 10px;
-      border: 3px solid #e0e0e0;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 6px;
+      border: 2px solid #e0e0e0;
       border-top-color: #2196F3;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
+      vertical-align: middle;
     }
     .file-item {
       padding: 12px;
@@ -1334,11 +1333,17 @@
     const playBtn = document.getElementById('playBtn');
     const backBtn = document.getElementById('backBtn');
 
+    // State to track if we're fetching initial files
+    let isFetchingInitialFiles = false;
+
     // Initialize
     function init() {
       loadFromStorage();
-      renderFileList();
-      updateSelectedFileStats();
+      // Skip rendering if fetchGradeLevelFiles is handling it
+      if (!isFetchingInitialFiles) {
+        renderFileList();
+        updateSelectedFileStats();
+      }
       setupEventListeners();
       setupSpeechRecognition();
       setupVoiceSelector();
@@ -1383,7 +1388,9 @@
       }
       // Pre-populate with grade-level flashcard files if no files exist
       if (files.length === 0) {
+        isFetchingInitialFiles = true;
         fetchGradeLevelFiles();
+        return; // Skip session stats init - fetchGradeLevelFiles handles everything
       }
       // Initialize session stats for each file
       files.forEach(f => {
@@ -1413,45 +1420,104 @@
         { name: 'Primary 6', url: '六上六下.json' }
       ];
 
-      // Show loading indicator
-      fileList.innerHTML = '<div class="loading-indicator">Loading flashcard sets...</div>';
+      // Create loading placeholder for each file with a createdAt timestamp for ordering
+      const baseTime = Date.now();
+      const placeholders = gradeFiles.map((gradeFile, index) => {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'file-item file-item-loading';
+        placeholder.innerHTML = `
+          <div class="file-item-header">
+            <span class="file-item-name">${escapeHtml(gradeFile.name)}</span>
+          </div>
+          <div class="file-item-stats">Loading...</div>
+        `;
+        placeholder.dataset.createdAt = baseTime + index; // For ordering
+        fileList.appendChild(placeholder);
+        return placeholder;
+      });
 
-      for (const gradeFile of gradeFiles) {
+      // Fetch all files in parallel, each updating its own placeholder when done
+      await Promise.all(gradeFiles.map(async (gradeFile, index) => {
+        const placeholder = placeholders[index];
+        const createdAt = baseTime + index; // Same timestamp as placeholder
         try {
           const response = await fetch(gradeFile.url);
-          if (!response.ok) continue;
+          if (!response.ok) {
+            placeholder.remove();
+            return;
+          }
 
           const flashcards = await response.json();
-          if (!Array.isArray(flashcards) || flashcards.length === 0) continue;
+          if (!Array.isArray(flashcards) || flashcards.length === 0) {
+            placeholder.remove();
+            return;
+          }
 
           // Validate flashcards have required fields
           const validCards = flashcards.filter(card => validateFlashcard(card));
-          if (validCards.length === 0) continue;
+          if (validCards.length === 0) {
+            placeholder.remove();
+            return;
+          }
 
           const newFile = {
             id: generateId(),
             name: gradeFile.name,
             flashcards: validCards,
             progress: {},
-            highscore: null
+            highscore: null,
+            createdAt: createdAt // For maintaining order
           };
 
           files.push(newFile);
+          files.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0)); // Keep sorted
           sessionStats[newFile.id] = { correct: 0, wrong: 0 };
+          saveToStorage();
+
+          // Replace placeholder with actual file item
+          placeholder.classList.remove('file-item-loading');
+          placeholder.innerHTML = `
+            <div class="file-item-header">
+              <span class="file-item-name">${escapeHtml(newFile.name)}</span>
+              <div class="file-item-actions">
+                <button class="file-item-btn file-item-edit" data-id="${escapeHtml(newFile.id)}" title="Edit name">&#9998;</button>
+                <button class="file-item-btn file-item-export" data-id="${escapeHtml(newFile.id)}" title="Export">&#128190;</button>
+                <button class="file-item-btn file-item-trash" data-id="${escapeHtml(newFile.id)}" title="Delete">&#128465;</button>
+              </div>
+            </div>
+            <div class="file-item-stats">${validCards.length} words</div>
+          `;
+
+          // Add click handlers
+          placeholder.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('file-item-btn')) {
+              selectFile(newFile.id);
+            }
+          });
+          placeholder.querySelector('.file-item-edit').addEventListener('click', (e) => {
+            e.stopPropagation();
+            editFileName(newFile.id, placeholder);
+          });
+          placeholder.querySelector('.file-item-export').addEventListener('click', (e) => {
+            e.stopPropagation();
+            exportFile(newFile.id);
+          });
+          placeholder.querySelector('.file-item-trash').addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteFile(newFile.id);
+          });
+
+          // Auto-select first file for new users
+          if (!currentFileId) {
+            currentFileId = newFile.id;
+            placeholder.classList.add('active');
+            updateSelectedFileStats();
+          }
         } catch (e) {
           console.log(`Failed to fetch ${gradeFile.url}:`, e);
+          placeholder.remove();
         }
-      }
-
-      saveToStorage();
-      renderFileList();
-
-      // Auto-select first file for new users
-      if (files.length > 0 && !currentFileId) {
-        currentFileId = files[0].id;
-        renderFileList();
-        updateSelectedFileStats();
-      }
+      }));
     }
 
     function generateId() {
@@ -1840,10 +1906,12 @@
               name: data.name || getDefaultName(),
               flashcards: data.flashcards,
               progress: sanitizeProgress(data.progress),
-              highscore: data.highscore || null  // { count: number, timestamp: number }
+              highscore: data.highscore || null,  // { count: number, timestamp: number }
+              createdAt: Date.now()
             };
 
             files.push(newFile);
+            files.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
             sessionStats[newFile.id] = { correct: 0, wrong: 0 };
             saveToStorage();
             renderFileList();
@@ -1875,10 +1943,12 @@
               name: fileNameInput.value.trim() || getDefaultName(),
               flashcards: data,
               progress: {},
-              highscore: null  // { count: number, timestamp: number }
+              highscore: null,  // { count: number, timestamp: number }
+              createdAt: Date.now()
             };
 
             files.push(newFile);
+            files.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
             sessionStats[newFile.id] = { correct: 0, wrong: 0 };
             saveToStorage();
             renderFileList();
