@@ -1367,8 +1367,9 @@
           saveToStorage();
         }
       }
-      // Pre-populate with Sample flashcards if no files exist
+      // Pre-populate with grade-level flashcard files if no files exist
       if (files.length === 0) {
+        // Add Sample immediately so users see something
         const sampleFile = {
           id: generateId(),
           name: 'Sample',
@@ -1377,9 +1378,14 @@
           highscore: null
         };
         files.push(sampleFile);
-        saveToStorage();
-        // Auto-select the sample file for new users
+        sessionStats[sampleFile.id] = { correct: 0, wrong: 0 };
         currentFileId = sampleFile.id;
+        saveToStorage();
+        renderFileList();
+        updateSelectedFileStats();
+
+        // Fetch grade-level files asynchronously
+        fetchGradeLevelFiles();
       }
       // Initialize session stats for each file
       files.forEach(f => {
@@ -1396,6 +1402,48 @@
         }
         console.error('Failed to save:', e);
       }
+    }
+
+    // Fetch grade-level JSON files for new users
+    async function fetchGradeLevelFiles() {
+      const gradeFiles = [
+        { name: 'Primary 1', url: '一上一下.json' },
+        { name: 'Primary 2', url: '二上二下.json' },
+        { name: 'Primary 3', url: '三上三下.json' },
+        { name: 'Primary 4', url: '四上四下.json' },
+        { name: 'Primary 5', url: '五上五下.json' },
+        { name: 'Primary 6', url: '六上六下.json' }
+      ];
+
+      for (const gradeFile of gradeFiles) {
+        try {
+          const response = await fetch(gradeFile.url);
+          if (!response.ok) continue;
+
+          const flashcards = await response.json();
+          if (!Array.isArray(flashcards) || flashcards.length === 0) continue;
+
+          // Validate flashcards have required fields
+          const validCards = flashcards.filter(card => validateFlashcard(card));
+          if (validCards.length === 0) continue;
+
+          const newFile = {
+            id: generateId(),
+            name: gradeFile.name,
+            flashcards: validCards,
+            progress: {},
+            highscore: null
+          };
+
+          files.push(newFile);
+          sessionStats[newFile.id] = { correct: 0, wrong: 0 };
+        } catch (e) {
+          console.log(`Failed to fetch ${gradeFile.url}:`, e);
+        }
+      }
+
+      saveToStorage();
+      renderFileList();
     }
 
     function generateId() {

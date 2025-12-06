@@ -1,0 +1,2549 @@
+[
+  {
+    "word": "科",
+    "word_hanyupinyin": "kē",
+    "word_english": "subject/science",
+    "sentence": "我喜欢科学课。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan kēxué kè.",
+    "sentence_english": "I like science class.",
+    "label": "三上"
+  },
+  {
+    "word": "将",
+    "word_hanyupinyin": "jiāng",
+    "word_english": "will/future",
+    "sentence": "我将来想当医生。",
+    "sentence_hanyupinyin": "Wǒ jiānglái xiǎng dāng yīshēng.",
+    "sentence_english": "I want to be a doctor in the future.",
+    "label": "三上"
+  },
+  {
+    "word": "当",
+    "word_hanyupinyin": "dāng",
+    "word_english": "to be/when",
+    "sentence": "我想当老师。",
+    "sentence_hanyupinyin": "Wǒ xiǎng dāng lǎoshī.",
+    "sentence_english": "I want to be a teacher.",
+    "label": "三上"
+  },
+  {
+    "word": "司",
+    "word_hanyupinyin": "sī",
+    "word_english": "department",
+    "sentence": "爸爸是公司的经理。",
+    "sentence_hanyupinyin": "Bàba shì gōngsī de jīnglǐ.",
+    "sentence_english": "Dad is a company manager.",
+    "label": "三上"
+  },
+  {
+    "word": "希",
+    "word_hanyupinyin": "xī",
+    "word_english": "hope",
+    "sentence": "我希望明天是晴天。",
+    "sentence_hanyupinyin": "Wǒ xīwàng míngtiān shì qíngtiān.",
+    "sentence_english": "I hope tomorrow is sunny.",
+    "label": "三上"
+  },
+  {
+    "word": "望",
+    "word_hanyupinyin": "wàng",
+    "word_english": "to hope/look",
+    "sentence": "我望着窗外。",
+    "sentence_hanyupinyin": "Wǒ wàng zhe chuāngwài.",
+    "sentence_english": "I look out the window.",
+    "label": "三上"
+  },
+  {
+    "word": "军",
+    "word_hanyupinyin": "jūn",
+    "word_english": "army/military",
+    "sentence": "我想参军。",
+    "sentence_hanyupinyin": "Wǒ xiǎng cān jūn.",
+    "sentence_english": "I want to join the army.",
+    "label": "三上"
+  },
+  {
+    "word": "卫",
+    "word_hanyupinyin": "wèi",
+    "word_english": "guard/protect",
+    "sentence": "保安在门口站卫。",
+    "sentence_hanyupinyin": "Bǎo'ān zài ménkǒu zhàn wèi.",
+    "sentence_english": "The guard stands at the door.",
+    "label": "三上"
+  },
+  {
+    "word": "练",
+    "word_hanyupinyin": "liàn",
+    "word_english": "to practice",
+    "sentence": "我每天练习弹琴。",
+    "sentence_hanyupinyin": "Wǒ měitiān liànxí tán qín.",
+    "sentence_english": "I practice piano every day.",
+    "label": "三上"
+  },
+  {
+    "word": "努",
+    "word_hanyupinyin": "nǔ",
+    "word_english": "to strive",
+    "sentence": "他很努力学习。",
+    "sentence_hanyupinyin": "Tā hěn nǔlì xuéxí.",
+    "sentence_english": "He studies very hard.",
+    "label": "三上"
+  },
+  {
+    "word": "愿",
+    "word_hanyupinyin": "yuàn",
+    "word_english": "willing/wish",
+    "sentence": "我愿意帮你。",
+    "sentence_hanyupinyin": "Wǒ yuànyì bāng nǐ.",
+    "sentence_english": "I am willing to help you.",
+    "label": "三上"
+  },
+  {
+    "word": "实",
+    "word_hanyupinyin": "shí",
+    "word_english": "real/solid",
+    "sentence": "他是个老实人。",
+    "sentence_hanyupinyin": "Tā shì gè lǎoshi rén.",
+    "sentence_english": "He is an honest person.",
+    "label": "三上"
+  },
+  {
+    "word": "篇",
+    "word_hanyupinyin": "piān",
+    "word_english": "(measure word for articles)",
+    "sentence": "我读了一篇文章。",
+    "sentence_hanyupinyin": "Wǒ dú le yī piān wénzhāng.",
+    "sentence_english": "I read an article.",
+    "label": "三上"
+  },
+  {
+    "word": "复",
+    "word_hanyupinyin": "fù",
+    "word_english": "to repeat/review",
+    "sentence": "我在复习功课。",
+    "sentence_hanyupinyin": "Wǒ zài fùxí gōngkè.",
+    "sentence_english": "I am reviewing my lessons.",
+    "label": "三上"
+  },
+  {
+    "word": "取",
+    "word_hanyupinyin": "qǔ",
+    "word_english": "to take/get",
+    "sentence": "我去银行取钱。",
+    "sentence_hanyupinyin": "Wǒ qù yínháng qǔ qián.",
+    "sentence_english": "I go to the bank to withdraw money.",
+    "label": "三上"
+  },
+  {
+    "word": "举",
+    "word_hanyupinyin": "jǔ",
+    "word_english": "to raise/lift",
+    "sentence": "请举手回答问题。",
+    "sentence_hanyupinyin": "Qǐng jǔ shǒu huídá wèntí.",
+    "sentence_english": "Please raise your hand to answer.",
+    "label": "三上"
+  },
+  {
+    "word": "翻",
+    "word_hanyupinyin": "fān",
+    "word_english": "to turn over",
+    "sentence": "请翻到第五页。",
+    "sentence_hanyupinyin": "Qǐng fān dào dì wǔ yè.",
+    "sentence_english": "Please turn to page five.",
+    "label": "三上"
+  },
+  {
+    "word": "页",
+    "word_hanyupinyin": "yè",
+    "word_english": "page",
+    "sentence": "请翻到第五页。",
+    "sentence_hanyupinyin": "Qǐng fān dào dì wǔ yè.",
+    "sentence_english": "Please turn to page five.",
+    "label": "三上"
+  },
+  {
+    "word": "姓",
+    "word_hanyupinyin": "xìng",
+    "word_english": "surname",
+    "sentence": "我姓李。",
+    "sentence_hanyupinyin": "Wǒ xìng Lǐ.",
+    "sentence_english": "My surname is Li.",
+    "label": "三上"
+  },
+  {
+    "word": "陈",
+    "word_hanyupinyin": "chén",
+    "word_english": "(surname Chen)",
+    "sentence": "他姓陈。",
+    "sentence_hanyupinyin": "Tā xìng Chén.",
+    "sentence_english": "His surname is Chen.",
+    "label": "三上"
+  },
+  {
+    "word": "名",
+    "word_hanyupinyin": "míng",
+    "word_english": "name",
+    "sentence": "我的名字叫小明。",
+    "sentence_hanyupinyin": "Wǒ de míngzi jiào Xiǎomíng.",
+    "sentence_english": "My name is Xiaoming.",
+    "label": "三上"
+  },
+  {
+    "word": "胖",
+    "word_hanyupinyin": "pàng",
+    "word_english": "fat/chubby",
+    "sentence": "熊猫胖胖的很可爱。",
+    "sentence_hanyupinyin": "Xióngmāo pàngpàng de hěn kě'ài.",
+    "sentence_english": "Pandas are chubby and cute.",
+    "label": "三上"
+  },
+  {
+    "word": "瘦",
+    "word_hanyupinyin": "shòu",
+    "word_english": "thin/slim",
+    "sentence": "他很瘦，要多吃饭。",
+    "sentence_hanyupinyin": "Tā hěn shòu, yào duō chīfàn.",
+    "sentence_english": "He is thin, needs to eat more.",
+    "label": "三上"
+  },
+  {
+    "word": "李",
+    "word_hanyupinyin": "lǐ",
+    "word_english": "(surname Li)",
+    "sentence": "我姓李。",
+    "sentence_hanyupinyin": "Wǒ xìng Lǐ.",
+    "sentence_english": "My surname is Li.",
+    "label": "三上"
+  },
+  {
+    "word": "矮",
+    "word_hanyupinyin": "ǎi",
+    "word_english": "short (height)",
+    "sentence": "弟弟比我矮。",
+    "sentence_hanyupinyin": "Dìdi bǐ wǒ ǎi.",
+    "sentence_english": "My younger brother is shorter than me.",
+    "label": "三上"
+  },
+  {
+    "word": "姨",
+    "word_hanyupinyin": "yí",
+    "word_english": "aunt (mother's sister)",
+    "sentence": "阿姨好！",
+    "sentence_hanyupinyin": "Āyí hǎo!",
+    "sentence_english": "Hello, auntie!",
+    "label": "三上"
+  },
+  {
+    "word": "趣",
+    "word_hanyupinyin": "qù",
+    "word_english": "interest",
+    "sentence": "这个故事很有趣。",
+    "sentence_hanyupinyin": "Zhège gùshi hěn yǒuqù.",
+    "sentence_english": "This story is very interesting.",
+    "label": "三上"
+  },
+  {
+    "word": "意",
+    "word_hanyupinyin": "yì",
+    "word_english": "meaning/intention",
+    "sentence": "你什么意思？",
+    "sentence_hanyupinyin": "Nǐ shénme yìsi?",
+    "sentence_english": "What do you mean?",
+    "label": "三上"
+  },
+  {
+    "word": "思",
+    "word_hanyupinyin": "sī",
+    "word_english": "to think",
+    "sentence": "我在思考问题。",
+    "sentence_hanyupinyin": "Wǒ zài sīkǎo wèntí.",
+    "sentence_english": "I am thinking about the problem.",
+    "label": "三上"
+  },
+  {
+    "word": "卷",
+    "word_hanyupinyin": "juǎn",
+    "word_english": "roll/volume",
+    "sentence": "请把试卷交上来。",
+    "sentence_hanyupinyin": "Qǐng bǎ shìjuàn jiāo shànglái.",
+    "sentence_english": "Please hand in your test papers.",
+    "label": "三上"
+  },
+  {
+    "word": "强",
+    "word_hanyupinyin": "qiáng",
+    "word_english": "strong",
+    "sentence": "他很强壮。",
+    "sentence_hanyupinyin": "Tā hěn qiángzhuàng.",
+    "sentence_english": "He is very strong.",
+    "label": "三上"
+  },
+  {
+    "word": "壮",
+    "word_hanyupinyin": "zhuàng",
+    "word_english": "strong/robust",
+    "sentence": "这棵树很壮。",
+    "sentence_hanyupinyin": "Zhè kē shù hěn zhuàng.",
+    "sentence_english": "This tree is very sturdy.",
+    "label": "三上"
+  },
+  {
+    "word": "福",
+    "word_hanyupinyin": "fú",
+    "word_english": "blessing/fortune",
+    "sentence": "祝你幸福！",
+    "sentence_hanyupinyin": "Zhù nǐ xìngfú!",
+    "sentence_english": "Wish you happiness!",
+    "label": "三上"
+  },
+  {
+    "word": "猪",
+    "word_hanyupinyin": "zhū",
+    "word_english": "pig",
+    "sentence": "猪喜欢睡觉。",
+    "sentence_hanyupinyin": "Zhū xǐhuan shuìjiào.",
+    "sentence_english": "Pigs like to sleep.",
+    "label": "三上"
+  },
+  {
+    "word": "题",
+    "word_hanyupinyin": "tí",
+    "word_english": "question/topic",
+    "sentence": "请回答这道题。",
+    "sentence_hanyupinyin": "Qǐng huídá zhè dào tí.",
+    "sentence_english": "Please answer this question.",
+    "label": "三上"
+  },
+  {
+    "word": "退",
+    "word_hanyupinyin": "tuì",
+    "word_english": "to retreat/return",
+    "sentence": "请退后一步。",
+    "sentence_hanyupinyin": "Qǐng tuì hòu yī bù.",
+    "sentence_english": "Please step back.",
+    "label": "三上"
+  },
+  {
+    "word": "辆",
+    "word_hanyupinyin": "liàng",
+    "word_english": "(measure word for vehicles)",
+    "sentence": "这是一辆车。",
+    "sentence_hanyupinyin": "Zhè shì yī liàng chē.",
+    "sentence_english": "This is a car.",
+    "label": "三上"
+  },
+  {
+    "word": "形",
+    "word_hanyupinyin": "xíng",
+    "word_english": "shape/form",
+    "sentence": "这个形状很奇怪。",
+    "sentence_hanyupinyin": "Zhège xíngzhuàng hěn qíguài.",
+    "sentence_english": "This shape is strange.",
+    "label": "三上"
+  },
+  {
+    "word": "按",
+    "word_hanyupinyin": "àn",
+    "word_english": "to press",
+    "sentence": "请按这个按钮。",
+    "sentence_hanyupinyin": "Qǐng àn zhège ànniǔ.",
+    "sentence_english": "Please press this button.",
+    "label": "三上"
+  },
+  {
+    "word": "盖",
+    "word_hanyupinyin": "gài",
+    "word_english": "cover/lid",
+    "sentence": "请盖上盒子。",
+    "sentence_hanyupinyin": "Qǐng gài shàng hézi.",
+    "sentence_english": "Please cover the box.",
+    "label": "三上"
+  },
+  {
+    "word": "吸",
+    "word_hanyupinyin": "xī",
+    "word_english": "to inhale/absorb",
+    "sentence": "深呼吸一下。",
+    "sentence_hanyupinyin": "Shēn hūxī yīxià.",
+    "sentence_english": "Take a deep breath.",
+    "label": "三上"
+  },
+  {
+    "word": "管",
+    "word_hanyupinyin": "guǎn",
+    "word_english": "tube/pipe",
+    "sentence": "这是一根吸管。",
+    "sentence_hanyupinyin": "Zhè shì yī gēn xīguǎn.",
+    "sentence_english": "This is a straw.",
+    "label": "三上"
+  },
+  {
+    "word": "钟",
+    "word_hanyupinyin": "zhōng",
+    "word_english": "clock",
+    "sentence": "钟告诉我们时间。",
+    "sentence_hanyupinyin": "Zhōng gàosu wǒmen shíjiān.",
+    "sentence_english": "Clocks tell us the time.",
+    "label": "三上"
+  },
+  {
+    "word": "伙",
+    "word_hanyupinyin": "huǒ",
+    "word_english": "partner/group",
+    "sentence": "他是我的小伙伴。",
+    "sentence_hanyupinyin": "Tā shì wǒ de xiǎo huǒbàn.",
+    "sentence_english": "He is my little partner.",
+    "label": "三上"
+  },
+  {
+    "word": "伴",
+    "word_hanyupinyin": "bàn",
+    "word_english": "companion",
+    "sentence": "我们是好伙伴。",
+    "sentence_hanyupinyin": "Wǒmen shì hǎo huǒbàn.",
+    "sentence_english": "We are good partners.",
+    "label": "三上"
+  },
+  {
+    "word": "背",
+    "word_hanyupinyin": "bèi",
+    "word_english": "back/to carry",
+    "sentence": "我背着书包。",
+    "sentence_hanyupinyin": "Wǒ bēi zhe shūbāo.",
+    "sentence_english": "I carry my school bag on my back.",
+    "label": "三上"
+  },
+  {
+    "word": "颜",
+    "word_hanyupinyin": "yán",
+    "word_english": "color/face",
+    "sentence": "这是什么颜色？",
+    "sentence_hanyupinyin": "Zhè shì shénme yánsè?",
+    "sentence_english": "What color is this?",
+    "label": "三上"
+  },
+  {
+    "word": "角",
+    "word_hanyupinyin": "jiǎo",
+    "word_english": "corner/angle",
+    "sentence": "桌子有四个角。",
+    "sentence_hanyupinyin": "Zhuōzi yǒu sì gè jiǎo.",
+    "sentence_english": "The table has four corners.",
+    "label": "三上"
+  },
+  {
+    "word": "睡",
+    "word_hanyupinyin": "shuì",
+    "word_english": "to sleep",
+    "sentence": "我每天晚上九点睡觉。",
+    "sentence_hanyupinyin": "Wǒ měitiān wǎnshang jiǔ diǎn shuìjiào.",
+    "sentence_english": "I go to sleep at 9pm every night.",
+    "label": "三上"
+  },
+  {
+    "word": "准",
+    "word_hanyupinyin": "zhǔn",
+    "word_english": "accurate/allow",
+    "sentence": "你准备好了吗？",
+    "sentence_hanyupinyin": "Nǐ zhǔnbèi hǎo le ma?",
+    "sentence_english": "Are you ready?",
+    "label": "三上"
+  },
+  {
+    "word": "改",
+    "word_hanyupinyin": "gǎi",
+    "word_english": "to change/correct",
+    "sentence": "我要改正错误。",
+    "sentence_hanyupinyin": "Wǒ yào gǎizhèng cuòwù.",
+    "sentence_english": "I want to correct my mistakes.",
+    "label": "三上"
+  },
+  {
+    "word": "迟",
+    "word_hanyupinyin": "chí",
+    "word_english": "late",
+    "sentence": "不要迟到。",
+    "sentence_hanyupinyin": "Bùyào chídào.",
+    "sentence_english": "Don't be late.",
+    "label": "三上"
+  },
+  {
+    "word": "惯",
+    "word_hanyupinyin": "guàn",
+    "word_english": "habit/used to",
+    "sentence": "我习惯早起。",
+    "sentence_hanyupinyin": "Wǒ xíguàn zǎoqǐ.",
+    "sentence_english": "I am used to waking up early.",
+    "label": "三上"
+  },
+  {
+    "word": "陪",
+    "word_hanyupinyin": "péi",
+    "word_english": "to accompany",
+    "sentence": "妈妈陪我做功课。",
+    "sentence_hanyupinyin": "Māma péi wǒ zuò gōngkè.",
+    "sentence_english": "Mum accompanies me to do homework.",
+    "label": "三上"
+  },
+  {
+    "word": "化",
+    "word_hanyupinyin": "huà",
+    "word_english": "to change/transform",
+    "sentence": "冰化成水了。",
+    "sentence_hanyupinyin": "Bīng huà chéng shuǐ le.",
+    "sentence_english": "The ice melted into water.",
+    "label": "三上"
+  },
+  {
+    "word": "芽",
+    "word_hanyupinyin": "yá",
+    "word_english": "sprout/bud",
+    "sentence": "种子发芽了。",
+    "sentence_hanyupinyin": "Zhǒngzi fāyá le.",
+    "sentence_english": "The seed has sprouted.",
+    "label": "三上"
+  },
+  {
+    "word": "细",
+    "word_hanyupinyin": "xì",
+    "word_english": "thin/fine",
+    "sentence": "头发很细。",
+    "sentence_hanyupinyin": "Tóufa hěn xì.",
+    "sentence_english": "Hair is thin.",
+    "label": "三上"
+  },
+  {
+    "word": "根",
+    "word_hanyupinyin": "gēn",
+    "word_english": "root",
+    "sentence": "树根很粗。",
+    "sentence_hanyupinyin": "Shùgēn hěn cū.",
+    "sentence_english": "The tree root is very thick.",
+    "label": "三上"
+  },
+  {
+    "word": "健",
+    "word_hanyupinyin": "jiàn",
+    "word_english": "healthy/strong",
+    "sentence": "我身体很健康。",
+    "sentence_hanyupinyin": "Wǒ shēntǐ hěn jiànkāng.",
+    "sentence_english": "I am very healthy.",
+    "label": "三上"
+  },
+  {
+    "word": "康",
+    "word_hanyupinyin": "kāng",
+    "word_english": "health",
+    "sentence": "祝你身体健康！",
+    "sentence_hanyupinyin": "Zhù nǐ shēntǐ jiànkāng!",
+    "sentence_english": "Wish you good health!",
+    "label": "三上"
+  },
+  {
+    "word": "越",
+    "word_hanyupinyin": "yuè",
+    "word_english": "to exceed/more",
+    "sentence": "他越来越高了。",
+    "sentence_hanyupinyin": "Tā yuè lái yuè gāo le.",
+    "sentence_english": "He is getting taller and taller.",
+    "label": "三上"
+  },
+  {
+    "word": "粗",
+    "word_hanyupinyin": "cū",
+    "word_english": "thick/rough",
+    "sentence": "大树的树干很粗。",
+    "sentence_hanyupinyin": "Dà shù de shùgàn hěn cū.",
+    "sentence_english": "Big trees have thick trunks.",
+    "label": "三上"
+  },
+  {
+    "word": "幼",
+    "word_hanyupinyin": "yòu",
+    "word_english": "young",
+    "sentence": "他还很幼小。",
+    "sentence_hanyupinyin": "Tā hái hěn yòuxiǎo.",
+    "sentence_english": "He is still very young.",
+    "label": "三上"
+  },
+  {
+    "word": "摆",
+    "word_hanyupinyin": "bǎi",
+    "word_english": "to place/arrange",
+    "sentence": "请把书摆好。",
+    "sentence_hanyupinyin": "Qǐng bǎ shū bǎi hǎo.",
+    "sentence_english": "Please arrange the books nicely.",
+    "label": "三上"
+  },
+  {
+    "word": "腿",
+    "word_hanyupinyin": "tuǐ",
+    "word_english": "leg",
+    "sentence": "他的腿很长。",
+    "sentence_hanyupinyin": "Tā de tuǐ hěn cháng.",
+    "sentence_english": "His legs are long.",
+    "label": "三上"
+  },
+  {
+    "word": "乌",
+    "word_hanyupinyin": "wū",
+    "word_english": "black/crow",
+    "sentence": "天空有乌云。",
+    "sentence_hanyupinyin": "Tiānkōng yǒu wūyún.",
+    "sentence_english": "There are dark clouds in the sky.",
+    "label": "三上"
+  },
+  {
+    "word": "龟",
+    "word_hanyupinyin": "guī",
+    "word_english": "turtle",
+    "sentence": "乌龟爬得很慢。",
+    "sentence_hanyupinyin": "Wūguī pá de hěn màn.",
+    "sentence_english": "Turtles crawl very slowly.",
+    "label": "三上"
+  },
+  {
+    "word": "喊",
+    "word_hanyupinyin": "hǎn",
+    "word_english": "to shout",
+    "sentence": "不要大声喊叫。",
+    "sentence_hanyupinyin": "Bùyào dàshēng hǎnjiào.",
+    "sentence_english": "Don't shout loudly.",
+    "label": "三上"
+  },
+  {
+    "word": "披",
+    "word_hanyupinyin": "pī",
+    "word_english": "to drape/wear",
+    "sentence": "她披着外套。",
+    "sentence_hanyupinyin": "Tā pī zhe wàitào.",
+    "sentence_english": "She has a coat draped over her.",
+    "label": "三上"
+  },
+  {
+    "word": "短",
+    "word_hanyupinyin": "duǎn",
+    "word_english": "short",
+    "sentence": "兔子的尾巴很短。",
+    "sentence_hanyupinyin": "Tùzi de wěiba hěn duǎn.",
+    "sentence_english": "Rabbits have short tails.",
+    "label": "三上"
+  },
+  {
+    "word": "蛙",
+    "word_hanyupinyin": "wā",
+    "word_english": "frog",
+    "sentence": "青蛙会跳也会游泳。",
+    "sentence_hanyupinyin": "Qīngwā huì tiào yě huì yóuyǒng.",
+    "sentence_english": "Frogs can jump and swim.",
+    "label": "三上"
+  },
+  {
+    "word": "展",
+    "word_hanyupinyin": "zhǎn",
+    "word_english": "to display/unfold",
+    "sentence": "我们去看展览。",
+    "sentence_hanyupinyin": "Wǒmen qù kàn zhǎnlǎn.",
+    "sentence_english": "We go to see the exhibition.",
+    "label": "三上"
+  },
+  {
+    "word": "傍",
+    "word_hanyupinyin": "bàng",
+    "word_english": "near/beside",
+    "sentence": "傍晚的天空很美。",
+    "sentence_hanyupinyin": "Bàngwǎn de tiānkōng hěn měi.",
+    "sentence_english": "The evening sky is beautiful.",
+    "label": "三上"
+  },
+  {
+    "word": "逛",
+    "word_hanyupinyin": "guàng",
+    "word_english": "to stroll",
+    "sentence": "我喜欢逛街。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan guàngjiē.",
+    "sentence_english": "I like to go shopping.",
+    "label": "三上"
+  },
+  {
+    "word": "尝",
+    "word_hanyupinyin": "cháng",
+    "word_english": "to taste/try",
+    "sentence": "请尝一尝这个菜。",
+    "sentence_hanyupinyin": "Qǐng cháng yī cháng zhège cài.",
+    "sentence_english": "Please try this dish.",
+    "label": "三上"
+  },
+  {
+    "word": "或",
+    "word_hanyupinyin": "huò",
+    "word_english": "or",
+    "sentence": "你要茶或咖啡？",
+    "sentence_hanyupinyin": "Nǐ yào chá huò kāfēi?",
+    "sentence_english": "Do you want tea or coffee?",
+    "label": "三上"
+  },
+  {
+    "word": "者",
+    "word_hanyupinyin": "zhě",
+    "word_english": "person who",
+    "sentence": "读者很喜欢这本书。",
+    "sentence_hanyupinyin": "Dúzhě hěn xǐhuan zhè běn shū.",
+    "sentence_english": "Readers like this book very much.",
+    "label": "三上"
+  },
+  {
+    "word": "脑",
+    "word_hanyupinyin": "nǎo",
+    "word_english": "brain",
+    "sentence": "用脑子想一想。",
+    "sentence_hanyupinyin": "Yòng nǎozi xiǎng yī xiǎng.",
+    "sentence_english": "Think about it with your brain.",
+    "label": "三上"
+  },
+  {
+    "word": "艺",
+    "word_hanyupinyin": "yì",
+    "word_english": "art/skill",
+    "sentence": "我喜欢艺术。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan yìshù.",
+    "sentence_english": "I like art.",
+    "label": "三上"
+  },
+  {
+    "word": "号",
+    "word_hanyupinyin": "hào",
+    "word_english": "number",
+    "sentence": "我的电话号码是多少？",
+    "sentence_hanyupinyin": "Wǒ de diànhuà hàomǎ shì duōshao?",
+    "sentence_english": "What is my phone number?",
+    "label": "三上"
+  },
+  {
+    "word": "刚",
+    "word_hanyupinyin": "gāng",
+    "word_english": "just/just now",
+    "sentence": "我刚到家。",
+    "sentence_hanyupinyin": "Wǒ gāng dào jiā.",
+    "sentence_english": "I just got home.",
+    "label": "三上"
+  },
+  {
+    "word": "附",
+    "word_hanyupinyin": "fù",
+    "word_english": "to attach/near",
+    "sentence": "学校附近有商店。",
+    "sentence_hanyupinyin": "Xuéxiào fùjìn yǒu shāngdiàn.",
+    "sentence_english": "There is a shop near the school.",
+    "label": "三上"
+  },
+  {
+    "word": "近",
+    "word_hanyupinyin": "jìn",
+    "word_english": "near/close",
+    "sentence": "商店离我家很近。",
+    "sentence_hanyupinyin": "Shāngdiàn lí wǒ jiā hěn jìn.",
+    "sentence_english": "The shop is close to my home.",
+    "label": "三上"
+  },
+  {
+    "word": "付",
+    "word_hanyupinyin": "fù",
+    "word_english": "to pay",
+    "sentence": "我用现金付款。",
+    "sentence_hanyupinyin": "Wǒ yòng xiànjīn fùkuǎn.",
+    "sentence_english": "I pay with cash.",
+    "label": "三上"
+  },
+  {
+    "word": "束",
+    "word_hanyupinyin": "shù",
+    "word_english": "bundle/(measure word)",
+    "sentence": "我买了一束花。",
+    "sentence_hanyupinyin": "Wǒ mǎi le yī shù huā.",
+    "sentence_english": "I bought a bouquet of flowers.",
+    "label": "三上"
+  },
+  {
+    "word": "鲜",
+    "word_hanyupinyin": "xiān",
+    "word_english": "fresh",
+    "sentence": "这些蔬菜很新鲜。",
+    "sentence_hanyupinyin": "Zhèxiē shūcài hěn xīnxiān.",
+    "sentence_english": "These vegetables are very fresh.",
+    "label": "三上"
+  },
+  {
+    "word": "贴",
+    "word_hanyupinyin": "tiē",
+    "word_english": "to stick/paste",
+    "sentence": "请把照片贴在这里。",
+    "sentence_hanyupinyin": "Qǐng bǎ zhàopiàn tiē zài zhèlǐ.",
+    "sentence_english": "Please paste the photo here.",
+    "label": "三上"
+  },
+  {
+    "word": "备",
+    "word_hanyupinyin": "bèi",
+    "word_english": "to prepare",
+    "sentence": "我准备好了。",
+    "sentence_hanyupinyin": "Wǒ zhǔnbèi hǎo le.",
+    "sentence_english": "I am ready.",
+    "label": "三上"
+  },
+  {
+    "word": "扔",
+    "word_hanyupinyin": "rēng",
+    "word_english": "to throw",
+    "sentence": "不要乱扔垃圾。",
+    "sentence_hanyupinyin": "Bùyào luàn rēng lājī.",
+    "sentence_english": "Don't throw rubbish everywhere.",
+    "label": "三上"
+  },
+  {
+    "word": "错",
+    "word_hanyupinyin": "cuò",
+    "word_english": "wrong/mistake",
+    "sentence": "我做错了。",
+    "sentence_hanyupinyin": "Wǒ zuò cuò le.",
+    "sentence_english": "I made a mistake.",
+    "label": "三上"
+  },
+  {
+    "word": "推",
+    "word_hanyupinyin": "tuī",
+    "word_english": "to push",
+    "sentence": "请推开门。",
+    "sentence_hanyupinyin": "Qǐng tuī kāi mén.",
+    "sentence_english": "Please push the door open.",
+    "label": "三上"
+  },
+  {
+    "word": "撞",
+    "word_hanyupinyin": "zhuàng",
+    "word_english": "to bump/collide",
+    "sentence": "小心不要撞到人。",
+    "sentence_hanyupinyin": "Xiǎoxīn bùyào zhuàng dào rén.",
+    "sentence_english": "Be careful not to bump into people.",
+    "label": "三上"
+  },
+  {
+    "word": "谅",
+    "word_hanyupinyin": "liàng",
+    "word_english": "to forgive",
+    "sentence": "请原谅我。",
+    "sentence_hanyupinyin": "Qǐng yuánliàng wǒ.",
+    "sentence_english": "Please forgive me.",
+    "label": "三上"
+  },
+  {
+    "word": "弄",
+    "word_hanyupinyin": "nòng",
+    "word_english": "to do/make",
+    "sentence": "你在弄什么？",
+    "sentence_hanyupinyin": "Nǐ zài nòng shénme?",
+    "sentence_english": "What are you doing?",
+    "label": "三上"
+  },
+  {
+    "word": "破",
+    "word_hanyupinyin": "pò",
+    "word_english": "broken",
+    "sentence": "杯子破了。",
+    "sentence_hanyupinyin": "Bēizi pò le.",
+    "sentence_english": "The cup is broken.",
+    "label": "三上"
+  },
+  {
+    "word": "系",
+    "word_hanyupinyin": "xì",
+    "word_english": "to tie/system",
+    "sentence": "请系好安全带。",
+    "sentence_hanyupinyin": "Qǐng xì hǎo ānquándài.",
+    "sentence_english": "Please fasten your seatbelt.",
+    "label": "三上"
+  },
+  {
+    "word": "紧",
+    "word_hanyupinyin": "jǐn",
+    "word_english": "tight",
+    "sentence": "这条裤子太紧了。",
+    "sentence_hanyupinyin": "Zhè tiáo kùzi tài jǐn le.",
+    "sentence_english": "These pants are too tight.",
+    "label": "三上"
+  },
+  {
+    "word": "突",
+    "word_hanyupinyin": "tū",
+    "word_english": "sudden",
+    "sentence": "突然下雨了。",
+    "sentence_hanyupinyin": "Tūrán xià yǔ le.",
+    "sentence_english": "It suddenly started raining.",
+    "label": "三上"
+  },
+  {
+    "word": "及",
+    "word_hanyupinyin": "jí",
+    "word_english": "and/to reach",
+    "sentence": "来不及了！",
+    "sentence_hanyupinyin": "Láibují le!",
+    "sentence_english": "There's not enough time!",
+    "label": "三上"
+  },
+  {
+    "word": "倒",
+    "word_hanyupinyin": "dǎo",
+    "word_english": "to fall/pour",
+    "sentence": "杯子倒了。",
+    "sentence_hanyupinyin": "Bēizi dǎo le.",
+    "sentence_english": "The cup fell over.",
+    "label": "三上"
+  },
+  {
+    "word": "理",
+    "word_hanyupinyin": "lǐ",
+    "word_english": "reason/to manage",
+    "sentence": "你说得有道理。",
+    "sentence_hanyupinyin": "Nǐ shuō de yǒu dàolǐ.",
+    "sentence_english": "What you said makes sense.",
+    "label": "三上"
+  },
+  {
+    "word": "跌",
+    "word_hanyupinyin": "diē",
+    "word_english": "to fall down",
+    "sentence": "他跌倒了。",
+    "sentence_hanyupinyin": "Tā diēdǎo le.",
+    "sentence_english": "He fell down.",
+    "label": "三上"
+  },
+  {
+    "word": "受",
+    "word_hanyupinyin": "shòu",
+    "word_english": "to receive/suffer",
+    "sentence": "他受伤了。",
+    "sentence_hanyupinyin": "Tā shòushāng le.",
+    "sentence_english": "He got hurt.",
+    "label": "三上"
+  },
+  {
+    "word": "刻",
+    "word_hanyupinyin": "kè",
+    "word_english": "moment/to carve",
+    "sentence": "现在三点一刻。",
+    "sentence_hanyupinyin": "Xiànzài sān diǎn yī kè.",
+    "sentence_english": "It's 3:15 now.",
+    "label": "三上"
+  },
+  {
+    "word": "扶",
+    "word_hanyupinyin": "fú",
+    "word_english": "to support/help",
+    "sentence": "我扶奶奶过马路。",
+    "sentence_hanyupinyin": "Wǒ fú nǎinai guò mǎlù.",
+    "sentence_english": "I help grandma cross the road.",
+    "label": "三上"
+  },
+  {
+    "word": "赶",
+    "word_hanyupinyin": "gǎn",
+    "word_english": "to hurry/catch",
+    "sentence": "我要赶巴士。",
+    "sentence_hanyupinyin": "Wǒ yào gǎn bāshì.",
+    "sentence_english": "I need to catch the bus.",
+    "label": "三上"
+  },
+  {
+    "word": "留",
+    "word_hanyupinyin": "liú",
+    "word_english": "to stay/keep",
+    "sentence": "请留下你的电话号码。",
+    "sentence_hanyupinyin": "Qǐng liú xià nǐ de diànhuà hàomǎ.",
+    "sentence_english": "Please leave your phone number.",
+    "label": "三上"
+  },
+  {
+    "word": "便",
+    "word_hanyupinyin": "biàn",
+    "word_english": "convenient",
+    "sentence": "这里交通很方便。",
+    "sentence_hanyupinyin": "Zhèlǐ jiāotōng hěn fāngbiàn.",
+    "sentence_english": "Transportation here is convenient.",
+    "label": "三上"
+  },
+  {
+    "word": "赔",
+    "word_hanyupinyin": "péi",
+    "word_english": "to compensate",
+    "sentence": "我会赔你钱。",
+    "sentence_hanyupinyin": "Wǒ huì péi nǐ qián.",
+    "sentence_english": "I will compensate you.",
+    "label": "三上"
+  },
+  {
+    "word": "邻",
+    "word_hanyupinyin": "lín",
+    "word_english": "neighbor",
+    "sentence": "邻居很友好。",
+    "sentence_hanyupinyin": "Línjū hěn yǒuhǎo.",
+    "sentence_english": "The neighbors are friendly.",
+    "label": "三上"
+  },
+  {
+    "word": "居",
+    "word_hanyupinyin": "jū",
+    "word_english": "to live/residence",
+    "sentence": "我的邻居很友好。",
+    "sentence_hanyupinyin": "Wǒ de línjū hěn yǒuhǎo.",
+    "sentence_english": "My neighbor is friendly.",
+    "label": "三上"
+  },
+  {
+    "word": "盆",
+    "word_hanyupinyin": "pén",
+    "word_english": "basin/pot",
+    "sentence": "这个花盆很漂亮。",
+    "sentence_hanyupinyin": "Zhège huāpén hěn piàoliang.",
+    "sentence_english": "This flower pot is beautiful.",
+    "label": "三上"
+  },
+  {
+    "word": "镜",
+    "word_hanyupinyin": "jìng",
+    "word_english": "mirror",
+    "sentence": "我照镜子。",
+    "sentence_hanyupinyin": "Wǒ zhào jìngzi.",
+    "sentence_english": "I look in the mirror.",
+    "label": "三上"
+  },
+  {
+    "word": "溜",
+    "word_hanyupinyin": "liū",
+    "word_english": "to slip/slide",
+    "sentence": "地板很滑，小心滑溜！",
+    "sentence_hanyupinyin": "Dìbǎn hěn huá, xiǎoxīn huáliū!",
+    "sentence_english": "The floor is slippery, be careful!",
+    "label": "三上"
+  },
+  {
+    "word": "休",
+    "word_hanyupinyin": "xiū",
+    "word_english": "to rest",
+    "sentence": "我需要休息一下。",
+    "sentence_hanyupinyin": "Wǒ xūyào xiūxi yīxià.",
+    "sentence_english": "I need to rest for a while.",
+    "label": "三上"
+  },
+  {
+    "word": "息",
+    "word_hanyupinyin": "xī",
+    "word_english": "rest/breath",
+    "sentence": "请休息一下。",
+    "sentence_hanyupinyin": "Qǐng xiūxi yīxià.",
+    "sentence_english": "Please take a rest.",
+    "label": "三上"
+  },
+  {
+    "word": "视",
+    "word_hanyupinyin": "shì",
+    "word_english": "to look/vision",
+    "sentence": "我喜欢看电视。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan kàn diànshì.",
+    "sentence_english": "I like to watch TV.",
+    "label": "三上"
+  },
+  {
+    "word": "轻",
+    "word_hanyupinyin": "qīng",
+    "word_english": "light (weight)",
+    "sentence": "羽毛很轻。",
+    "sentence_hanyupinyin": "Yǔmáo hěn qīng.",
+    "sentence_english": "Feathers are light.",
+    "label": "三上"
+  },
+  {
+    "word": "脱",
+    "word_hanyupinyin": "tuō",
+    "word_english": "to take off",
+    "sentence": "请脱鞋进屋。",
+    "sentence_hanyupinyin": "Qǐng tuō xié jìn wū.",
+    "sentence_english": "Please take off your shoes before entering.",
+    "label": "三上"
+  },
+  {
+    "word": "鞋",
+    "word_hanyupinyin": "xié",
+    "word_english": "shoes",
+    "sentence": "鞋子穿在脚上。",
+    "sentence_hanyupinyin": "Xiézi chuān zài jiǎo shàng.",
+    "sentence_english": "Shoes are worn on feet.",
+    "label": "三上"
+  },
+  {
+    "word": "搬",
+    "word_hanyupinyin": "bān",
+    "word_english": "to move",
+    "sentence": "我们要搬家了。",
+    "sentence_hanyupinyin": "Wǒmen yào bānjiā le.",
+    "sentence_english": "We are going to move house.",
+    "label": "三上"
+  },
+  {
+    "word": "碰",
+    "word_hanyupinyin": "pèng",
+    "word_english": "to touch/bump",
+    "sentence": "不要碰那个！",
+    "sentence_hanyupinyin": "Bùyào pèng nàge!",
+    "sentence_english": "Don't touch that!",
+    "label": "三上"
+  },
+  {
+    "word": "板",
+    "word_hanyupinyin": "bǎn",
+    "word_english": "board/plank",
+    "sentence": "老师在黑板上写字。",
+    "sentence_hanyupinyin": "Lǎoshī zài hēibǎn shàng xiě zì.",
+    "sentence_english": "The teacher writes on the blackboard.",
+    "label": "三上"
+  },
+  {
+    "word": "盘",
+    "word_hanyupinyin": "pán",
+    "word_english": "plate/disc",
+    "sentence": "盘子里有水果。",
+    "sentence_hanyupinyin": "Pánzi lǐ yǒu shuǐguǒ.",
+    "sentence_english": "There are fruits on the plate.",
+    "label": "三上"
+  },
+  {
+    "word": "需",
+    "word_hanyupinyin": "xū",
+    "word_english": "to need",
+    "sentence": "我需要你的帮助。",
+    "sentence_hanyupinyin": "Wǒ xūyào nǐ de bāngzhù.",
+    "sentence_english": "I need your help.",
+    "label": "三上"
+  },
+  {
+    "word": "硬",
+    "word_hanyupinyin": "yìng",
+    "word_english": "hard",
+    "sentence": "这块石头很硬。",
+    "sentence_hanyupinyin": "Zhè kuài shítou hěn yìng.",
+    "sentence_english": "This stone is very hard.",
+    "label": "三上"
+  },
+  {
+    "word": "贺",
+    "word_hanyupinyin": "hè",
+    "word_english": "to congratulate",
+    "sentence": "我祝贺你！",
+    "sentence_hanyupinyin": "Wǒ zhùhè nǐ!",
+    "sentence_english": "I congratulate you!",
+    "label": "三上"
+  },
+  {
+    "word": "线",
+    "word_hanyupinyin": "xiàn",
+    "word_english": "line/thread",
+    "sentence": "请画一条直线。",
+    "sentence_hanyupinyin": "Qǐng huà yī tiáo zhí xiàn.",
+    "sentence_english": "Please draw a straight line.",
+    "label": "三上"
+  },
+  {
+    "word": "部",
+    "word_hanyupinyin": "bù",
+    "word_english": "part/department",
+    "sentence": "这是书的一部分。",
+    "sentence_hanyupinyin": "Zhè shì shū de yī bùfen.",
+    "sentence_english": "This is part of the book.",
+    "label": "三上"
+  },
+  {
+    "word": "涂",
+    "word_hanyupinyin": "tú",
+    "word_english": "to paint/apply",
+    "sentence": "我在涂颜色。",
+    "sentence_hanyupinyin": "Wǒ zài tú yánsè.",
+    "sentence_english": "I am coloring.",
+    "label": "三上"
+  },
+  {
+    "word": "挂",
+    "word_hanyupinyin": "guà",
+    "word_english": "to hang",
+    "sentence": "请把画挂在墙上。",
+    "sentence_hanyupinyin": "Qǐng bǎ huà guà zài qiáng shàng.",
+    "sentence_english": "Please hang the painting on the wall.",
+    "label": "三上"
+  },
+  {
+    "word": "求",
+    "word_hanyupinyin": "qiú",
+    "word_english": "to seek/request",
+    "sentence": "我有一个请求。",
+    "sentence_hanyupinyin": "Wǒ yǒu yī gè qǐngqiú.",
+    "sentence_english": "I have a request.",
+    "label": "三上"
+  },
+  {
+    "word": "晒",
+    "word_hanyupinyin": "shài",
+    "word_english": "to dry in the sun",
+    "sentence": "妈妈在晒衣服。",
+    "sentence_hanyupinyin": "Māma zài shài yīfu.",
+    "sentence_english": "Mum is drying clothes in the sun.",
+    "label": "三上"
+  },
+  {
+    "word": "反",
+    "word_hanyupinyin": "fǎn",
+    "word_english": "opposite/to oppose",
+    "sentence": "反过来看。",
+    "sentence_hanyupinyin": "Fǎn guòlái kàn.",
+    "sentence_english": "Look at it the other way.",
+    "label": "三上"
+  },
+  {
+    "word": "伸",
+    "word_hanyupinyin": "shēn",
+    "word_english": "to stretch",
+    "sentence": "请伸出你的手。",
+    "sentence_hanyupinyin": "Qǐng shēn chū nǐ de shǒu.",
+    "sentence_english": "Please stretch out your hand.",
+    "label": "三上"
+  },
+  {
+    "word": "歪",
+    "word_hanyupinyin": "wāi",
+    "word_english": "crooked/slanted",
+    "sentence": "这幅画挂歪了。",
+    "sentence_hanyupinyin": "Zhè fú huà guà wāi le.",
+    "sentence_english": "This painting is hung crookedly.",
+    "label": "三上"
+  },
+  {
+    "word": "乱",
+    "word_hanyupinyin": "luàn",
+    "word_english": "messy/chaotic",
+    "sentence": "房间很乱。",
+    "sentence_hanyupinyin": "Fángjiān hěn luàn.",
+    "sentence_english": "The room is messy.",
+    "label": "三上"
+  },
+  {
+    "word": "累",
+    "word_hanyupinyin": "lèi",
+    "word_english": "tired",
+    "sentence": "我很累了。",
+    "sentence_hanyupinyin": "Wǒ hěn lèi le.",
+    "sentence_english": "I am very tired.",
+    "label": "三上"
+  },
+  {
+    "word": "汗",
+    "word_hanyupinyin": "hàn",
+    "word_english": "sweat",
+    "sentence": "我出了很多汗。",
+    "sentence_hanyupinyin": "Wǒ chū le hěn duō hàn.",
+    "sentence_english": "I sweated a lot.",
+    "label": "三上"
+  },
+  {
+    "word": "熊",
+    "word_hanyupinyin": "xióng",
+    "word_english": "bear",
+    "sentence": "熊猫很可爱。",
+    "sentence_hanyupinyin": "Xióngmāo hěn kě'ài.",
+    "sentence_english": "Pandas are cute.",
+    "label": "三上"
+  },
+  {
+    "word": "鼻",
+    "word_hanyupinyin": "bí",
+    "word_english": "nose",
+    "sentence": "大象的鼻子很长。",
+    "sentence_hanyupinyin": "Dàxiàng de bízi hěn cháng.",
+    "sentence_english": "Elephants have long noses.",
+    "label": "三上"
+  },
+  {
+    "word": "救",
+    "word_hanyupinyin": "jiù",
+    "word_english": "to save/rescue",
+    "sentence": "消防员救人。",
+    "sentence_hanyupinyin": "Xiāofángyuán jiù rén.",
+    "sentence_english": "Firefighters save people.",
+    "label": "三上"
+  },
+  {
+    "word": "法",
+    "word_hanyupinyin": "fǎ",
+    "word_english": "law/method",
+    "sentence": "我有办法解决。",
+    "sentence_hanyupinyin": "Wǒ yǒu bànfǎ jiějué.",
+    "sentence_english": "I have a way to solve it.",
+    "label": "三上"
+  },
+  {
+    "word": "竹",
+    "word_hanyupinyin": "zhú",
+    "word_english": "bamboo",
+    "sentence": "熊猫吃竹子。",
+    "sentence_hanyupinyin": "Xióngmāo chī zhúzi.",
+    "sentence_english": "Pandas eat bamboo.",
+    "label": "三上"
+  },
+  {
+    "word": "往",
+    "word_hanyupinyin": "wǎng",
+    "word_english": "to go/toward",
+    "sentence": "请往前走。",
+    "sentence_hanyupinyin": "Qǐng wǎng qián zǒu.",
+    "sentence_english": "Please go forward.",
+    "label": "三上"
+  },
+  {
+    "word": "升",
+    "word_hanyupinyin": "shēng",
+    "word_english": "to rise/promote",
+    "sentence": "太阳升起来了。",
+    "sentence_hanyupinyin": "Tàiyáng shēng qǐlái le.",
+    "sentence_english": "The sun has risen.",
+    "label": "三上"
+  },
+  {
+    "word": "称",
+    "word_hanyupinyin": "chēng",
+    "word_english": "to weigh/call",
+    "sentence": "我去称一下体重。",
+    "sentence_hanyupinyin": "Wǒ qù chēng yīxià tǐzhòng.",
+    "sentence_english": "I will go weigh myself.",
+    "label": "三上"
+  },
+  {
+    "word": "古",
+    "word_hanyupinyin": "gǔ",
+    "word_english": "ancient/old",
+    "sentence": "这是古老的故事。",
+    "sentence_hanyupinyin": "Zhè shì gǔlǎo de gùshi.",
+    "sentence_english": "This is an ancient story.",
+    "label": "三上"
+  },
+  {
+    "word": "官",
+    "word_hanyupinyin": "guān",
+    "word_english": "official",
+    "sentence": "他是政府官员。",
+    "sentence_hanyupinyin": "Tā shì zhèngfǔ guānyuán.",
+    "sentence_english": "He is a government official.",
+    "label": "三上"
+  },
+  {
+    "word": "墙",
+    "word_hanyupinyin": "qiáng",
+    "word_english": "wall",
+    "sentence": "墙上有一幅画。",
+    "sentence_hanyupinyin": "Qiáng shàng yǒu yī fú huà.",
+    "sentence_english": "There is a painting on the wall.",
+    "label": "三上"
+  },
+  {
+    "word": "沉",
+    "word_hanyupinyin": "chén",
+    "word_english": "to sink/heavy",
+    "sentence": "石头沉到水底。",
+    "sentence_hanyupinyin": "Shítou chén dào shuǐdǐ.",
+    "sentence_english": "The stone sinks to the bottom.",
+    "label": "三上"
+  },
+  {
+    "word": "装",
+    "word_hanyupinyin": "zhuāng",
+    "word_english": "to pack/pretend",
+    "sentence": "我把书装进书包。",
+    "sentence_hanyupinyin": "Wǒ bǎ shū zhuāng jìn shūbāo.",
+    "sentence_english": "I pack the books into my school bag.",
+    "label": "三上"
+  },
+  {
+    "word": "量",
+    "word_hanyupinyin": "liàng",
+    "word_english": "to measure/quantity",
+    "sentence": "我量一下身高。",
+    "sentence_hanyupinyin": "Wǒ liáng yīxià shēngāo.",
+    "sentence_english": "I will measure my height.",
+    "label": "三上"
+  },
+  {
+    "word": "夸",
+    "word_hanyupinyin": "kuā",
+    "word_english": "to praise/boast",
+    "sentence": "老师夸我做得好。",
+    "sentence_hanyupinyin": "Lǎoshī kuā wǒ zuò de hǎo.",
+    "sentence_english": "The teacher praised me for doing well.",
+    "label": "三上"
+  },
+  {
+    "word": "神",
+    "word_hanyupinyin": "shén",
+    "word_english": "god/spirit",
+    "sentence": "他看起来很精神。",
+    "sentence_hanyupinyin": "Tā kàn qǐlái hěn jīngshén.",
+    "sentence_english": "He looks energetic.",
+    "label": "三上"
+  },
+  {
+    "word": "垃",
+    "word_hanyupinyin": "lā",
+    "word_english": "rubbish (in 垃圾)",
+    "sentence": "请把垃圾丢进垃圾桶。",
+    "sentence_hanyupinyin": "Qǐng bǎ lājī diū jìn lājītǒng.",
+    "sentence_english": "Please throw the rubbish into the bin.",
+    "label": "三下"
+  },
+  {
+    "word": "圾",
+    "word_hanyupinyin": "jī",
+    "word_english": "rubbish (in 垃圾)",
+    "sentence": "不要乱丢垃圾。",
+    "sentence_hanyupinyin": "Bùyào luàn diū lājī.",
+    "sentence_english": "Don't litter.",
+    "label": "三下"
+  },
+  {
+    "word": "引",
+    "word_hanyupinyin": "yǐn",
+    "word_english": "to lead/attract",
+    "sentence": "这本书很吸引人。",
+    "sentence_hanyupinyin": "Zhè běn shū hěn xīyǐn rén.",
+    "sentence_english": "This book is very attractive.",
+    "label": "三下"
+  },
+  {
+    "word": "蚊",
+    "word_hanyupinyin": "wén",
+    "word_english": "mosquito",
+    "sentence": "蚊子咬了我。",
+    "sentence_hanyupinyin": "Wénzi yǎo le wǒ.",
+    "sentence_english": "A mosquito bit me.",
+    "label": "三下"
+  },
+  {
+    "word": "环",
+    "word_hanyupinyin": "huán",
+    "word_english": "ring/environment",
+    "sentence": "我们要保护环境。",
+    "sentence_hanyupinyin": "Wǒmen yào bǎohù huánjìng.",
+    "sentence_english": "We should protect the environment.",
+    "label": "三下"
+  },
+  {
+    "word": "境",
+    "word_hanyupinyin": "jìng",
+    "word_english": "boundary/environment",
+    "sentence": "这里的环境很好。",
+    "sentence_hanyupinyin": "Zhèlǐ de huánjìng hěn hǎo.",
+    "sentence_english": "The environment here is good.",
+    "label": "三下"
+  },
+  {
+    "word": "脏",
+    "word_hanyupinyin": "zāng",
+    "word_english": "dirty",
+    "sentence": "你的手很脏。",
+    "sentence_hanyupinyin": "Nǐ de shǒu hěn zāng.",
+    "sentence_english": "Your hands are dirty.",
+    "label": "三下"
+  },
+  {
+    "word": "厕",
+    "word_hanyupinyin": "cè",
+    "word_english": "toilet",
+    "sentence": "厕所在哪里？",
+    "sentence_hanyupinyin": "Cèsuǒ zài nǎlǐ?",
+    "sentence_english": "Where is the toilet?",
+    "label": "三下"
+  },
+  {
+    "word": "所",
+    "word_hanyupinyin": "suǒ",
+    "word_english": "place",
+    "sentence": "所以我没去学校。",
+    "sentence_hanyupinyin": "Suǒyǐ wǒ méi qù xuéxiào.",
+    "sentence_english": "So I didn't go to school.",
+    "label": "三下"
+  },
+  {
+    "word": "臭",
+    "word_hanyupinyin": "chòu",
+    "word_english": "smelly",
+    "sentence": "垃圾很臭。",
+    "sentence_hanyupinyin": "Lājī hěn chòu.",
+    "sentence_english": "Rubbish smells bad.",
+    "label": "三下"
+  },
+  {
+    "word": "清",
+    "word_hanyupinyin": "qīng",
+    "word_english": "clear/clean",
+    "sentence": "这条河水很清。",
+    "sentence_hanyupinyin": "Zhè tiáo héshuǐ hěn qīng.",
+    "sentence_english": "The river water is very clear.",
+    "label": "三下"
+  },
+  {
+    "word": "仔",
+    "word_hanyupinyin": "zǎi",
+    "word_english": "careful/young",
+    "sentence": "你要仔细看。",
+    "sentence_hanyupinyin": "Nǐ yào zǐxì kàn.",
+    "sentence_english": "You should look carefully.",
+    "label": "三下"
+  },
+  {
+    "word": "招",
+    "word_hanyupinyin": "zhāo",
+    "word_english": "to beckon/recruit",
+    "sentence": "他向我招手。",
+    "sentence_hanyupinyin": "Tā xiàng wǒ zhāo shǒu.",
+    "sentence_english": "He waves at me.",
+    "label": "三下"
+  },
+  {
+    "word": "呼",
+    "word_hanyupinyin": "hū",
+    "word_english": "to call/breathe",
+    "sentence": "我大声呼叫。",
+    "sentence_hanyupinyin": "Wǒ dàshēng hūjiào.",
+    "sentence_english": "I call out loudly.",
+    "label": "三下"
+  },
+  {
+    "word": "决",
+    "word_hanyupinyin": "jué",
+    "word_english": "to decide",
+    "sentence": "我决定去参加。",
+    "sentence_hanyupinyin": "Wǒ juédìng qù cānjiā.",
+    "sentence_english": "I decided to participate.",
+    "label": "三下"
+  },
+  {
+    "word": "惊",
+    "word_hanyupinyin": "jīng",
+    "word_english": "to startle/surprise",
+    "sentence": "我吓了一惊。",
+    "sentence_hanyupinyin": "Wǒ xià le yī jīng.",
+    "sentence_english": "I was startled.",
+    "label": "三下"
+  },
+  {
+    "word": "浪",
+    "word_hanyupinyin": "làng",
+    "word_english": "wave/waste",
+    "sentence": "不要浪费食物。",
+    "sentence_hanyupinyin": "Bùyào làngfèi shíwù.",
+    "sentence_english": "Don't waste food.",
+    "label": "三下"
+  },
+  {
+    "word": "费",
+    "word_hanyupinyin": "fèi",
+    "word_english": "fee/waste",
+    "sentence": "学费不便宜。",
+    "sentence_hanyupinyin": "Xuéfèi bù piányi.",
+    "sentence_english": "The school fees are not cheap.",
+    "label": "三下"
+  },
+  {
+    "word": "使",
+    "word_hanyupinyin": "shǐ",
+    "word_english": "to use/make",
+    "sentence": "请使用这支笔。",
+    "sentence_hanyupinyin": "Qǐng shǐyòng zhè zhī bǐ.",
+    "sentence_english": "Please use this pen.",
+    "label": "三下"
+  },
+  {
+    "word": "袋",
+    "word_hanyupinyin": "dài",
+    "word_english": "bag",
+    "sentence": "我带了一个袋子。",
+    "sentence_hanyupinyin": "Wǒ dài le yī gè dàizi.",
+    "sentence_english": "I brought a bag.",
+    "label": "三下"
+  },
+  {
+    "word": "废",
+    "word_hanyupinyin": "fèi",
+    "word_english": "waste/discard",
+    "sentence": "这是废纸。",
+    "sentence_hanyupinyin": "Zhè shì fèi zhǐ.",
+    "sentence_english": "This is waste paper.",
+    "label": "三下"
+  },
+  {
+    "word": "利",
+    "word_hanyupinyin": "lì",
+    "word_english": "benefit/sharp",
+    "sentence": "这把刀很锋利。",
+    "sentence_hanyupinyin": "Zhè bǎ dāo hěn fēnglì.",
+    "sentence_english": "This knife is very sharp.",
+    "label": "三下"
+  },
+  {
+    "word": "瓶",
+    "word_hanyupinyin": "píng",
+    "word_english": "bottle",
+    "sentence": "我要一瓶水。",
+    "sentence_hanyupinyin": "Wǒ yào yī píng shuǐ.",
+    "sentence_english": "I want a bottle of water.",
+    "label": "三下"
+  },
+  {
+    "word": "箱",
+    "word_hanyupinyin": "xiāng",
+    "word_english": "box/trunk",
+    "sentence": "箱子里有衣服。",
+    "sentence_hanyupinyin": "Xiāngzi lǐ yǒu yīfu.",
+    "sentence_english": "There are clothes in the box.",
+    "label": "三下"
+  },
+  {
+    "word": "超",
+    "word_hanyupinyin": "chāo",
+    "word_english": "super/exceed",
+    "sentence": "我去超市买东西。",
+    "sentence_hanyupinyin": "Wǒ qù chāoshì mǎi dōngxi.",
+    "sentence_english": "I go to the supermarket to buy things.",
+    "label": "三下"
+  },
+  {
+    "word": "品",
+    "word_hanyupinyin": "pǐn",
+    "word_english": "product/quality",
+    "sentence": "这个产品很好。",
+    "sentence_hanyupinyin": "Zhège chǎnpǐn hěn hǎo.",
+    "sentence_english": "This product is good.",
+    "label": "三下"
+  },
+  {
+    "word": "如",
+    "word_hanyupinyin": "rú",
+    "word_english": "like/if",
+    "sentence": "如果下雨，我就不去。",
+    "sentence_hanyupinyin": "Rúguǒ xià yǔ, wǒ jiù bù qù.",
+    "sentence_english": "If it rains, I won't go.",
+    "label": "三下"
+  },
+  {
+    "word": "购",
+    "word_hanyupinyin": "gòu",
+    "word_english": "to buy",
+    "sentence": "我去购物中心。",
+    "sentence_hanyupinyin": "Wǒ qù gòuwù zhōngxīn.",
+    "sentence_english": "I go to the shopping mall.",
+    "label": "三下"
+  },
+  {
+    "word": "尽",
+    "word_hanyupinyin": "jìn",
+    "word_english": "to exhaust/utmost",
+    "sentence": "我会尽力做好。",
+    "sentence_hanyupinyin": "Wǒ huì jìnlì zuò hǎo.",
+    "sentence_english": "I will do my best.",
+    "label": "三下"
+  },
+  {
+    "word": "份",
+    "word_hanyupinyin": "fèn",
+    "word_english": "portion/share",
+    "sentence": "我要一份鸡饭。",
+    "sentence_hanyupinyin": "Wǒ yào yī fèn jīfàn.",
+    "sentence_english": "I want one portion of chicken rice.",
+    "label": "三下"
+  },
+  {
+    "word": "设",
+    "word_hanyupinyin": "shè",
+    "word_english": "to set up",
+    "sentence": "学校设立了新课程。",
+    "sentence_hanyupinyin": "Xuéxiào shèlì le xīn kèchéng.",
+    "sentence_english": "The school set up a new course.",
+    "label": "三下"
+  },
+  {
+    "word": "计",
+    "word_hanyupinyin": "jì",
+    "word_english": "plan/calculate",
+    "sentence": "我们要设计一个游戏。",
+    "sentence_hanyupinyin": "Wǒmen yào shèjì yī gè yóuxì.",
+    "sentence_english": "We want to design a game.",
+    "label": "三下"
+  },
+  {
+    "word": "虎",
+    "word_hanyupinyin": "hǔ",
+    "word_english": "tiger",
+    "sentence": "老虎很凶猛。",
+    "sentence_hanyupinyin": "Lǎohǔ hěn xiōngměng.",
+    "sentence_english": "Tigers are fierce.",
+    "label": "三下"
+  },
+  {
+    "word": "各",
+    "word_hanyupinyin": "gè",
+    "word_english": "each/every",
+    "sentence": "各位同学好！",
+    "sentence_hanyupinyin": "Gèwèi tóngxué hǎo!",
+    "sentence_english": "Hello, everyone!",
+    "label": "三下"
+  },
+  {
+    "word": "喷",
+    "word_hanyupinyin": "pēn",
+    "word_english": "to spray",
+    "sentence": "喷泉的水喷得很高。",
+    "sentence_hanyupinyin": "Pēnquán de shuǐ pēn de hěn gāo.",
+    "sentence_english": "The fountain sprays water very high.",
+    "label": "三下"
+  },
+  {
+    "word": "岸",
+    "word_hanyupinyin": "àn",
+    "word_english": "shore/bank",
+    "sentence": "我们在河岸边玩。",
+    "sentence_hanyupinyin": "Wǒmen zài hé'àn biān wán.",
+    "sentence_english": "We play by the riverbank.",
+    "label": "三下"
+  },
+  {
+    "word": "野",
+    "word_hanyupinyin": "yě",
+    "word_english": "wild",
+    "sentence": "我们去野餐。",
+    "sentence_hanyupinyin": "Wǒmen qù yěcān.",
+    "sentence_english": "We go for a picnic.",
+    "label": "三下"
+  },
+  {
+    "word": "踏",
+    "word_hanyupinyin": "tà",
+    "word_english": "to step on",
+    "sentence": "不要踏草地。",
+    "sentence_hanyupinyin": "Bùyào tà cǎodì.",
+    "sentence_english": "Don't step on the grass.",
+    "label": "三下"
+  },
+  {
+    "word": "旗",
+    "word_hanyupinyin": "qí",
+    "word_english": "flag",
+    "sentence": "新加坡的国旗很漂亮。",
+    "sentence_hanyupinyin": "Xīnjiāpō de guóqí hěn piàoliang.",
+    "sentence_english": "Singapore's flag is beautiful.",
+    "label": "三下"
+  },
+  {
+    "word": "颗",
+    "word_hanyupinyin": "kē",
+    "word_english": "(measure word for small items)",
+    "sentence": "我吃了一颗糖。",
+    "sentence_hanyupinyin": "Wǒ chī le yī kē táng.",
+    "sentence_english": "I ate a piece of candy.",
+    "label": "三下"
+  },
+  {
+    "word": "印",
+    "word_hanyupinyin": "yìn",
+    "word_english": "to print/seal",
+    "sentence": "请在这里盖印章。",
+    "sentence_hanyupinyin": "Qǐng zài zhèlǐ gài yìnzhāng.",
+    "sentence_english": "Please stamp here.",
+    "label": "三下"
+  },
+  {
+    "word": "度",
+    "word_hanyupinyin": "dù",
+    "word_english": "degree/time",
+    "sentence": "今天温度很高。",
+    "sentence_hanyupinyin": "Jīntiān wēndù hěn gāo.",
+    "sentence_english": "The temperature is high today.",
+    "label": "三下"
+  },
+  {
+    "word": "竖",
+    "word_hanyupinyin": "shù",
+    "word_english": "vertical",
+    "sentence": "请竖起大拇指。",
+    "sentence_hanyupinyin": "Qǐng shù qǐ dà mǔzhǐ.",
+    "sentence_english": "Please give a thumbs up.",
+    "label": "三下"
+  },
+  {
+    "word": "拇",
+    "word_hanyupinyin": "mǔ",
+    "word_english": "thumb",
+    "sentence": "大拇指表示赞同。",
+    "sentence_hanyupinyin": "Dà mǔzhǐ biǎoshì zàntóng.",
+    "sentence_english": "A thumbs up shows approval.",
+    "label": "三下"
+  },
+  {
+    "word": "谜",
+    "word_hanyupinyin": "mí",
+    "word_english": "riddle/mystery",
+    "sentence": "我喜欢猜谜语。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan cāi míyǔ.",
+    "sentence_english": "I like to solve riddles.",
+    "label": "三下"
+  },
+  {
+    "word": "奋",
+    "word_hanyupinyin": "fèn",
+    "word_english": "to exert/excited",
+    "sentence": "我们要努力奋斗。",
+    "sentence_hanyupinyin": "Wǒmen yào nǔlì fèndòu.",
+    "sentence_english": "We should work hard.",
+    "label": "三下"
+  },
+  {
+    "word": "养",
+    "word_hanyupinyin": "yǎng",
+    "word_english": "to raise/support",
+    "sentence": "我养了一只小猫。",
+    "sentence_hanyupinyin": "Wǒ yǎng le yī zhī xiǎo māo.",
+    "sentence_english": "I raise a kitten.",
+    "label": "三下"
+  },
+  {
+    "word": "虾",
+    "word_hanyupinyin": "xiā",
+    "word_english": "shrimp",
+    "sentence": "我喜欢吃虾。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan chī xiā.",
+    "sentence_english": "I like to eat shrimp.",
+    "label": "三下"
+  },
+  {
+    "word": "湖",
+    "word_hanyupinyin": "hú",
+    "word_english": "lake",
+    "sentence": "湖水很清澈。",
+    "sentence_hanyupinyin": "Húshuǐ hěn qīngchè.",
+    "sentence_english": "The lake water is very clear.",
+    "label": "三下"
+  },
+  {
+    "word": "狼",
+    "word_hanyupinyin": "láng",
+    "word_english": "wolf",
+    "sentence": "狼很凶猛。",
+    "sentence_hanyupinyin": "Láng hěn xiōngměng.",
+    "sentence_english": "Wolves are fierce.",
+    "label": "三下"
+  },
+  {
+    "word": "洞",
+    "word_hanyupinyin": "dòng",
+    "word_english": "hole/cave",
+    "sentence": "老鼠住在洞里。",
+    "sentence_hanyupinyin": "Lǎoshǔ zhù zài dòng lǐ.",
+    "sentence_english": "Mice live in holes.",
+    "label": "三下"
+  },
+  {
+    "word": "沿",
+    "word_hanyupinyin": "yán",
+    "word_english": "along",
+    "sentence": "沿着这条路走。",
+    "sentence_hanyupinyin": "Yánzhe zhè tiáo lù zǒu.",
+    "sentence_english": "Walk along this road.",
+    "label": "三下"
+  },
+  {
+    "word": "滩",
+    "word_hanyupinyin": "tān",
+    "word_english": "beach",
+    "sentence": "我们去海滩玩。",
+    "sentence_hanyupinyin": "Wǒmen qù hǎitān wán.",
+    "sentence_english": "We go to the beach to play.",
+    "label": "三下"
+  },
+  {
+    "word": "丛",
+    "word_hanyupinyin": "cóng",
+    "word_english": "cluster/bush",
+    "sentence": "草丛里有虫子。",
+    "sentence_hanyupinyin": "Cǎocóng lǐ yǒu chóngzi.",
+    "sentence_english": "There are insects in the bushes.",
+    "label": "三下"
+  },
+  {
+    "word": "顶",
+    "word_hanyupinyin": "dǐng",
+    "word_english": "top/peak",
+    "sentence": "山顶的风景很美。",
+    "sentence_hanyupinyin": "Shāndǐng de fēngjǐng hěn měi.",
+    "sentence_english": "The view from the mountaintop is beautiful.",
+    "label": "三下"
+  },
+  {
+    "word": "必",
+    "word_hanyupinyin": "bì",
+    "word_english": "must/certainly",
+    "sentence": "你必须做完功课。",
+    "sentence_hanyupinyin": "Nǐ bìxū zuò wán gōngkè.",
+    "sentence_english": "You must finish your homework.",
+    "label": "三下"
+  },
+  {
+    "word": "须",
+    "word_hanyupinyin": "xū",
+    "word_english": "must/beard",
+    "sentence": "爷爷有胡须。",
+    "sentence_hanyupinyin": "Yéye yǒu húxū.",
+    "sentence_english": "Grandpa has a beard.",
+    "label": "三下"
+  },
+  {
+    "word": "讨",
+    "word_hanyupinyin": "tǎo",
+    "word_english": "to discuss/beg",
+    "sentence": "我们讨论一下吧。",
+    "sentence_hanyupinyin": "Wǒmen tǎolùn yīxià ba.",
+    "sentence_english": "Let's discuss it.",
+    "label": "三下"
+  },
+  {
+    "word": "论",
+    "word_hanyupinyin": "lùn",
+    "word_english": "to discuss/theory",
+    "sentence": "无论如何我都会去。",
+    "sentence_hanyupinyin": "Wúlùn rúhé wǒ dōu huì qù.",
+    "sentence_english": "I will go no matter what.",
+    "label": "三下"
+  },
+  {
+    "word": "任",
+    "word_hanyupinyin": "rèn",
+    "word_english": "task/appoint",
+    "sentence": "这是我的任务。",
+    "sentence_hanyupinyin": "Zhè shì wǒ de rènwu.",
+    "sentence_english": "This is my task.",
+    "label": "三下"
+  },
+  {
+    "word": "务",
+    "word_hanyupinyin": "wù",
+    "word_english": "task/affair",
+    "sentence": "我有重要的任务。",
+    "sentence_hanyupinyin": "Wǒ yǒu zhòngyào de rènwu.",
+    "sentence_english": "I have an important task.",
+    "label": "三下"
+  },
+  {
+    "word": "虽",
+    "word_hanyupinyin": "suī",
+    "word_english": "although",
+    "sentence": "虽然下雨，我还是去了。",
+    "sentence_hanyupinyin": "Suīrán xià yǔ, wǒ háishì qù le.",
+    "sentence_english": "Although it rained, I still went.",
+    "label": "三下"
+  },
+  {
+    "word": "仍",
+    "word_hanyupinyin": "réng",
+    "word_english": "still/yet",
+    "sentence": "他仍然很努力。",
+    "sentence_hanyupinyin": "Tā réngrán hěn nǔlì.",
+    "sentence_english": "He is still working hard.",
+    "label": "三下"
+  },
+  {
+    "word": "滑",
+    "word_hanyupinyin": "huá",
+    "word_english": "slippery/to slide",
+    "sentence": "地板很滑，小心！",
+    "sentence_hanyupinyin": "Dìbǎn hěn huá, xiǎoxīn!",
+    "sentence_english": "The floor is slippery, be careful!",
+    "label": "三下"
+  },
+  {
+    "word": "软",
+    "word_hanyupinyin": "ruǎn",
+    "word_english": "soft",
+    "sentence": "这个枕头很软。",
+    "sentence_hanyupinyin": "Zhège zhěntou hěn ruǎn.",
+    "sentence_english": "This pillow is very soft.",
+    "label": "三下"
+  },
+  {
+    "word": "灰",
+    "word_hanyupinyin": "huī",
+    "word_english": "gray/ash",
+    "sentence": "他穿着灰色的衣服。",
+    "sentence_hanyupinyin": "Tā chuān zhe huīsè de yīfu.",
+    "sentence_english": "He is wearing gray clothes.",
+    "label": "三下"
+  },
+  {
+    "word": "嘴",
+    "word_hanyupinyin": "zuǐ",
+    "word_english": "mouth",
+    "sentence": "闭上你的嘴。",
+    "sentence_hanyupinyin": "Bì shàng nǐ de zuǐ.",
+    "sentence_english": "Close your mouth.",
+    "label": "三下"
+  },
+  {
+    "word": "胡",
+    "word_hanyupinyin": "hú",
+    "word_english": "beard/reckless",
+    "sentence": "爷爷的胡子很长。",
+    "sentence_hanyupinyin": "Yéye de húzi hěn cháng.",
+    "sentence_english": "Grandpa's beard is very long.",
+    "label": "三下"
+  },
+  {
+    "word": "圈",
+    "word_hanyupinyin": "quān",
+    "word_english": "circle/ring",
+    "sentence": "请画一个圆圈。",
+    "sentence_hanyupinyin": "Qǐng huà yī gè yuánquān.",
+    "sentence_english": "Please draw a circle.",
+    "label": "三下"
+  },
+  {
+    "word": "喂",
+    "word_hanyupinyin": "wèi",
+    "word_english": "hello/to feed",
+    "sentence": "喂，你好！",
+    "sentence_hanyupinyin": "Wèi, nǐ hǎo!",
+    "sentence_english": "Hello!",
+    "label": "三下"
+  },
+  {
+    "word": "萝",
+    "word_hanyupinyin": "luó",
+    "word_english": "radish (in 萝卜)",
+    "sentence": "兔子喜欢吃萝卜。",
+    "sentence_hanyupinyin": "Tùzi xǐhuan chī luóbo.",
+    "sentence_english": "Rabbits like to eat carrots.",
+    "label": "三下"
+  },
+  {
+    "word": "卜",
+    "word_hanyupinyin": "bo",
+    "word_english": "radish (in 萝卜)",
+    "sentence": "红萝卜很有营养。",
+    "sentence_hanyupinyin": "Hóng luóbo hěn yǒu yíngyǎng.",
+    "sentence_english": "Carrots are very nutritious.",
+    "label": "三下"
+  },
+  {
+    "word": "散",
+    "word_hanyupinyin": "sàn",
+    "word_english": "to scatter/stroll",
+    "sentence": "我喜欢散步。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan sànbù.",
+    "sentence_english": "I like to take walks.",
+    "label": "三下"
+  },
+  {
+    "word": "却",
+    "word_hanyupinyin": "què",
+    "word_english": "but/however",
+    "sentence": "我想去，却没时间。",
+    "sentence_hanyupinyin": "Wǒ xiǎng qù, què méi shíjiān.",
+    "sentence_english": "I want to go, but I don't have time.",
+    "label": "三下"
+  },
+  {
+    "word": "咬",
+    "word_hanyupinyin": "yǎo",
+    "word_english": "to bite",
+    "sentence": "小狗咬了我一口。",
+    "sentence_hanyupinyin": "Xiǎo gǒu yǎo le wǒ yī kǒu.",
+    "sentence_english": "The puppy bit me.",
+    "label": "三下"
+  },
+  {
+    "word": "断",
+    "word_hanyupinyin": "duàn",
+    "word_english": "to break/cut",
+    "sentence": "绳子断了。",
+    "sentence_hanyupinyin": "Shéngzi duàn le.",
+    "sentence_english": "The rope broke.",
+    "label": "三下"
+  },
+  {
+    "word": "斤",
+    "word_hanyupinyin": "jīn",
+    "word_english": "catty (weight unit)",
+    "sentence": "我买了一斤苹果。",
+    "sentence_hanyupinyin": "Wǒ mǎi le yī jīn píngguǒ.",
+    "sentence_english": "I bought a catty of apples.",
+    "label": "三下"
+  },
+  {
+    "word": "够",
+    "word_hanyupinyin": "gòu",
+    "word_english": "enough",
+    "sentence": "这些钱够用吗？",
+    "sentence_hanyupinyin": "Zhèxiē qián gòu yòng ma?",
+    "sentence_english": "Is this money enough?",
+    "label": "三下"
+  },
+  {
+    "word": "肚",
+    "word_hanyupinyin": "dù",
+    "word_english": "belly/stomach",
+    "sentence": "我肚子饿了。",
+    "sentence_hanyupinyin": "Wǒ dùzi è le.",
+    "sentence_english": "I am hungry.",
+    "label": "三下"
+  },
+  {
+    "word": "躺",
+    "word_hanyupinyin": "tǎng",
+    "word_english": "to lie down",
+    "sentence": "我躺在床上休息。",
+    "sentence_hanyupinyin": "Wǒ tǎng zài chuáng shàng xiūxi.",
+    "sentence_english": "I lie down on the bed to rest.",
+    "label": "三下"
+  },
+  {
+    "word": "慢",
+    "word_hanyupinyin": "màn",
+    "word_english": "slow",
+    "sentence": "乌龟走得很慢。",
+    "sentence_hanyupinyin": "Wūguī zǒu de hěn màn.",
+    "sentence_english": "Turtles walk very slowly.",
+    "label": "三下"
+  },
+  {
+    "word": "偷",
+    "word_hanyupinyin": "tōu",
+    "word_english": "to steal",
+    "sentence": "不可以偷东西。",
+    "sentence_hanyupinyin": "Bù kěyǐ tōu dōngxi.",
+    "sentence_english": "You cannot steal things.",
+    "label": "三下"
+  },
+  {
+    "word": "堂",
+    "word_hanyupinyin": "táng",
+    "word_english": "hall/class",
+    "sentence": "我在课堂上学习。",
+    "sentence_hanyupinyin": "Wǒ zài kètáng shàng xuéxí.",
+    "sentence_english": "I study in the classroom.",
+    "label": "三下"
+  },
+  {
+    "word": "吓",
+    "word_hanyupinyin": "xià",
+    "word_english": "to scare",
+    "sentence": "你吓到我了！",
+    "sentence_hanyupinyin": "Nǐ xià dào wǒ le!",
+    "sentence_english": "You scared me!",
+    "label": "三下"
+  },
+  {
+    "word": "逃",
+    "word_hanyupinyin": "táo",
+    "word_english": "to escape/flee",
+    "sentence": "小偷逃跑了。",
+    "sentence_hanyupinyin": "Xiǎotōu táopǎo le.",
+    "sentence_english": "The thief ran away.",
+    "label": "三下"
+  },
+  {
+    "word": "痛",
+    "word_hanyupinyin": "tòng",
+    "word_english": "painful",
+    "sentence": "我的头很痛。",
+    "sentence_hanyupinyin": "Wǒ de tóu hěn tòng.",
+    "sentence_english": "My head hurts.",
+    "label": "三下"
+  },
+  {
+    "word": "冒",
+    "word_hanyupinyin": "mào",
+    "word_english": "to emit/risk",
+    "sentence": "烟囱在冒烟。",
+    "sentence_hanyupinyin": "Yāncōng zài mào yān.",
+    "sentence_english": "The chimney is emitting smoke.",
+    "label": "三下"
+  },
+  {
+    "word": "抖",
+    "word_hanyupinyin": "dǒu",
+    "word_english": "to tremble/shake",
+    "sentence": "他冷得发抖。",
+    "sentence_hanyupinyin": "Tā lěng de fādǒu.",
+    "sentence_english": "He is shivering from the cold.",
+    "label": "三下"
+  },
+  {
+    "word": "蜜",
+    "word_hanyupinyin": "mì",
+    "word_english": "honey",
+    "sentence": "蜜蜂采蜜。",
+    "sentence_hanyupinyin": "Mìfēng cǎi mì.",
+    "sentence_english": "Bees collect honey.",
+    "label": "三下"
+  },
+  {
+    "word": "蜂",
+    "word_hanyupinyin": "fēng",
+    "word_english": "bee",
+    "sentence": "小心蜜蜂会蜇人。",
+    "sentence_hanyupinyin": "Xiǎoxīn mìfēng huì zhē rén.",
+    "sentence_english": "Be careful, bees can sting.",
+    "label": "三下"
+  },
+  {
+    "word": "假",
+    "word_hanyupinyin": "jiǎ",
+    "word_english": "fake/holiday",
+    "sentence": "这朵花是假的。",
+    "sentence_hanyupinyin": "Zhè duǒ huā shì jiǎ de.",
+    "sentence_english": "This flower is fake.",
+    "label": "三下"
+  },
+  {
+    "word": "简",
+    "word_hanyupinyin": "jiǎn",
+    "word_english": "simple",
+    "sentence": "这道题很简单。",
+    "sentence_hanyupinyin": "Zhè dào tí hěn jiǎndān.",
+    "sentence_english": "This question is simple.",
+    "label": "三下"
+  },
+  {
+    "word": "单",
+    "word_hanyupinyin": "dān",
+    "word_english": "single/list",
+    "sentence": "这是一张名单。",
+    "sentence_hanyupinyin": "Zhè shì yī zhāng míngdān.",
+    "sentence_english": "This is a name list.",
+    "label": "三下"
+  },
+  {
+    "word": "忍",
+    "word_hanyupinyin": "rěn",
+    "word_english": "to endure",
+    "sentence": "我忍不住笑了。",
+    "sentence_hanyupinyin": "Wǒ rěn bù zhù xiào le.",
+    "sentence_english": "I couldn't help laughing.",
+    "label": "三下"
+  },
+  {
+    "word": "钻",
+    "word_hanyupinyin": "zuān",
+    "word_english": "to drill/dig",
+    "sentence": "小虫钻进洞里。",
+    "sentence_hanyupinyin": "Xiǎo chóng zuān jìn dòng lǐ.",
+    "sentence_english": "The little bug drilled into the hole.",
+    "label": "三下"
+  },
+  {
+    "word": "敢",
+    "word_hanyupinyin": "gǎn",
+    "word_english": "to dare",
+    "sentence": "我不敢跳水。",
+    "sentence_hanyupinyin": "Wǒ bù gǎn tiào shuǐ.",
+    "sentence_english": "I dare not dive.",
+    "label": "三下"
+  },
+  {
+    "word": "欺",
+    "word_hanyupinyin": "qī",
+    "word_english": "to bully/cheat",
+    "sentence": "不要欺负人。",
+    "sentence_hanyupinyin": "Bùyào qīfu rén.",
+    "sentence_english": "Don't bully others.",
+    "label": "三下"
+  },
+  {
+    "word": "负",
+    "word_hanyupinyin": "fù",
+    "word_english": "negative/bear",
+    "sentence": "他很负责任。",
+    "sentence_hanyupinyin": "Tā hěn fùzérèn.",
+    "sentence_english": "He is responsible.",
+    "label": "三下"
+  },
+  {
+    "word": "宠",
+    "word_hanyupinyin": "chǒng",
+    "word_english": "pet/spoil",
+    "sentence": "这是我的宠物。",
+    "sentence_hanyupinyin": "Zhè shì wǒ de chǒngwù.",
+    "sentence_english": "This is my pet.",
+    "label": "三下"
+  },
+  {
+    "word": "俩",
+    "word_hanyupinyin": "liǎ",
+    "word_english": "two (informal)",
+    "sentence": "我们俩是好朋友。",
+    "sentence_hanyupinyin": "Wǒmen liǎ shì hǎo péngyou.",
+    "sentence_english": "The two of us are good friends.",
+    "label": "三下"
+  },
+  {
+    "word": "舞",
+    "word_hanyupinyin": "wǔ",
+    "word_english": "dance",
+    "sentence": "她喜欢跳舞。",
+    "sentence_hanyupinyin": "Tā xǐhuan tiàowǔ.",
+    "sentence_english": "She likes to dance.",
+    "label": "三下"
+  },
+  {
+    "word": "吹",
+    "word_hanyupinyin": "chuī",
+    "word_english": "to blow",
+    "sentence": "风在吹。",
+    "sentence_hanyupinyin": "Fēng zài chuī.",
+    "sentence_english": "The wind is blowing.",
+    "label": "三下"
+  },
+  {
+    "word": "轮",
+    "word_hanyupinyin": "lún",
+    "word_english": "wheel/turn",
+    "sentence": "轮到你了！",
+    "sentence_hanyupinyin": "Lún dào nǐ le!",
+    "sentence_english": "It's your turn!",
+    "label": "三下"
+  },
+  {
+    "word": "数",
+    "word_hanyupinyin": "shǔ",
+    "word_english": "to count/number",
+    "sentence": "我在数星星。",
+    "sentence_hanyupinyin": "Wǒ zài shǔ xīngxing.",
+    "sentence_english": "I am counting stars.",
+    "label": "三下"
+  },
+  {
+    "word": "吴",
+    "word_hanyupinyin": "wú",
+    "word_english": "(surname Wu)",
+    "sentence": "吴老师很和蔼。",
+    "sentence_hanyupinyin": "Wú lǎoshī hěn hé'ǎi.",
+    "sentence_english": "Teacher Wu is very kind.",
+    "label": "三下"
+  },
+  {
+    "word": "代",
+    "word_hanyupinyin": "dài",
+    "word_english": "generation/replace",
+    "sentence": "这是现代的科技。",
+    "sentence_hanyupinyin": "Zhè shì xiàndài de kējì.",
+    "sentence_english": "This is modern technology.",
+    "label": "三下"
+  },
+  {
+    "word": "替",
+    "word_hanyupinyin": "tì",
+    "word_english": "to substitute",
+    "sentence": "我替你做。",
+    "sentence_hanyupinyin": "Wǒ tì nǐ zuò.",
+    "sentence_english": "I will do it for you.",
+    "label": "三下"
+  },
+  {
+    "word": "传",
+    "word_hanyupinyin": "chuán",
+    "word_english": "to pass/spread",
+    "sentence": "请把球传给我。",
+    "sentence_hanyupinyin": "Qǐng bǎ qiú chuán gěi wǒ.",
+    "sentence_english": "Please pass the ball to me.",
+    "label": "三下"
+  },
+  {
+    "word": "念",
+    "word_hanyupinyin": "niàn",
+    "word_english": "to read/miss",
+    "sentence": "我想念奶奶。",
+    "sentence_hanyupinyin": "Wǒ xiǎngniàn nǎinai.",
+    "sentence_english": "I miss grandma.",
+    "label": "三下"
+  },
+  {
+    "word": "抬",
+    "word_hanyupinyin": "tái",
+    "word_english": "to lift/raise",
+    "sentence": "请抬起头来。",
+    "sentence_hanyupinyin": "Qǐng tái qǐ tóu lái.",
+    "sentence_english": "Please raise your head.",
+    "label": "三下"
+  },
+  {
+    "word": "裙",
+    "word_hanyupinyin": "qún",
+    "word_english": "skirt",
+    "sentence": "她穿着漂亮的裙子。",
+    "sentence_hanyupinyin": "Tā chuān zhe piàoliang de qúnzi.",
+    "sentence_english": "She is wearing a beautiful skirt.",
+    "label": "三下"
+  },
+  {
+    "word": "咖",
+    "word_hanyupinyin": "kā",
+    "word_english": "coffee (in 咖啡)",
+    "sentence": "我喜欢喝咖啡。",
+    "sentence_hanyupinyin": "Wǒ xǐhuan hē kāfēi.",
+    "sentence_english": "I like to drink coffee.",
+    "label": "三下"
+  },
+  {
+    "word": "啡",
+    "word_hanyupinyin": "fēi",
+    "word_english": "coffee (in 咖啡)",
+    "sentence": "咖啡很香。",
+    "sentence_hanyupinyin": "Kāfēi hěn xiāng.",
+    "sentence_english": "Coffee smells good.",
+    "label": "三下"
+  },
+  {
+    "word": "藏",
+    "word_hanyupinyin": "cáng",
+    "word_english": "to hide",
+    "sentence": "他藏在门后面。",
+    "sentence_hanyupinyin": "Tā cáng zài mén hòumiàn.",
+    "sentence_english": "He hides behind the door.",
+    "label": "三下"
+  },
+  {
+    "word": "底",
+    "word_hanyupinyin": "dǐ",
+    "word_english": "bottom",
+    "sentence": "水在桶底。",
+    "sentence_hanyupinyin": "Shuǐ zài tǒng dǐ.",
+    "sentence_english": "The water is at the bottom of the bucket.",
+    "label": "三下"
+  },
+  {
+    "word": "失",
+    "word_hanyupinyin": "shī",
+    "word_english": "to lose",
+    "sentence": "我失去了钱包。",
+    "sentence_hanyupinyin": "Wǒ shīqù le qiánbāo.",
+    "sentence_english": "I lost my wallet.",
+    "label": "三下"
+  },
+  {
+    "word": "铁",
+    "word_hanyupinyin": "tiě",
+    "word_english": "iron",
+    "sentence": "我坐地铁上学。",
+    "sentence_hanyupinyin": "Wǒ zuò dìtiě shàngxué.",
+    "sentence_english": "I take the MRT to school.",
+    "label": "三下"
+  },
+  {
+    "word": "金",
+    "word_hanyupinyin": "jīn",
+    "word_english": "gold",
+    "sentence": "金子很值钱。",
+    "sentence_hanyupinyin": "Jīnzi hěn zhí qián.",
+    "sentence_english": "Gold is valuable.",
+    "label": "三下"
+  },
+  {
+    "word": "签",
+    "word_hanyupinyin": "qiān",
+    "word_english": "to sign",
+    "sentence": "请在这里签名。",
+    "sentence_hanyupinyin": "Qǐng zài zhèlǐ qiānmíng.",
+    "sentence_english": "Please sign here.",
+    "label": "三下"
+  },
+  {
+    "word": "百",
+    "word_hanyupinyin": "bǎi",
+    "word_english": "hundred",
+    "sentence": "我有一百块钱。",
+    "sentence_hanyupinyin": "Wǒ yǒu yībǎi kuài qián.",
+    "sentence_english": "I have one hundred dollars.",
+    "label": "三下"
+  },
+  {
+    "word": "消",
+    "word_hanyupinyin": "xiāo",
+    "word_english": "to disappear/eliminate",
+    "sentence": "他的怒气消了。",
+    "sentence_hanyupinyin": "Tā de nùqì xiāo le.",
+    "sentence_english": "His anger has disappeared.",
+    "label": "三下"
+  },
+  {
+    "word": "万",
+    "word_hanyupinyin": "wàn",
+    "word_english": "ten thousand",
+    "sentence": "一万块钱很多。",
+    "sentence_hanyupinyin": "Yīwàn kuài qián hěn duō.",
+    "sentence_english": "Ten thousand dollars is a lot.",
+    "label": "三下"
+  },
+  {
+    "word": "千",
+    "word_hanyupinyin": "qiān",
+    "word_english": "thousand",
+    "sentence": "一千个人参加了。",
+    "sentence_hanyupinyin": "Yīqiān gè rén cānjiā le.",
+    "sentence_english": "A thousand people participated.",
+    "label": "三下"
+  },
+  {
+    "word": "减",
+    "word_hanyupinyin": "jiǎn",
+    "word_english": "to subtract/reduce",
+    "sentence": "五减三等于二。",
+    "sentence_hanyupinyin": "Wǔ jiǎn sān děngyú èr.",
+    "sentence_english": "Five minus three equals two.",
+    "label": "三下"
+  },
+  {
+    "word": "算",
+    "word_hanyupinyin": "suàn",
+    "word_english": "to calculate",
+    "sentence": "我在算数学题。",
+    "sentence_hanyupinyin": "Wǒ zài suàn shùxué tí.",
+    "sentence_english": "I am solving math problems.",
+    "label": "三下"
+  },
+  {
+    "word": "检",
+    "word_hanyupinyin": "jiǎn",
+    "word_english": "to check/inspect",
+    "sentence": "医生帮我检查身体。",
+    "sentence_hanyupinyin": "Yīshēng bāng wǒ jiǎnchá shēntǐ.",
+    "sentence_english": "The doctor checks my health.",
+    "label": "三下"
+  },
+  {
+    "word": "查",
+    "word_hanyupinyin": "chá",
+    "word_english": "to examine/check",
+    "sentence": "请检查一下作业。",
+    "sentence_hanyupinyin": "Qǐng jiǎnchá yīxià zuòyè.",
+    "sentence_english": "Please check the homework.",
+    "label": "三下"
+  },
+  {
+    "word": "废",
+    "word_hanyupinyin": "fèi",
+    "word_english": "waste/useless",
+    "sentence": "我们要回收废纸。",
+    "sentence_hanyupinyin": "Wǒmen yào huíshōu fèizhǐ.",
+    "sentence_english": "We should recycle waste paper.",
+    "label": "三下"
+  }
+]
