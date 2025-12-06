@@ -41,6 +41,14 @@
       text-align: left;
     }
     th { background: #f5f5f5; }
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+    .table-wrapper table {
+      margin: 0;
+      min-width: 500px;
+    }
     a { color: #9C27B0; }
     .back-link {
       display: inline-block;
@@ -373,6 +381,7 @@
   <h3>Difficulty Signals</h3>
   <p>Three implicit signals determine how well you know a card:</p>
 
+  <div class="table-wrapper">
   <table>
     <tr><th>Signal</th><th>What It Measures</th><th>How It's Captured</th></tr>
     <tr>
@@ -391,10 +400,12 @@
       <td>Correct / Wrong answer</td>
     </tr>
   </table>
+  </div>
 
   <h3>The Eight Scenarios</h3>
   <p>Combining these signals creates a spectrum of memory strength:</p>
 
+  <div class="table-wrapper">
   <table>
     <tr><th>Time</th><th>Hint</th><th>Result</th><th>Interpretation</th><th>Interval Adjustment</th></tr>
     <tr style="background:#c8e6c9;">
@@ -438,6 +449,7 @@
       <td>Reset to 0, increment leech counter</td>
     </tr>
   </table>
+  </div>
 
   <h3>Response Time Measurement</h3>
 
@@ -473,6 +485,7 @@ SLOW = responseTime > avgResponseTime * 1.5   // 50% slower than usual</code></p
   <h3>Hint Usage Impact</h3>
   <p>Using a hint indicates incomplete recall, even if you get the answer right:</p>
 
+  <div class="table-wrapper">
   <table>
     <tr><th>Hint Button</th><th>Mode</th><th>Impact on "Correct" Answer</th></tr>
     <tr>
@@ -491,6 +504,7 @@ SLOW = responseTime > avgResponseTime * 1.5   // 50% slower than usual</code></p
       <td>No penalty (translation lookup is acceptable)</td>
     </tr>
   </table>
+  </div>
 
   <p><strong>Key insight:</strong> If you needed the pinyin hint to pronounce it, or needed to peek at the characters to write them, you haven't truly memorized the card yet. The interval should stay the same rather than advance.</p>
 
@@ -503,6 +517,7 @@ SLOW = responseTime > avgResponseTime * 1.5   // 50% slower than usual</code></p
   <p>Example: A 7-day base interval becomes 14 days for an easy card (score 0.5) or 3.5 days for a hard card (score 2.0).</p>
 
   <h3>Quick Reference: Outcome Matrix</h3>
+  <div class="table-wrapper">
   <table>
     <tr>
       <th>Scenario</th>
@@ -535,6 +550,7 @@ SLOW = responseTime > avgResponseTime * 1.5   // 50% slower than usual</code></p
       <td>× 1.2 (harder)</td>
     </tr>
   </table>
+  </div>
 
   <p><em>For implementation details, see <a href="DEVELOPER.html#adaptive-difficulty-implementation">Developer Guide: Adaptive Difficulty Implementation</a>.</em></p>
 
